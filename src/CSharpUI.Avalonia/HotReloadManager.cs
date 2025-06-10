@@ -113,8 +113,7 @@ public static class HotReloadManager
 
         if (!Instances.TryGetValue(type, out var instances)) return;
 
-        if (instances.Contains(instance))
-            instances.Remove(instance);
+        instances.Remove(instance);
     }
 
 

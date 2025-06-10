@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -19,6 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="TestData\**\*" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
@@ -33,9 +34,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+      	  <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.14.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\CSharpUI.Avalonia.SourceGenerator\CSharpUI.Avalonia.SourceGenerator.csproj" />
     <ProjectReference Include="..\..\src\CSharpUI.Avalonia\CSharpUI.Avalonia.csproj" />
   </ItemGroup>
 

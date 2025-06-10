@@ -8,18 +8,12 @@ namespace CSharpUI.Avalonia.CommonExtensions;
 /// </summary>
 public static class AppBuilderExtensions
 {
-    private static IComponentControlFactory? _componentControlFactory;
     private static IServiceProvider? _serviceProvider;
 
     /// <summary>
     /// Gets the current <see cref="IServiceProvider"/> instance.
     /// </summary>
     internal static IServiceProvider? ServiceProvider => _serviceProvider;
-
-    /// <summary>
-    /// Gets the current <see cref="IComponentControlFactory"/> instance.
-    /// </summary>
-    internal static IComponentControlFactory? ComponentControlFactory => _componentControlFactory;
 
     /// <summary>
     /// Configures the <see cref="AppBuilder"/> to use the specified <see cref="IServiceProvider"/>.
@@ -30,12 +24,6 @@ public static class AppBuilderExtensions
     public static AppBuilder UseServiceProvider(this AppBuilder appBuilder, IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-        return appBuilder;
-    }
-
-    public static AppBuilder UseComponentControlFactory(this AppBuilder appBuilder, IComponentControlFactory componentControlFactory)
-    {
-        _componentControlFactory = componentControlFactory;
         return appBuilder;
     }
 

@@ -16,6 +16,9 @@ var appBuilder = AppBuilder.Configure<Application>()
     .AfterSetup(b => b.Instance?.Styles.Add(new FluentTheme()))
     .UseServiceProvider(services.BuildServiceProvider())
     .UseReactiveUI()
+#if DEBUG
+    .UseHotReload()
+#endif
     .SetupWithLifetime(lifetime);
 
 lifetime.MainWindow = new Window()

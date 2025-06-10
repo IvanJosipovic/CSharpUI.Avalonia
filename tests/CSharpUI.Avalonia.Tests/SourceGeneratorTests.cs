@@ -1,0 +1,74 @@
+using Avalonia;
+using Avalonia.Markup.Declarative;
+using CSharpUI.Avalonia;
+using CSharpUI.Avalonia.SourceGenerator;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using System.IO;
+using System.Reflection;
+using Tests;
+
+namespace tests;
+
+public class SourceGeneratorTests
+{
+    private static string? GetGeneratedOutput(string sourceCode)
+    {
+        var loadDll = typeof(AvaloniaObject);
+        var loadDll1 = typeof(IDeclarativeViewBase);
+
+        var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
+        var references = AppDomain.CurrentDomain.GetAssemblies()
+                                  .Where(assembly => !assembly.IsDynamic)
+                                  .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
+                                  .Cast<MetadataReference>();
+
+        var compilation = CSharpCompilation.Create("SourceGeneratorTests",
+                      [syntaxTree],
+                      references,
+                      new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        // Source Generator to test
+        var generator = new AvaloniaPropertyExtensionsGenerator();
+
+        CSharpGeneratorDriver.Create(generator)
+                             .RunGeneratorsAndUpdateCompilation(compilation,
+                                                                out var outputCompilation,
+                                                                out var diagnostics);
+
+        // check for errors
+        Assert.Empty(diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error));
+
+        var code = outputCompilation.SyntaxTrees.Skip(1).LastOrDefault()?.ToString();
+
+        // remove // Auto-generated code <date/time>
+        if (code != null)
+        {
+            var lines = code.Split([Environment.NewLine], StringSplitOptions.None);
+            code = string.Join(Environment.NewLine, lines.Where(line => !line.TrimStart().StartsWith("// Auto-generated code")));
+        }
+
+        return code?.Trim();
+    }
+
+    /// <summary>
+    /// Gets the input and expected output sources for a test based on the test name.
+    /// Usage: var (input, expected) = GetTestSources(nameof(DirectProperty));
+    /// </summary>
+    private static (string input, string expected) GetTestSources(string testName, string markupName)
+    {
+        var inputPath = Path.Combine("TestData", $"{testName}.cs");
+        var expectedPath = Path.Combine("TestData", $"{markupName}.cs");
+        return (File.ReadAllText(inputPath), File.ReadAllText(expectedPath));
+    }
+
+    [Fact]
+    public void DirectProperty()
+    {
+        var (inputSource, expectedOutput) = GetTestSources(nameof(DirectPropertyTest), nameof(DirectPropertyTestExtensions));
+
+        var output = GetGeneratedOutput(inputSource);
+
+        Assert.Equal(output, expectedOutput.Trim());
+    }
+}
