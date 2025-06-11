@@ -11,8 +11,8 @@
 - ✅ **XAML-Free** UI development
 - ✅ **Fluent C# DSL** for defining layouts, controls, styles, and bindings
 - ✅ Full **IntelliSense**, **compile-time checking**, and **refactoring support**
-- ✅ Ideal for teams that prefer **code-first UI**
-- ✅ Dependent on ReactiveUI
+- ✅ ViewModel Binding using C# Expressions
+- ✅ Utilizes ReactiveUI
 
 
 ---
@@ -21,3 +21,13 @@
 
 ```bash
 dotnet add package CSharpUI.Avalonia
+```
+
+
+
+
+### Attribution
+Includes portions derived from [Avalonia.Markup.Declarative](https://github.com/AvaloniaUI/Avalonia.Markup.Declarative) (MIT License)
+
+
+

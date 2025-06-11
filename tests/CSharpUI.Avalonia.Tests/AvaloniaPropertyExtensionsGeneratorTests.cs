@@ -4,13 +4,11 @@ using CSharpUI.Avalonia;
 using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using System.IO;
-using System.Reflection;
 using Tests;
 
-namespace tests;
+namespace CSharpUI.Avalonia.Tests;
 
-public class SourceGeneratorTests
+public class AvaloniaPropertyExtensionsGeneratorTests
 {
     private static string? GetGeneratedOutput(string sourceCode)
     {
@@ -23,7 +21,7 @@ public class SourceGeneratorTests
                                   .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
                                   .Cast<MetadataReference>();
 
-        var compilation = CSharpCompilation.Create("SourceGeneratorTests",
+        var compilation = CSharpCompilation.Create("AvaloniaPropertyExtensionsGeneratorTests",
                       [syntaxTree],
                       references,
                       new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
@@ -51,10 +49,6 @@ public class SourceGeneratorTests
         return code?.Trim();
     }
 
-    /// <summary>
-    /// Gets the input and expected output sources for a test based on the test name.
-    /// Usage: var (input, expected) = GetTestSources(nameof(DirectProperty));
-    /// </summary>
     private static (string input, string expected) GetTestSources(string testName, string markupName)
     {
         var inputPath = Path.Combine("TestData", $"{testName}.cs");
