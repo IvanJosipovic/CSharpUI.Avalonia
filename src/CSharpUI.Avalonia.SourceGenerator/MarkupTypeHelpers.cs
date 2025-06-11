@@ -88,6 +88,23 @@ internal static class MarkupTypeHelpers
         return typeInfo.Type?.ToDisplayString() ?? property.Type.ToString();
     }
 
+    internal static IEnumerable<INamedTypeSymbol> GetPublicClasses(this INamespaceSymbol sym)
+    {
+        foreach (INamedTypeSymbol typeMember in sym.GetTypeMembers())
+        {
+            if (typeMember.DeclaredAccessibility == Accessibility.Public && typeMember.TypeKind == TypeKind.Class)
+                yield return typeMember;
+        }
+        foreach (INamespaceSymbol namespaceMember in sym.GetNamespaceMembers())
+        {
+            foreach (INamedTypeSymbol publicClass in GetPublicClasses(namespaceMember))
+            {
+                if (publicClass.DeclaredAccessibility == Accessibility.Public && publicClass.TypeKind == TypeKind.Class)
+                    yield return publicClass;
+            }
+        }
+    }
+
     internal static string GetNullableLambdaParameterTypeName(PropertyDeclarationSyntax property, SemanticModel semanticModel)
     {
         var typeInfo = semanticModel.GetTypeInfo(property.Type);

@@ -7,7 +7,7 @@ using CSharpUI.Avalonia;
 using Avalonia;
 using Avalonia.Controls;
 using Tests;
-namespace Avalonia.Markup.Declarative;
+namespace CSharpUI.Avalonia;
 public static partial class DirectPropertyTestExtensions
 {
 // avalonia properties

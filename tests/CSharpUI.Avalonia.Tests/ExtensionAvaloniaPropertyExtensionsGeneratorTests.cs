@@ -1,5 +1,4 @@
 using Avalonia;
-using Avalonia.Markup.Declarative;
 using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,7 +8,7 @@ namespace CSharpUI.Avalonia.Tests;
 
 public class ExtensionAvaloniaPropertyExtensionsGeneratorTests
 {
-    private static string? GetGeneratedOutput(string externalAssemblySourceCode)
+    private static string? GetGeneratedOutput(string externalAssemblySourceCode, string className)
     {
         var loadDll = typeof(AvaloniaObject);
         var loadDll1 = typeof(IDeclarativeViewBase);
@@ -29,7 +28,7 @@ public class ExtensionAvaloniaPropertyExtensionsGeneratorTests
 
         references.Add(externalAssemblyCompilation.ToMetadataReference());
 
-        var syntaxTree = CSharpSyntaxTree.ParseText($"""
+        var syntaxTree = CSharpSyntaxTree.ParseText("""
             using CSharpUI.Avalonia;
             using Tests;
             [assembly: GenerateExtensionsForAssembly(typeof(TestPointer))]
@@ -52,7 +51,7 @@ public class ExtensionAvaloniaPropertyExtensionsGeneratorTests
         // check for errors
         Assert.Empty(diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error));
 
-        var code = outputCompilation.SyntaxTrees.Skip(1).LastOrDefault()?.ToString();
+        var code = outputCompilation.SyntaxTrees.First(x => x.FilePath.EndsWith($"{className}.g.cs")).ToString();
 
         // remove // Auto-generated code <date/time>
         if (code != null)
@@ -76,7 +75,7 @@ public class ExtensionAvaloniaPropertyExtensionsGeneratorTests
     {
         var (inputSource, expectedOutput) = GetTestSources(nameof(DirectPropertyTest), nameof(DirectPropertyTestExtensions));
 
-        var output = GetGeneratedOutput(inputSource);
+        var output = GetGeneratedOutput(inputSource, nameof(DirectPropertyTestExtensions));
 
         Assert.Equal(output, expectedOutput.Trim());
     }

@@ -13,7 +13,7 @@ using static CSharpUI.Avalonia.SourceGenerator.MarkupTypeHelpers;
 namespace CSharpUI.Avalonia.SourceGenerator;
 
 [Generator]
-public class AvaloniaPropertyExtensionsGenerator : IIncrementalGenerator
+public class AvaloniaPropertyExtensionsGenerator : SourceGeneratorBase, IIncrementalGenerator
 {
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -91,7 +91,7 @@ public class AvaloniaPropertyExtensionsGenerator : IIncrementalGenerator
         }
         typeName = typeName + genericParams;
 
-        sb.AppendLine("namespace Avalonia.Markup.Declarative;");
+        sb.AppendLine("namespace CSharpUI.Avalonia;");
         sb.AppendLine($"public static partial class {CleanIdentifier(typeName)}Extensions");
         sb.AppendLine("{");
 
@@ -136,75 +136,6 @@ public class AvaloniaPropertyExtensionsGenerator : IIncrementalGenerator
         {
             context.AddSource($"{RemoveIllegalFileNameCharacters(typeName)}Extensions.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
         }
-    }
-
-    public static string RemoveIllegalFileNameCharacters(string fileName)
-    {
-        if (string.IsNullOrEmpty(fileName))
-            throw new ArgumentException("File name cannot be null or empty", nameof(fileName));
-
-        // Remove invalid characters from the input
-        string sanitizedFileName = new([.. fileName.Where(c => !Path.GetInvalidFileNameChars().Contains(c))]);
-
-        return sanitizedFileName;
-    }
-
-    private static string? CleanIdentifier(string name, bool @namespace = false)
-    {
-        // trim off leading and trailing whitespace
-        name = name.Trim();
-
-        if (string.IsNullOrEmpty(name))
-        {
-            return null;
-        }
-
-        var sb = new StringBuilder();
-        if (!SyntaxFacts.IsIdentifierStartCharacter(name[0]))
-        {
-            // the first characters
-            sb.Append('_');
-        }
-
-        foreach (var ch in name)
-        {
-            if (SyntaxFacts.IsIdentifierPartCharacter(ch) || @namespace && ch == '.')
-            {
-                sb.Append(ch);
-            }
-        }
-
-        var result = sb.ToString();
-
-        if (SyntaxFacts.GetKeywordKind(result) != SyntaxKind.None)
-        {
-            result = '@' + result;
-        }
-
-        if (@namespace)
-        {
-            var newResult = string.Empty;
-            foreach (var chunk in result.Split('.'))
-            {
-                if (!string.IsNullOrEmpty(newResult))
-                {
-                    newResult += '.';
-                }
-
-                if (SyntaxFacts.GetKeywordKind(chunk) != SyntaxKind.None)
-                {
-                    newResult += '@' + chunk;
-                }
-                else
-                {
-                    newResult += chunk;
-                }
-            }
-
-            return newResult;
-        }
-
-        return result;
     }
 
     private static void AppendIfNotNull(StringBuilder sb, string value)
@@ -278,6 +209,7 @@ public class AvaloniaPropertyExtensionsGenerator : IIncrementalGenerator
 
         return extensionText;
     }
+
     public static string GetExpressionBindingSetterExtension(string controlTypeName, string genericParams, FieldDeclarationSyntax field)
     {
         var extensionName = field.Declaration.Variables[0].Identifier.ToString().Replace("Property", "");
