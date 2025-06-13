@@ -77,6 +77,11 @@ internal static class MarkupTypeHelpers
         return false;
     }
 
+    internal static bool HasPublicSetter(this IPropertySymbol? property)
+    {
+        return property?.SetMethod != null && property.SetMethod.DeclaredAccessibility == Accessibility.Public;
+    }
+
     internal static bool IsPublic(PropertyDeclarationSyntax? property)
     {
         return property != null && property.Modifiers.Any(x => x.ValueText == "public");

@@ -8,7 +8,7 @@ namespace CSharpUI.Avalonia.Tests;
 
 public class ExtensionAvaloniaPropertyExtensionsGeneratorTests
 {
-    private static string? GetGeneratedOutput(string externalAssemblySourceCode, string className)
+    private static string? GetGeneratedOutput(string externalAssemblySourceCode)
     {
         var loadDll = typeof(AvaloniaObject);
         var loadDll1 = typeof(IDeclarativeViewBase);
@@ -26,7 +26,16 @@ public class ExtensionAvaloniaPropertyExtensionsGeneratorTests
               references,
               new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-        references.Add(externalAssemblyCompilation.ToMetadataReference());
+        var stream = new MemoryStream();
+        var results = externalAssemblyCompilation.Emit(stream);
+
+        if (!results.Success)
+        {
+            throw new Exception(results.Diagnostics.First().GetMessage());
+        }
+
+        stream.Position = 0;
+        references.Add(MetadataReference.CreateFromStream(stream));
 
         var syntaxTree = CSharpSyntaxTree.ParseText("""
             using CSharpUI.Avalonia;
@@ -51,7 +60,7 @@ public class ExtensionAvaloniaPropertyExtensionsGeneratorTests
         // check for errors
         Assert.Empty(diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error));
 
-        var code = outputCompilation.SyntaxTrees.First(x => x.FilePath.EndsWith($"{className}.g.cs")).ToString();
+        var code = outputCompilation.SyntaxTrees.Skip(1).Last(x => !x.FilePath.EndsWith("TestPointerExtensions.g.cs")).ToString();
 
         // remove // Auto-generated code <date/time>
         if (code != null)
@@ -75,7 +84,7 @@ public class ExtensionAvaloniaPropertyExtensionsGeneratorTests
     {
         var (inputSource, expectedOutput) = GetTestSources(nameof(DirectPropertyTest), nameof(DirectPropertyTestExtensions));
 
-        var output = GetGeneratedOutput(inputSource, nameof(DirectPropertyTestExtensions));
+        var output = GetGeneratedOutput(inputSource);
 
         Assert.Equal(output, expectedOutput.Trim());
     }
