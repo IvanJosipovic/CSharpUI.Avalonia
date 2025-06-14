@@ -62,13 +62,13 @@ public class AvaloniaPropertyExtensionsGenerator : SourceGeneratorBase, IIncreme
         sb.AppendLine("using Avalonia.Data.Converters;");
         sb.AppendLine("using System.Runtime.CompilerServices;");
 
-        if (root is CompilationUnitSyntax compilationUnit)
-        {
-            foreach (var usingDirective in compilationUnit.Usings)
-            {
-                sb.AppendLine(usingDirective.ToString());
-            }
-        }
+        //if (root is CompilationUnitSyntax compilationUnit)
+        //{
+        //    foreach (var usingDirective in compilationUnit.Usings)
+        //    {
+        //        sb.AppendLine(usingDirective.ToString());
+        //    }
+        //}
 
         if (!string.IsNullOrWhiteSpace(typeNamespace))
             sb.AppendLine($"using {typeNamespace};");
@@ -89,7 +89,7 @@ public class AvaloniaPropertyExtensionsGenerator : SourceGeneratorBase, IIncreme
             genericParams += '>';
 
         }
-        typeName = typeName + genericParams;
+        typeName += genericParams;
 
         sb.AppendLine("namespace CSharpUI.Avalonia;");
         sb.AppendLine($"public static partial class {CleanIdentifier(typeName)}Extensions");

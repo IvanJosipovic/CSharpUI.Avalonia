@@ -107,21 +107,20 @@ public class ExtensionAvaloniaPropertyExtensionsGenerator : SourceGeneratorBase,
         sb.AppendLine($"public static partial class {CleanIdentifier(typeName)}Extensions");
         sb.AppendLine("{");
 
-        //var members = type.Members;
+        var members = type.GetMembers();
         var processedFields = new List<string>();
 
         //// PROCESS AVALONIA PROPERTIES
-        //foreach (var field in members.OfType<FieldDeclarationSyntax>())
-        //{
-        //    if (field.Declaration.Type is GenericNameSyntax { Identifier.ValueText: "DirectProperty" or "StyledProperty" or "AttachedProperty" }
-        //        && HasAvaloniaPropertyPublicSetter(field, members))
-        //    {
-        //        sb.AppendLine($"// avalonia properties\n");
-        //        //AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, field));
-        //        //AppendIfNotNull(sb, GetExpressionBindingSetterExtension(typeName, genericParams, field));
-        //        processedFields.Add(field.Declaration.Variables[0].Identifier.ValueText);
-        //    }
-        //}
+        foreach (var field in members.OfType<IFieldSymbol>())
+        {
+            if (IsAvaloniaPropertyField(field))
+            {
+                sb.AppendLine($"// avalonia properties\n");
+                //AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, field));
+                //AppendIfNotNull(sb, GetExpressionBindingSetterExtension(typeName, genericParams, field));
+                processedFields.Add(field.Name);
+            }
+        }
 
         //// PROCESS COMMON PROPERTIES
         //foreach (var property in members.OfType<PropertyDeclarationSyntax>())
@@ -144,9 +143,72 @@ public class ExtensionAvaloniaPropertyExtensionsGenerator : SourceGeneratorBase,
 
         sb.AppendLine("}");
 
-        if (processedFields.Count >= 0)
+        if (processedFields.Count > 0)
         {
             context.AddSource($"{RemoveIllegalFileNameCharacters(typeName)}Extensions.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
         }
+    }
+
+    private static bool IsAvaloniaPropertyField(IFieldSymbol field)
+    {
+        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
+            return false;
+
+        if (field.Type.Name.StartsWith("DirectProperty") ||
+            field.Type.Name.StartsWith("StyledProperty") ||
+            //some attached properties Mapped to properties of controls, i.e. TextBlock.TextWrapping
+            //so we need to add direct Extensions for them, additionally to AttachedProperty extensions
+            field.Type.Name.StartsWith("AttachedProperty") ||
+            field.Type.Name.StartsWith("AvaloniaProperty"))
+        {
+            return !IsReadOnlyField(field);
+        }
+
+        return false;
+    }
+
+    private static bool IsReadOnlyField(IFieldSymbol field)
+    {
+        var controlType = field.ContainingType;
+        var propertyName = field.Name.Replace("Property", "");
+
+        if (field.AssociatedSymbol != null)
+        {
+            propertyName = field.AssociatedSymbol.Name.Replace("Property", "");
+        }
+
+        var symbol = controlType?.GetMembers(propertyName).FirstOrDefault();
+
+        if (symbol is IPropertySymbol prop)
+        {
+            return !prop.HasPublicSetter();
+        }
+
+        return true;
+    }
+
+    private static bool IsReadOnlyAttachedField(IFieldSymbol field)
+    {
+        var controlType = field.ContainingType;
+        var setterMethodName = "Set" + field.Name.Replace("Property", "");
+
+        var methodInfo = controlType?.GetMembers(setterMethodName).FirstOrDefault();
+
+        if (methodInfo is IMethodSymbol method)
+        {
+            return method.DeclaredAccessibility == Accessibility.Public && method.IsStatic;
+        }
+
+        return false;
+    }
+
+    public static bool IsStyledElement(INamedTypeSymbol controlType)
+    {
+        return controlType.AllInterfaces.Any(x => x.Name == "IStyleable");
+    }
+
+    public static bool IsDeclarativeViewBase(INamedTypeSymbol controlType)
+    {
+        return controlType.AllInterfaces.Any(x => x.Name == "IDeclarativeViewBase");
     }
 }
