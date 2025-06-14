@@ -5,10 +5,10 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
 
-namespace CSharpUI.Avalonia.SourceGenerator;
+namespace CSharpUI.Avalonia.SourceGenerator.External;
 
 [Generator]
-public class ExtensionAvaloniaPropertyExtensionsGenerator : SourceGeneratorBase, IIncrementalGenerator
+public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
 {
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -19,14 +19,13 @@ public class ExtensionAvaloniaPropertyExtensionsGenerator : SourceGeneratorBase,
             //Debugger.Launch();
         }
 #endif
-        Debug.WriteLine("Initialize ExtensionAvaloniaPropertyExtensionsGenerator code generator");
-
         var attribute = context.SyntaxProvider
                          .ForAttributeWithMetadataName("CSharpUI.Avalonia.GenerateExtensionsForAssemblyAttribute",
                                                        static (s, _) => true,
                                                        static (ctx, _) => GetSemanticTarget(ctx))
                          .Collect()
-                         .SelectMany((x, _) => x.SelectMany(y => y).Distinct(SymbolEqualityComparer.Default));
+                         .SelectMany((x, _) => x.SelectMany(y => y)
+                         .Distinct(SymbolEqualityComparer.Default));
 
 
         context.RegisterSourceOutput(attribute,
@@ -122,10 +121,10 @@ public class ExtensionAvaloniaPropertyExtensionsGenerator : SourceGeneratorBase,
             }
         }
 
-        //// PROCESS COMMON PROPERTIES
-        //foreach (var property in members.OfType<PropertyDeclarationSyntax>())
+        // PROCESS COMMON PROPERTIES
+        //foreach (var property in members.OfType<IPropertySymbol>())
         //{
-        //    var propertyName = property.Identifier.ToString();
+        //    var propertyName = property.Name;
         //    if (!processedFields.Contains(propertyName + "Property")
         //        && IsPublic(property)
         //        && HasPublicSetter(property)
@@ -169,15 +168,19 @@ public class ExtensionAvaloniaPropertyExtensionsGenerator : SourceGeneratorBase,
 
     private static bool IsReadOnlyField(IFieldSymbol field)
     {
-        var controlType = field.ContainingType;
-        var propertyName = field.Name.Replace("Property", "");
+        var propertyName = field.Name;
 
         if (field.AssociatedSymbol != null)
         {
-            propertyName = field.AssociatedSymbol.Name.Replace("Property", "");
+            propertyName = field.AssociatedSymbol.Name;
         }
 
-        var symbol = controlType?.GetMembers(propertyName).FirstOrDefault();
+        if (propertyName.EndsWith("Property"))
+        {
+            propertyName = propertyName.Substring(0, propertyName.Length - "Property".Length);
+        }
+
+        var symbol = field.ContainingType?.GetMembers(propertyName).FirstOrDefault();
 
         if (symbol is IPropertySymbol prop)
         {
@@ -190,7 +193,12 @@ public class ExtensionAvaloniaPropertyExtensionsGenerator : SourceGeneratorBase,
     private static bool IsReadOnlyAttachedField(IFieldSymbol field)
     {
         var controlType = field.ContainingType;
-        var setterMethodName = "Set" + field.Name.Replace("Property", "");
+        var setterMethodName = "Set" + field.Name;
+
+        if (setterMethodName.EndsWith("Property"))
+        {
+            setterMethodName = setterMethodName.Substring(0, setterMethodName.Length - "Property".Length);
+        }
 
         var methodInfo = controlType?.GetMembers(setterMethodName).FirstOrDefault();
 
@@ -204,7 +212,7 @@ public class ExtensionAvaloniaPropertyExtensionsGenerator : SourceGeneratorBase,
 
     public static bool IsStyledElement(INamedTypeSymbol controlType)
     {
-        return controlType.AllInterfaces.Any(x => x.Name == "IStyleable");
+        return controlType.AllInterfaces.Any(x => x.Name == "StyledElement");
     }
 
     public static bool IsDeclarativeViewBase(INamedTypeSymbol controlType)

@@ -1,32 +1,57 @@
 using Avalonia;
-using CSharpUI.Avalonia;
 using CSharpUI.Avalonia.SourceGenerator;
+using CSharpUI.Avalonia.SourceGenerator.External;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Tests;
 
 namespace CSharpUI.Avalonia.Tests;
 
-public class AvaloniaPropertyExtensionsGeneratorTests
+public class ExternalPropertyGeneratorTests
 {
-    private static string? GetGeneratedOutput(string sourceCode)
+    private static string? GetGeneratedOutput(string externalAssemblySourceCode)
     {
         var loadDll = typeof(AvaloniaObject);
         var loadDll1 = typeof(IDeclarativeViewBase);
 
-        var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
         var references = AppDomain.CurrentDomain.GetAssemblies()
-                                  .Where(assembly => !assembly.IsDynamic)
-                                  .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
-                                  .Cast<MetadataReference>();
+                          .Where(assembly => !assembly.IsDynamic)
+                          .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
+                          .Cast<MetadataReference>()
+                          .ToList();
 
-        var compilation = CSharpCompilation.Create("AvaloniaPropertyExtensionsGeneratorTests",
+        var externalAssemblySyntaxTree = CSharpSyntaxTree.ParseText(externalAssemblySourceCode + "\n public class TestPointer { }");
+
+        var externalAssemblyCompilation = CSharpCompilation.Create("ExternalAssembly",
+              [externalAssemblySyntaxTree],
+              references,
+              new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        var stream = new MemoryStream();
+        var results = externalAssemblyCompilation.Emit(stream);
+
+        if (!results.Success)
+        {
+            throw new Exception(results.Diagnostics.First().GetMessage());
+        }
+
+        stream.Position = 0;
+        references.Add(MetadataReference.CreateFromStream(stream));
+
+        var syntaxTree = CSharpSyntaxTree.ParseText("""
+            using CSharpUI.Avalonia;
+            using Tests;
+            [assembly: GenerateExtensionsForAssembly(typeof(TestPointer))]
+            """);
+
+        var compilation = CSharpCompilation.Create("SourceGeneratorTests",
                       [syntaxTree],
                       references,
                       new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
+
         // Source Generator to test
-        var generator = new AvaloniaPropertyExtensionsGenerator();
+        var generator = new ExternalPropertyGenerator();
 
         CSharpGeneratorDriver.Create(generator)
                              .RunGeneratorsAndUpdateCompilation(compilation,
@@ -36,7 +61,7 @@ public class AvaloniaPropertyExtensionsGeneratorTests
         // check for errors
         Assert.Empty(diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error));
 
-        var code = outputCompilation.SyntaxTrees.Skip(1).LastOrDefault()?.ToString();
+        var code = outputCompilation.SyntaxTrees.Skip(1).Last(x => !x.FilePath.EndsWith("TestPointerExtensions.g.cs")).ToString();
 
         // remove // Auto-generated code <date/time>
         if (code != null)

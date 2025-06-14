@@ -2,18 +2,14 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text;
 using static CSharpUI.Avalonia.SourceGenerator.MarkupTypeHelpers;
 
-namespace CSharpUI.Avalonia.SourceGenerator;
+namespace CSharpUI.Avalonia.SourceGenerator.Local;
 
 [Generator]
-public class AvaloniaPropertyExtensionsGenerator : SourceGeneratorBase, IIncrementalGenerator
+public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
 {
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -24,8 +20,6 @@ public class AvaloniaPropertyExtensionsGenerator : SourceGeneratorBase, IIncreme
             //Debugger.Launch();
         }
 #endif
-        Debug.WriteLine("Initialize AvaloniaPropertyExtensionsGenerator code generator");
-
         var classDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => s is ClassDeclarationSyntax,
