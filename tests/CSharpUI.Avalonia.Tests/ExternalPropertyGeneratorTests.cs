@@ -42,6 +42,7 @@ public class ExternalPropertyGeneratorTests
             using CSharpUI.Avalonia;
             using Tests;
             [assembly: GenerateExtensionsForAssembly(typeof(TestPointer))]
+            [assembly: GenerateExtensionsForAssembly(typeof(TestPointer))]
             """);
 
         var compilation = CSharpCompilation.Create("SourceGeneratorTests",

@@ -4,6 +4,10 @@ using CSharpUI.Avalonia.Samples.Reactive.ViewModels;
 using CSharpUI.Avalonia.Samples.Reactive.Views;
 using Microsoft.Extensions.DependencyInjection;
 
+// Generates Extensions for External Assembles
+[assembly: GenerateExtensionsForAssembly(typeof(AvaloniaObject))]
+//[assembly: GenerateExtensionsForAssembly(typeof(StackPanel))]
+
 var services = new ServiceCollection();
 var lifetime = new ClassicDesktopStyleApplicationLifetime
 {

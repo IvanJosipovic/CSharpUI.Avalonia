@@ -1,5 +1,4 @@
-﻿using CSharpUI.Avalonia.SourceGenerator.External;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Diagnostics;
@@ -24,7 +23,7 @@ public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
             .Where(static c => c is not null);
 
         context.RegisterSourceOutput(classDeclarations,
-            static (spc, data) => ExternalPropertyGenerator.GenerateSource(spc, data));
+            static (spc, data) => GenerateSource(spc, data));
     }
 
     private static INamedTypeSymbol GetSemanticTarget(GeneratorSyntaxContext context)
