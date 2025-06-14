@@ -2,20 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace CSharpUI.Avalonia.SourceGenerator;
 
 public class SourceGeneratorBase
 {
+    private static readonly char[] InvalidHintNameChars = new[]
+    {
+        '<', '>', ':', '"', '/', '\\', '|', '?', '*'
+    };
+
     public static string RemoveIllegalFileNameCharacters(string fileName)
     {
-        if (string.IsNullOrEmpty(fileName))
-            throw new ArgumentException("File name cannot be null or empty", nameof(fileName));
-
-        // Remove invalid characters from the input
-        string sanitizedFileName = new([.. fileName.Where(c => !Path.GetInvalidFileNameChars().Contains(c))]);
-
-        return sanitizedFileName;
+        return string.Concat(fileName.Select(c => InvalidHintNameChars.Contains(c) || char.IsControl(c) ? '_' : c));
     }
 
     public static string? CleanIdentifier(string name, bool @namespace = false)
