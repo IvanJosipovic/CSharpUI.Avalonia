@@ -24,62 +24,35 @@ jobs:
       with:
         global-json-file: global.json
 
-    - name: .NET Build
+    - name: Dotnet Build
       run: dotnet build -c Release
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+    - name: Dotnet Pack
+      run: dotnet pack -c Release -p:Version=0.0.1-alpha1
 
-    - name: Docker Build
-      working-directory: src/oidc-guard
-      run: docker build -t test.loc/oidc-guard .
-
-    - name: Docker Buildx
-      working-directory: src/oidc-guard
-      run: docker buildx build --platform linux/amd64,linux/arm64 -t test.loc/oidc-guard .
-
-    - name: Add hosts to /etc/hosts
-      run: |
-          sudo echo "127.0.0.1 demo-app.test.loc" | sudo tee -a /etc/hosts
-          sudo echo "127.0.0.1 oidc-guard.test.loc" | sudo tee -a /etc/hosts
-          sudo echo "127.0.0.1 oidc-server.oidc-server" | sudo tee -a /etc/hosts
-
-    - name: Install Playwright
-      working-directory: tests/oidc-guard-tests/bin/Release/net9.0
-      run: ./playwright.ps1 install --with-deps
-      shell: pwsh
+    - uses: actions/upload-artifact@v4
+      with:
+        name: NuGet
+        path: src/**/*.nupkg
 
     - name: .NET Test
-      run: dotnet test -c Release --collect:"XPlat Code Coverage" /p:DebugSymbols=true /p:DebugType=full --logger "trx;LogFileName=test-results.trx"
+      working-directory: tests/CSharpUI.Avalonia.Tests
+      run: dotnet run -c Release /p:DebugSymbols=true /p:DebugType=full -- --report-xunit-trx --report-xunit-trx-filename test-results.trx --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml
 
     - name: Test Report
       uses: dorny/test-reporter@v2
       if: success() || failure()
       with:
-        name: OIDC-Guard Tests
-        path: tests/oidc-guard-tests/TestResults/test-results.trx
+        name: Tests
+        path: tests/**/TestResults/test-results.trx
         reporter: dotnet-trx
 
     - name: Coverage
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: coverage.cobertura.xml
-        fail_ci_if_error: true
-
-    - name: Run Benchmark
-      working-directory: benchmarks/oidc-guard-benchmarks
-      run: dotnet run -c Release
-
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: 'test.loc/oidc-guard'
-        format: 'table'
-        exit-code: '1'
-        ignore-unfixed: true
-        vuln-type: 'os,library'
-        severity: 'CRITICAL,HIGH'
+        files: coverage.cobertura.xml
+        fail_ci_if_error: false
 
   create-release:
     if: ${{ github.event_name != 'pull_request' }}
@@ -88,11 +61,6 @@ jobs:
     needs: [build-test]
     steps:
     - uses: actions/checkout@v4
-
-    - name: Configure Git
-      run: |
-        git config user.name "$GITHUB_ACTOR"
-        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v4
@@ -103,31 +71,10 @@ jobs:
         extra_plugins: |
           conventional-changelog-conventionalcommits
 
-    - name: Set up Docker Buildx
+    - name: Dotnet Pack
       if: steps.semantic.outputs.new_release_published == 'true'
-      uses: docker/setup-buildx-action@v3
+      run: dotnet pack -c Release -p:Version=${{ steps.semantic.outputs.new_release_version }}
 
-    - name: Docker Push
+    - name: .NET NuGet Push
       if: steps.semantic.outputs.new_release_published == 'true'
-      working-directory: src/oidc-guard
-      run: |
-        echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${GITHUB_ACTOR} --password-stdin
-
-        docker buildx build --push --platform linux/amd64,linux/arm64 -t ghcr.io/${GITHUB_REPOSITORY,,}/oidc-guard:latest -t ghcr.io/${GITHUB_REPOSITORY,,}/oidc-guard:${{ steps.semantic.outputs.new_release_version }} --build-arg VERSION=${{ steps.semantic.outputs.new_release_version }} .
-
-    - name: Install Helm
-      if: steps.semantic.outputs.new_release_published == 'true'
-      uses: azure/setup-helm@v4
-
-    - name: Update Helm Version
-      if: steps.semantic.outputs.new_release_published == 'true'
-      shell: bash
-      run: |
-          cp ./README.md ./charts/oidc-guard/
-          sed -i 's/0.0.1/${{ steps.semantic.outputs.new_release_version }}/' ./charts/oidc-guard/Chart.yaml
-
-    - name: Run chart-releaser
-      if: steps.semantic.outputs.new_release_published == 'true'
-      uses: helm/chart-releaser-action@v1
-      env:
-        CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      run: dotnet nuget push src/**/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
