@@ -11,7 +11,7 @@ namespace CSharpUI.Avalonia.SourceGenerator;
 
 internal static class MarkupTypeHelpers
 {
-    internal const string NewLine = "\n";
+    internal const string NewLine = "\r\n";
 
     internal static bool IsAvaloniaMarkupView(INamedTypeSymbol typeSymbol)
     {

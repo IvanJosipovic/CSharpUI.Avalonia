@@ -50,7 +50,6 @@ public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
         var sb = new StringBuilder();
 
         sb.AppendLine("#nullable enable");
-        sb.AppendLine($"// Auto-generated code {DateTime.Now:g}");
         sb.AppendLine("using System;");
         sb.AppendLine("using Avalonia.Data;");
         sb.AppendLine("using Avalonia.Data.Converters;");
@@ -85,7 +84,9 @@ public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
         }
         typeName += genericParams;
 
+        sb.AppendLine();
         sb.AppendLine("namespace CSharpUI.Avalonia;");
+        sb.AppendLine();
         sb.AppendLine($"public static partial class {CleanIdentifier(typeName)}Extensions");
         sb.AppendLine("{");
 
@@ -98,7 +99,7 @@ public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
             if (field.Declaration.Type is GenericNameSyntax { Identifier.ValueText: "DirectProperty" or "StyledProperty" or "AttachedProperty" }
                 && HasAvaloniaPropertyPublicSetter(field, members))
             {
-                sb.AppendLine($"// avalonia properties\n");
+                sb.AppendLine($"    // avalonia properties" + NewLine);
                 //AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, field));
                 //AppendIfNotNull(sb, GetExpressionBindingSetterExtension(typeName, genericParams, field));
                 processedFields.Add(field.Declaration.Variables[0].Identifier.ValueText);
@@ -114,7 +115,7 @@ public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
                 && HasPublicSetter(property)
                 && IsCommonInstanceProperty(property, members))
             {
-                sb.AppendLine($"// common properties\n");
+                sb.AppendLine($"    // common properties" + NewLine);
 
                 //AppendIfNotNull(sb, GetCommonPropertySetterExtension(typeName, property, semanticModel));
                 //AppendIfNotNull(sb, GetCommonPropertyBindingSetterExtension(typeName, property, semanticModel));
