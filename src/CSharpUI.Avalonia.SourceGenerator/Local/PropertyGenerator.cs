@@ -100,7 +100,7 @@ public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
             {
                 sb.AppendLine($"// avalonia properties\n");
                 //AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, field));
-                //AppendIfNotNull(sb, GetExpressionBindingSetterExtension(typeName, genericParams, field));
+                AppendIfNotNull(sb, GetExpressionBindingSetterExtension(typeName, genericParams, field));
                 processedFields.Add(field.Declaration.Variables[0].Identifier.ValueText);
             }
         }

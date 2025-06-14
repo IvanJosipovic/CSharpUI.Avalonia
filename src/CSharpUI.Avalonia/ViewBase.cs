@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
@@ -135,15 +131,21 @@ public abstract class ViewBase : Decorator, IReloadable, IDeclarativeViewBase
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
+        if (HotReloadManager.IsEnabled)
+        {
 #pragma warning disable IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
-        HotReloadManager.RegisterInstance(this);
+            HotReloadManager.RegisterInstance(this);
 #pragma warning restore IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
+        }
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
-        HotReloadManager.UnregisterInstance(this);
+        if (HotReloadManager.IsEnabled)
+        {
+            HotReloadManager.UnregisterInstance(this);
+        }
     }
 #endif
     #endregion

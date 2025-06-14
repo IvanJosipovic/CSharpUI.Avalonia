@@ -1,0 +1,45 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "timezone": "America/Vancouver",
+  "semanticCommits": "enabled",
+  "assignees": [
+    "@ivanjosipovic"
+  ],
+  "extends": [
+    "config:recommended"
+  ],
+  "platformAutomerge": true,
+  "ignorePaths": [
+    "**/docs/**",
+    "**/charts/**"
+  ],
+  "schedule": [
+    "before 4am"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
+      "automerge": true,
+      "semanticCommitType": "fix",
+      "matchFileNames": [
+        "src/**"
+      ]
+    },
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
+      "automerge": true,
+      "matchFileNames": [
+        "tests/**",
+        "benchmarks/**"
+      ]
+    }
+  ]
+}

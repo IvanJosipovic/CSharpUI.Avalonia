@@ -7,6 +7,11 @@ using Tests;
 namespace CSharpUI.Avalonia;
 public static partial class DirectPropertyTestExtensions
 {
-// avalonia properties
+    // avalonia properties
 
+    public static DirectPropertyTest CanSave(this DirectPropertyTest control, bool value)
+    {
+        control[DirectPropertyTest.CanSaveProperty] = value;
+        return control;
+    }
 }

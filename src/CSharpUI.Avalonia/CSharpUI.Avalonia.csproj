@@ -3,6 +3,15 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
+    <Title>CSharpUI.Avalonia</Title>
+    <PackageId>CSharpUI.Avalonia</PackageId>
+    <Description>Fluent, XAML-free UI composition library for Avalonia in pure C#</Description>
+    <Authors>Ivan Josipovic</Authors>
+    <PackageTags>Avalonia CSharp Fluent Builder Markup</PackageTags>
+    <RepositoryUrl>https://github.com/IvanJosipovic/CSharpUI.Avalonia</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

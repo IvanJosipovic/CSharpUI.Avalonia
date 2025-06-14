@@ -109,36 +109,38 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
         var members = type.GetMembers();
         var processedFields = new List<string>();
 
-        //// PROCESS AVALONIA PROPERTIES
+        // PROCESS AVALONIA PROPERTIES
         foreach (var field in members.OfType<IFieldSymbol>())
         {
-            if (IsAvaloniaPropertyField(field))
+            if (field.Type is INamedTypeSymbol namedType &&
+                namedType.Name is "DirectProperty" or "StyledProperty" or "AttachedProperty" &&
+                HasAvaloniaPropertyPublicSetter(field, members))
             {
                 sb.AppendLine($"// avalonia properties\n");
-                //AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, field));
-                //AppendIfNotNull(sb, GetExpressionBindingSetterExtension(typeName, genericParams, field));
+                // AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, field));
+                // AppendIfNotNull(sb, GetExpressionBindingSetterExtension(typeName, genericParams, field));
                 processedFields.Add(field.Name);
             }
         }
 
         // PROCESS COMMON PROPERTIES
-        //foreach (var property in members.OfType<IPropertySymbol>())
-        //{
-        //    var propertyName = property.Name;
-        //    if (!processedFields.Contains(propertyName + "Property")
-        //        && IsPublic(property)
-        //        && HasPublicSetter(property)
-        //        && IsCommonInstanceProperty(property, members))
-        //    {
-        //        sb.AppendLine($"// common properties\n");
+        foreach (var property in members.OfType<IPropertySymbol>())
+        {
+            var propertyName = property.Name;
+            if (!processedFields.Contains(propertyName + "Property")
+                && IsPublic(property)
+                && HasPublicSetter(property)
+                && IsCommonInstanceProperty(property, members))
+            {
+                sb.AppendLine($"// common properties\n");
 
-        //        //AppendIfNotNull(sb, GetCommonPropertySetterExtension(typeName, property, semanticModel));
-        //        //AppendIfNotNull(sb, GetCommonPropertyBindingSetterExtension(typeName, property, semanticModel));
-        //        //AppendIfNotNull(sb, GetCommonPropertyExpressionBindingSetterExtension(typeName, property, semanticModel));
+                //AppendIfNotNull(sb, GetCommonPropertySetterExtension(typeName, property, semanticModel));
+                //AppendIfNotNull(sb, GetCommonPropertyBindingSetterExtension(typeName, property, semanticModel));
+                //AppendIfNotNull(sb, GetCommonPropertyExpressionBindingSetterExtension(typeName, property, semanticModel));
 
-        //        processedFields.Add(propertyName);
-        //    }
-        //}
+                processedFields.Add(propertyName);
+            }
+        }
 
         sb.AppendLine("}");
 
@@ -148,9 +150,54 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
         }
     }
 
+    private static bool IsCommonInstanceProperty(IPropertySymbol property, ImmutableArray<ISymbol> members)
+    {
+        if (property == null || property.IsStatic)
+            return false;
+
+        var avaloniaPropertyName = property.Name + "Property";
+
+        return members
+            .OfType<IFieldSymbol>()
+            .All(field => field.Name != avaloniaPropertyName);
+    }
+
+    private static bool IsPublic(IPropertySymbol property)
+    {
+        return property != null && property.DeclaredAccessibility == Accessibility.Public;
+    }
+
+    private static bool HasAvaloniaPropertyPublicSetter(IFieldSymbol field, ImmutableArray<ISymbol> members)
+    {
+        var backingPropertyName = field.Name;
+
+        if (backingPropertyName.EndsWith("Property"))
+        {
+            backingPropertyName = backingPropertyName.Substring(0, backingPropertyName.Length - "Property".Length);
+        }
+
+        var property = members
+            .OfType<IPropertySymbol>()
+            .FirstOrDefault(x => x.Name == backingPropertyName);
+
+        return HasPublicSetter(property);
+    }
+
+    private static bool HasPublicSetter(IPropertySymbol property)
+    {
+        if (property == null)
+            return false;
+
+        var setter = property.SetMethod;
+        if (setter != null && setter.DeclaredAccessibility == Accessibility.Public)
+            return true;
+
+        return false;
+    }
+
     private static bool IsAvaloniaPropertyField(IFieldSymbol field)
     {
-        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
+        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == nameof(ObsoleteAttribute)))
             return false;
 
         if (field.Type.Name.StartsWith("DirectProperty") ||
