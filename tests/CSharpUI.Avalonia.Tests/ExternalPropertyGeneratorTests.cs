@@ -20,7 +20,7 @@ public class ExternalPropertyGeneratorTests
                           .Cast<MetadataReference>()
                           .ToList();
 
-        var externalAssemblySyntaxTree = CSharpSyntaxTree.ParseText(externalAssemblySourceCode + "\n public class TestPointer { }");
+        var externalAssemblySyntaxTree = CSharpSyntaxTree.ParseText(externalAssemblySourceCode + "\n\r" + "public class TestPointer { }");
 
         var externalAssemblyCompilation = CSharpCompilation.Create("ExternalAssembly",
               [externalAssemblySyntaxTree],

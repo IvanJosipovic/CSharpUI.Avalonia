@@ -100,6 +100,7 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
             genericParams += '>';
         }
         typeName = typeName + genericParams;
+
         sb.AppendLine();
         sb.AppendLine("namespace CSharpUI.Avalonia;");
         sb.AppendLine();
