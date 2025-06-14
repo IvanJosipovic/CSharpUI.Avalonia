@@ -64,7 +64,7 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
         //var ns = root.DescendantNodes()
         //    .FirstOrDefault(x => x is BaseNamespaceDeclarationSyntax) as BaseNamespaceDeclarationSyntax;
 
-        var typeNamespace = type.ContainingNamespace.Name;
+        var typeNamespace = type.ContainingNamespace.ToString();
         var sb = new StringBuilder();
 
         sb.AppendLine("#nullable enable");

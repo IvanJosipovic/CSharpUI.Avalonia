@@ -1,17 +1,14 @@
 ﻿using Microsoft.CodeAnalysis.CSharp;
-using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Xml.Linq;
 
 namespace CSharpUI.Avalonia.SourceGenerator;
 
 public class SourceGeneratorBase
 {
-    private static readonly char[] InvalidHintNameChars = new[]
-    {
+    private static readonly char[] InvalidHintNameChars =
+    [
         '<', '>', ':', '"', '/', '\\', '|', '?', '*'
-    };
+    ];
 
     public static string RemoveIllegalFileNameCharacters(string fileName)
     {
