@@ -9,6 +9,7 @@ namespace CSharpUI.Avalonia;
 
 public static partial class DirectPropertyTestExtensions
 {
-    // avalonia properties
-
+    // common properties
+    public static DirectPropertyTest CanSave(this DirectPropertyTest control, Boolean value) =>
+         control._set(() => control.CanSave = value);
 }

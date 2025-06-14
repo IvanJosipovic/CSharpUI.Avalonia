@@ -1,20 +1,22 @@
 ﻿using ReactiveUI;
-using System.Diagnostics.CodeAnalysis;
 
 namespace CSharpUI.Avalonia.Samples.Reactive.Views;
 
 public abstract class ReactiveViewBase<TViewModel> : ViewBase, IViewFor<TViewModel> where TViewModel : class
 {
-    [SuppressMessage("AvaloniaProperty", "AVP1002", Justification = "Generic avalonia property is expected here.")]
-    public static readonly StyledProperty<TViewModel?> ViewModelProperty = AvaloniaProperty.Register<ReactiveViewBase<TViewModel>, TViewModel?>(nameof(ViewModel));
+    private object? _cachedDataContext;
 
     public TViewModel? ViewModel
     {
-        get { return GetValue(ViewModelProperty); }
-        set { SetValue(ViewModelProperty, value); }
+        get { return GetValue(DataContextProperty) as TViewModel; }
+        set { SetValue(DataContextProperty, value); }
     }
 
-    object? IViewFor.ViewModel { get; set; }
+    object? IViewFor.ViewModel
+    {
+        get { return GetValue(DataContextProperty); }
+        set { SetValue(DataContextProperty, value); }
+    }
 
     protected override void OnDataContextChanged(EventArgs e)
     {
@@ -33,25 +35,10 @@ public abstract class ReactiveViewBase<TViewModel> : ViewBase, IViewFor<TViewMod
 
     protected abstract Control Build(TViewModel vm);
 
-    protected override Control Build() => Build(ViewModel!);
+    protected override Control Build() => Build((TViewModel)(_cachedDataContext ?? DataContext!));
 
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    protected override void OnBeforeReload()
     {
-        base.OnPropertyChanged(change);
-
-        if (change.Property == DataContextProperty)
-        {
-            if (ReferenceEquals(change.OldValue, ViewModel) && change.NewValue is null or TViewModel)
-            {
-                SetCurrentValue(ViewModelProperty, change.NewValue);
-            }
-        }
-        else if (change.Property == ViewModelProperty)
-        {
-            if (ReferenceEquals(change.OldValue, DataContext))
-            {
-                SetCurrentValue(DataContextProperty, change.NewValue);
-            }
-        }
+        _cachedDataContext = DataContext;
     }
 }

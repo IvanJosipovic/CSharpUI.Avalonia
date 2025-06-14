@@ -27,8 +27,6 @@ public static class AppBuilderExtensions
         return appBuilder;
     }
 
-#if DEBUG
-
     /// <summary>
     /// Enables or disables hot reload functionality for the application.
     /// </summary>
@@ -69,5 +67,4 @@ public static class AppBuilderExtensions
 
         return appBuilder;
     }
-#endif
 }

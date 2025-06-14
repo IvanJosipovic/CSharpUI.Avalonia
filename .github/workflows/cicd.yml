@@ -24,10 +24,10 @@ jobs:
       with:
         global-json-file: global.json
 
-    - name: Dotnet Build
+    - name: .NET Build
       run: dotnet build -c Release
 
-    - name: Dotnet Pack
+    - name: .NET Pack
       run: dotnet pack -c Release -p:Version=0.0.1-alpha1
 
     - uses: actions/upload-artifact@v4
@@ -71,7 +71,7 @@ jobs:
         extra_plugins: |
           conventional-changelog-conventionalcommits
 
-    - name: Dotnet Pack
+    - name: .NET Pack
       if: steps.semantic.outputs.new_release_published == 'true'
       run: dotnet pack -c Release -p:Version=${{ steps.semantic.outputs.new_release_version }}
 

@@ -31,7 +31,9 @@ public abstract class ViewBase<TViewModel> : ViewBase
 /// <summary>
 /// Base view class used like UserControl in XAML
 /// </summary>
-public abstract class ViewBase : Decorator, IReloadable, IDeclarativeViewBase
+
+public abstract class ViewBase : Decorator, IDeclarativeViewBase, IReloadable
+
 {
     private INameScope? _nameScope;
 
@@ -127,7 +129,7 @@ public abstract class ViewBase : Decorator, IReloadable, IDeclarativeViewBase
     {
     }
 
-#if DEBUG
+
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
@@ -147,8 +149,7 @@ public abstract class ViewBase : Decorator, IReloadable, IDeclarativeViewBase
             HotReloadManager.UnregisterInstance(this);
         }
     }
-#endif
-    #endregion
+#endregion
 }
 
 internal class ViewBuildContext : IDisposable

@@ -27,7 +27,6 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
                          .SelectMany((x, _) => x.SelectMany(y => y)
                          .Distinct(SymbolEqualityComparer.Default));
 
-
         context.RegisterSourceOutput(attribute,
             static (spc, data) => GetClasses(spc, data));
     }
@@ -58,12 +57,8 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
         }
     }
 
-    private static void GenerateSource(SourceProductionContext context, INamedTypeSymbol type)
+    public static void GenerateSource(SourceProductionContext context, INamedTypeSymbol type)
     {
-        //var root = type.SyntaxTree.GetRoot();
-        //var ns = root.DescendantNodes()
-        //    .FirstOrDefault(x => x is BaseNamespaceDeclarationSyntax) as BaseNamespaceDeclarationSyntax;
-
         var typeNamespace = type.ContainingNamespace.ToString();
         var sb = new StringBuilder();
 
@@ -72,14 +67,6 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
         sb.AppendLine("using Avalonia.Data;");
         sb.AppendLine("using Avalonia.Data.Converters;");
         sb.AppendLine("using System.Runtime.CompilerServices;");
-
-        //if (root is CompilationUnitSyntax compilationUnit)
-        //{
-        //    foreach (var usingDirective in compilationUnit.Usings)
-        //    {
-        //        sb.AppendLine(usingDirective.ToString());
-        //    }
-        //}
 
         if (!string.IsNullOrWhiteSpace(typeNamespace))
             sb.AppendLine($"using {typeNamespace};");
@@ -117,10 +104,11 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
                 namedType.Name is "DirectProperty" or "StyledProperty" or "AttachedProperty" &&
                 HasAvaloniaPropertyPublicSetter(field, members))
             {
-                sb.AppendLine($"    // avalonia properties" + NewLine);
+                //sb.AppendLine($"    // avalonia properties");
+                //AppendIfNotNull(sb, GetCommonPropertyExpressionBindingSetterExtension(type, genericParams))
                 // AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, field));
                 // AppendIfNotNull(sb, GetExpressionBindingSetterExtension(typeName, genericParams, field));
-                processedFields.Add(field.Name);
+                //processedFields.Add(field.Name);
             }
         }
 
@@ -131,11 +119,12 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
             if (!processedFields.Contains(propertyName + "Property")
                 && IsPublic(property)
                 && HasPublicSetter(property)
-                && IsCommonInstanceProperty(property, members))
+                //&& IsCommonInstanceProperty(property, members)
+                )
             {
-                sb.AppendLine($"    // common properties\n");
+                sb.AppendLine($"    // common properties");
 
-                //AppendIfNotNull(sb, GetCommonPropertySetterExtension(typeName, property, semanticModel));
+                AppendIfNotNull(sb, GetCommonPropertySetterExtension(typeName, genericParams, property));
                 //AppendIfNotNull(sb, GetCommonPropertyBindingSetterExtension(typeName, property, semanticModel));
                 //AppendIfNotNull(sb, GetCommonPropertyExpressionBindingSetterExtension(typeName, property, semanticModel));
 
@@ -149,6 +138,12 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
         {
             context.AddSource($"{RemoveIllegalFileNameCharacters(typeName)}Extensions.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
         }
+    }
+
+    private static void AppendIfNotNull(StringBuilder sb, string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return;
+        sb.AppendLine(value);
     }
 
     private static bool IsCommonInstanceProperty(IPropertySymbol property, ImmutableArray<ISymbol> members)
@@ -266,5 +261,34 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
     public static bool IsDeclarativeViewBase(INamedTypeSymbol controlType)
     {
         return controlType.AllInterfaces.Any(x => x.Name == "IDeclarativeViewBase");
+    }
+
+    private static string GetCommonPropertySetterExtension(string controlTypeName, string genericParams, IPropertySymbol property)
+    {
+        var extensionName = property.Name;
+
+        var valueTypeSource = property.Type.Name;
+
+        var argsString = $"{valueTypeSource} value";
+
+        var extensionText =
+            $"    public static {controlTypeName} {extensionName}{genericParams}(this {controlTypeName} control, {argsString}) =>{NewLine} "
+          + $"        control._set(() => control.{extensionName} = value);";
+
+        return extensionText;
+    }
+
+    private static string GetCommonPropertyExpressionBindingSetterExtension(string controlTypeName, string genericParams, PropertyDeclarationSyntax property, SemanticModel semanticModel)
+    {
+        var extensionName = property.Identifier.ToString();
+        var valueTypeSource = GetPropertyTypeName(property, semanticModel);
+
+        var extensionText =
+            $"//Generated by GetCommonPropertyExpressionBindingSetterExtension{NewLine}" +
+            $"public static {controlTypeName} {extensionName}{genericParams}(this {controlTypeName} control, Func<{valueTypeSource}> func, Action<{valueTypeSource}>? onChanged = null, [CallerArgumentExpression(nameof(func))] string? expression = null){NewLine}" +
+            $"   => control._set((v) => control.{extensionName} = v, func, onChanged, expression);";
+
+
+        return extensionText;
     }
 }

@@ -23,8 +23,8 @@ namespace CSharpUI.Avalonia;
 
 public static class ControlPropertyExtensions
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TControl _set<TControl>(this TControl control, Action setAction)
-    where TControl : AvaloniaObject
     {
         setAction();
         return control;

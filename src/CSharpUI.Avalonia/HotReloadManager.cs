@@ -1,12 +1,7 @@
-﻿#if DEBUG
-using CSharpUI.Avalonia;
-using System;
+﻿using CSharpUI.Avalonia;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
 
 #pragma warning disable IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
 [assembly: System.Reflection.Metadata.MetadataUpdateHandler(typeof(HotReloadManager))]
@@ -20,16 +15,13 @@ public static class HotReloadManager
 
     public static event Action<Type[]?>? HotReloaded;
 
-    public static bool IsEnabled { get; private set; } = true;
+    public static bool IsEnabled { get; private set; }
 
-    public static void Activate() =>
-        IsEnabled = true;
+    public static void Activate() => IsEnabled = true;
 
-    public static void Deactivate() =>
-        IsEnabled = false;
+    public static void Deactivate() => IsEnabled = false;
 
-    private static void OnHotReloaded(Type[]? types) =>
-        HotReloaded?.Invoke(types);
+    private static void OnHotReloaded(Type[]? types) => HotReloaded?.Invoke(types);
 
     public static void ClearCache(Type[]? types)
     {
@@ -198,5 +190,3 @@ public static class HotReloadManager
 
     #endregion
 }
-
-#endif
