@@ -63,4 +63,14 @@ public class PropertyGeneratorTests
 
         Assert.Equal(output, expectedOutput.Trim());
     }
+
+    [Fact]
+    public void StyledProperty()
+    {
+        var (inputSource, expectedOutput) = GetTestSources(nameof(StyledPropertyTest), nameof(StyledPropertyTestExtensions));
+
+        var output = GetGeneratedOutput(inputSource);
+
+        Assert.Equal(output, expectedOutput.Trim());
+    }
 }

@@ -64,7 +64,7 @@ public class SourceGeneratorBase
                 HasAvaloniaPropertyPublicSetter(field, members))
             {
                 //sb.AppendLine($"    // avalonia properties");
-                //AppendIfNotNull(sb, GetCommonPropertyExpressionBindingSetterExtension(type, genericParams))
+                // AppendIfNotNull(sb, GetCommonPropertyExpressionBindingSetterExtension(type, genericParams))
                 // AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, field));
                 // AppendIfNotNull(sb, GetExpressionBindingSetterExtension(typeName, genericParams, field));
                 //processedFields.Add(field.Name);
@@ -78,7 +78,7 @@ public class SourceGeneratorBase
                 //&& IsCommonInstanceProperty(property, members)
                 )
             {
-                sb.AppendLine($"    // common properties");
+                sb.AppendLine($"    // {property.Name}");
 
                 AppendIfNotNull(sb, GetCommonPropertySetterExtension(typeName, genericParams, property));
                 //AppendIfNotNull(sb, GetCommonPropertyBindingSetterExtension(typeName, property, semanticModel));
@@ -92,7 +92,7 @@ public class SourceGeneratorBase
 
         if (processedFields.Count > 0)
         {
-            context.AddSource($"{RemoveIllegalFileNameCharacters(typeName)}Extensions.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
+            context.AddSource($"{RemoveIllegalFileNameCharacters(type.ConstructedFrom.ToString())}.g.cs", SourceText.From(sb.ToString(), Encoding.UTF8));
         }
     }
 
@@ -286,12 +286,10 @@ public class SourceGeneratorBase
     {
         var extensionName = property.Name;
 
-        var valueTypeSource = property.Type.Name;
-
-        var argsString = $"{valueTypeSource} value";
+        var argsString = $"{property.Type.Name} value";
 
         var extensionText =
-            $"    public static {controlTypeName} {extensionName}{genericParams}(this {controlTypeName} control, {argsString}) =>{NewLine} "
+            $"    public static {controlTypeName} {extensionName}{genericParams}(this {controlTypeName} control, {argsString}) =>{NewLine}"
           + $"        control._set(() => control.{extensionName} = value);";
 
         return extensionText;
@@ -333,5 +331,18 @@ public class SourceGeneratorBase
         var nullableTypeSymbol = typeSymbol.WithNullableAnnotation(NullableAnnotation.Annotated);
 
         return nullableTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+    }
+
+    internal static bool InheritsFrom(INamedTypeSymbol type, string baseType)
+    {
+        while (type.BaseType != null)
+        {
+            if (type.BaseType.ToString() == baseType)
+                return true;
+
+            type = type.BaseType;
+        }
+
+        return false;
     }
 }

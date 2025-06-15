@@ -7,9 +7,9 @@ using Tests;
 
 namespace CSharpUI.Avalonia;
 
-public static partial class DirectPropertyTestExtensions
+public static partial class StyledPropertyTestExtensions
 {
     // CanSave
-    public static DirectPropertyTest CanSave(this DirectPropertyTest control, Boolean value) =>
+    public static StyledPropertyTest CanSave(this StyledPropertyTest control, Boolean value) =>
         control._set(() => control.CanSave = value);
 }

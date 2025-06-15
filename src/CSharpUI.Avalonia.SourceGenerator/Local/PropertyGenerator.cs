@@ -23,13 +23,19 @@ public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
             .Where(static c => c is not null);
 
         context.RegisterSourceOutput(classDeclarations,
-            static (spc, data) => GenerateSource(spc, data));
+            static (spc, data) => GenerateSource(spc, data!));
     }
 
-    private static INamedTypeSymbol GetSemanticTarget(GeneratorSyntaxContext context)
+    private static INamedTypeSymbol? GetSemanticTarget(GeneratorSyntaxContext context)
     {
         var classDecl = (ClassDeclarationSyntax)context.Node;
         var symbol = context.SemanticModel.GetDeclaredSymbol(classDecl);
-        return symbol!;
+
+        if (symbol != null && InheritsFrom(symbol, "Avalonia.Controls.Control"))
+        {
+            return symbol!;
+        }
+
+        return null;
     }
 }

@@ -24,8 +24,14 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
                          .Select((assemblies, _) => assemblies.Distinct<IAssemblySymbol>(SymbolEqualityComparer.Default)
                                                               .ToImmutableArray());
 
-        context.RegisterSourceOutput(attribute,
-            static (spc, assemblies) => Parallel.ForEach(assemblies, assembly => GetClasses(spc, assembly)));
+            context.RegisterSourceOutput(attribute,
+                static (spc, assemblies) =>
+                {
+                    foreach (var assembly in assemblies)
+                    {
+                        GetClasses(spc, assembly);
+                    }
+                });
     }
 
     private static ImmutableArray<IAssemblySymbol> GetSemanticTarget(GeneratorAttributeSyntaxContext context)
@@ -47,8 +53,12 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
 
     private static void GetClasses(SourceProductionContext spc, IAssemblySymbol symbol)
     {
-        var publicClasses = GetPublicClasses(symbol.GlobalNamespace);
-
-        Parallel.ForEach(publicClasses, publicClass => GenerateSource(spc, publicClass));
+        foreach (var publicClass in GetPublicClasses(symbol.GlobalNamespace))
+        {
+            if (InheritsFrom(publicClass, "Avalonia.Controls.Control"))
+            {
+                GenerateSource(spc, publicClass);
+            }
+        }
     }
 }
