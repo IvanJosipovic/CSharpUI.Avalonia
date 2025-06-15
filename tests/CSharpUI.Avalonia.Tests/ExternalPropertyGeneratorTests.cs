@@ -1,5 +1,4 @@
 using Avalonia;
-using CSharpUI.Avalonia.SourceGenerator;
 using CSharpUI.Avalonia.SourceGenerator.External;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -12,7 +11,7 @@ public class ExternalPropertyGeneratorTests
     private static string? GetGeneratedOutput(string externalAssemblySourceCode)
     {
         var loadDll = typeof(AvaloniaObject);
-        var loadDll1 = typeof(IDeclarativeViewBase);
+        var loadDll1 = typeof(ViewBase);
 
         var references = AppDomain.CurrentDomain.GetAssemblies()
                           .Where(assembly => !assembly.IsDynamic)
@@ -96,6 +95,16 @@ public class ExternalPropertyGeneratorTests
     public void StyledProperty()
     {
         var (inputSource, expectedOutput) = GetTestSources(nameof(StyledPropertyTest), nameof(StyledPropertyTestExtensions));
+
+        var output = GetGeneratedOutput(inputSource);
+
+        Assert.Equal(output, expectedOutput.Trim());
+    }
+
+    [Fact]
+    public void AttachedProperty()
+    {
+        var (inputSource, expectedOutput) = GetTestSources(nameof(AttachedPropertyTest), nameof(AttachedPropertyTestExtensions));
 
         var output = GetGeneratedOutput(inputSource);
 

@@ -1,6 +1,4 @@
-﻿using Avalonia.Controls;
-
-namespace CSharpUI.Avalonia.CommonExtensions;
+﻿namespace CSharpUI.Avalonia.CommonExtensions;
 
 public static class NativeMenuExtensions
 {

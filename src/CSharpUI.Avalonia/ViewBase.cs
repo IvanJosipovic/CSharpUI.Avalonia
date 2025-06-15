@@ -1,8 +1,5 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Threading;
 using CSharpUI.Avalonia.Styles;
 
 namespace CSharpUI.Avalonia;
@@ -32,7 +29,7 @@ public abstract class ViewBase<TViewModel> : ViewBase
 /// Base view class used like UserControl in XAML
 /// </summary>
 
-public abstract class ViewBase : Decorator, IDeclarativeViewBase, IReloadable
+public abstract class ViewBase : Decorator, IReloadable
 
 {
     private INameScope? _nameScope;

@@ -6,8 +6,6 @@ namespace Tests;
 
 public class StyledPropertyTest : ViewBase
 {
-    private bool _canSave = default;
-
     public static readonly StyledProperty<bool> CanSaveProperty =
         AvaloniaProperty.Register<StyledPropertyTest, bool>(nameof(CanSave));
 

@@ -11,7 +11,7 @@ public class PropertyGeneratorTests
     private static string? GetGeneratedOutput(string sourceCode)
     {
         var loadDll = typeof(AvaloniaObject);
-        var loadDll1 = typeof(IDeclarativeViewBase);
+        var loadDll1 = typeof(ViewBase);
 
         var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
         var references = AppDomain.CurrentDomain.GetAssemblies()
@@ -68,6 +68,16 @@ public class PropertyGeneratorTests
     public void StyledProperty()
     {
         var (inputSource, expectedOutput) = GetTestSources(nameof(StyledPropertyTest), nameof(StyledPropertyTestExtensions));
+
+        var output = GetGeneratedOutput(inputSource);
+
+        Assert.Equal(output, expectedOutput.Trim());
+    }
+
+    [Fact]
+    public void AttachedProperty()
+    {
+        var (inputSource, expectedOutput) = GetTestSources(nameof(AttachedPropertyTest), nameof(AttachedPropertyTestExtensions));
 
         var output = GetGeneratedOutput(inputSource);
 

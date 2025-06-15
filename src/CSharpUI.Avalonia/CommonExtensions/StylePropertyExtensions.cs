@@ -1,9 +1,5 @@
 ﻿using Avalonia.Styling;
-using System;
-using Avalonia.Controls;
-using System.Xml.Linq;
 using CSharpUI.Avalonia.Styles;
-using Avalonia;
 
 namespace CSharpUI.Avalonia.CommonExtensions;
 

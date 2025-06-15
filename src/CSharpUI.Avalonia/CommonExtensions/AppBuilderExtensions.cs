@@ -1,7 +1,4 @@
-﻿using Avalonia;
-using System;
-
-namespace CSharpUI.Avalonia.CommonExtensions;
+﻿namespace CSharpUI.Avalonia.CommonExtensions;
 
 /// <summary>
 /// Provides extension methods for configuring an <see cref="AppBuilder"/>.

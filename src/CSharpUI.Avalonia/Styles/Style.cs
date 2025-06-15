@@ -1,7 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Styling;
+﻿using Avalonia.Styling;
 using CSharpUI.Avalonia.Helpers;
-using System;
 using System.Runtime.CompilerServices;
 
 namespace CSharpUI.Avalonia.Styles;

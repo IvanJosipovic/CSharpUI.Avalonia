@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Text;
@@ -61,26 +60,28 @@ public class SourceGeneratorBase
         {
             if (field.Type is INamedTypeSymbol namedType &&
                 namedType.Name is "DirectProperty" or "StyledProperty" or "AttachedProperty" &&
-                HasAvaloniaPropertyPublicSetter(field, members))
+                HasAvaloniaPropertyPublicSetter(field))
             {
-                //sb.AppendLine($"    // avalonia properties");
+                sb.AppendLine($"    // Avalonia Property: {field.Name}");
+
+                AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, field));
                 // AppendIfNotNull(sb, GetCommonPropertyExpressionBindingSetterExtension(type, genericParams))
                 // AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, field));
                 // AppendIfNotNull(sb, GetExpressionBindingSetterExtension(typeName, genericParams, field));
-                //processedFields.Add(field.Name);
+                processedFields.Add(field.Name);
             }
         }
 
         // PROCESS COMMON PROPERTIES
         foreach (var property in members.OfType<IPropertySymbol>())
         {
-            if (IsPublic(property) && HasPublicSetter(property)
-                //&& IsCommonInstanceProperty(property, members)
-                )
+            if (!processedFields.Contains(property.Name + "Property") &&
+                IsPublic(property) && HasPublicSetter(property) &&
+                IsCommonInstanceProperty(property))
             {
-                sb.AppendLine($"    // {property.Name}");
+                sb.AppendLine($"    // Common Property: {property.Name}");
 
-                AppendIfNotNull(sb, GetCommonPropertySetterExtension(typeName, genericParams, property));
+                AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, property));
                 //AppendIfNotNull(sb, GetCommonPropertyBindingSetterExtension(typeName, property, semanticModel));
                 //AppendIfNotNull(sb, GetCommonPropertyExpressionBindingSetterExtension(typeName, property, semanticModel));
 
@@ -165,14 +166,15 @@ public class SourceGeneratorBase
         sb.AppendLine(value);
     }
 
-    private static bool IsCommonInstanceProperty(IPropertySymbol property, ImmutableArray<ISymbol> members)
+    #region Property
+    private static bool IsCommonInstanceProperty(IPropertySymbol property)
     {
         if (property == null || property.IsStatic)
             return false;
 
         var avaloniaPropertyName = property.Name + "Property";
 
-        return members
+        return property.ContainingType.GetMembers()
             .OfType<IFieldSymbol>()
             .All(field => field.Name != avaloniaPropertyName);
     }
@@ -180,22 +182,6 @@ public class SourceGeneratorBase
     private static bool IsPublic(IPropertySymbol property)
     {
         return property != null && property.DeclaredAccessibility == Accessibility.Public;
-    }
-
-    private static bool HasAvaloniaPropertyPublicSetter(IFieldSymbol field, ImmutableArray<ISymbol> members)
-    {
-        var backingPropertyName = field.Name;
-
-        if (backingPropertyName.EndsWith("Property"))
-        {
-            backingPropertyName = backingPropertyName.Substring(0, backingPropertyName.Length - "Property".Length);
-        }
-
-        var property = members
-            .OfType<IPropertySymbol>()
-            .FirstOrDefault(x => x.Name == backingPropertyName);
-
-        return HasPublicSetter(property);
     }
 
     private static bool HasPublicSetter(IPropertySymbol property)
@@ -208,6 +194,33 @@ public class SourceGeneratorBase
             return true;
 
         return false;
+    }
+
+    private static string GetPropertySetterExtension(string controlTypeName, string genericParams, IPropertySymbol property)
+    {
+        var extensionName = property.Name;
+
+        var argsString = $"{property.Type.Name} value";
+
+        var extensionText =
+            $"    public static {controlTypeName} {extensionName}{genericParams}(this {controlTypeName} control, {argsString}) =>{NewLine}"
+          + $"        control._set(() => control.{extensionName} = value);";
+
+        return extensionText;
+    }
+
+    #endregion
+
+    #region Field
+    private static bool HasAvaloniaPropertyPublicSetter(IFieldSymbol field)
+    {
+        var backingPropertyName = field.Name.RemoveTrailingProperty();
+
+        var property = field.ContainingType.GetMembers()
+            .OfType<IPropertySymbol>()
+            .FirstOrDefault(x => x.Name == backingPropertyName);
+
+        return HasPublicSetter(property);
     }
 
     private static bool IsAvaloniaPropertyField(IFieldSymbol field)
@@ -237,10 +250,7 @@ public class SourceGeneratorBase
             propertyName = field.AssociatedSymbol.Name;
         }
 
-        if (propertyName.EndsWith("Property"))
-        {
-            propertyName = propertyName.Substring(0, propertyName.Length - "Property".Length);
-        }
+        propertyName = propertyName.RemoveTrailingProperty();
 
         var symbol = field.ContainingType?.GetMembers(propertyName).FirstOrDefault();
 
@@ -272,21 +282,22 @@ public class SourceGeneratorBase
         return false;
     }
 
-    public static bool IsStyledElement(INamedTypeSymbol controlType)
+    private static string GetPropertySetterExtension(string controlTypeName, string genericParams, IFieldSymbol field)
     {
-        return controlType.AllInterfaces.Any(x => x.Name == "StyledElement");
-    }
+        var extensionName = field.Name.RemoveTrailingProperty();
 
-    public static bool IsDeclarativeViewBase(INamedTypeSymbol controlType)
-    {
-        return controlType.AllInterfaces.Any(x => x.Name == "IDeclarativeViewBase");
-    }
+        var returnType = "";
 
-    private static string GetCommonPropertySetterExtension(string controlTypeName, string genericParams, IPropertySymbol property)
-    {
-        var extensionName = property.Name;
+        if (field.Type is INamedTypeSymbol nts)
+        {
+            returnType = nts.TypeArguments.Last().ToString();
+        }
+        else
+        {
+            throw new Exception("Unkown Type");
+        }
 
-        var argsString = $"{property.Type.Name} value";
+        var argsString = $"{returnType} value";
 
         var extensionText =
             $"    public static {controlTypeName} {extensionName}{genericParams}(this {controlTypeName} control, {argsString}) =>{NewLine}"
@@ -295,12 +306,11 @@ public class SourceGeneratorBase
         return extensionText;
     }
 
-    private static bool IsGenerateExtensionsView(Compilation compilation, ClassDeclarationSyntax component)
-    {
-        var sModel = compilation.GetSemanticModel(component.SyntaxTree);
-        var classSymbol = ModelExtensions.GetDeclaredSymbol(sModel, component);
+    #endregion
 
-        return classSymbol is INamedTypeSymbol cs && cs.AllInterfaces.Any(x => x.Name == "IDeclarativeViewBase");
+    public static bool IsStyledElement(INamedTypeSymbol controlType)
+    {
+        return controlType.AllInterfaces.Any(x => x.Name == "StyledElement");
     }
 
     internal static IEnumerable<INamedTypeSymbol> GetPublicClasses(INamespaceSymbol sym)
@@ -318,19 +328,6 @@ public class SourceGeneratorBase
                     yield return publicClass;
             }
         }
-    }
-
-    internal static string GetNullableLambdaParameterTypeName(PropertyDeclarationSyntax property, SemanticModel semanticModel)
-    {
-        var typeInfo = semanticModel.GetTypeInfo(property.Type);
-        var typeSymbol = typeInfo.Type;
-
-        if (typeSymbol == null)
-            return property.Type + "?";
-
-        var nullableTypeSymbol = typeSymbol.WithNullableAnnotation(NullableAnnotation.Annotated);
-
-        return nullableTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
     }
 
     internal static bool InheritsFrom(INamedTypeSymbol type, string baseType)

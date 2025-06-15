@@ -1,6 +1,4 @@
-﻿using Avalonia.Data;
-using Avalonia.Data.Converters;
-using System;
+﻿using Avalonia.Data.Converters;
 
 namespace CSharpUI.Avalonia.CommonExtensions;
 
