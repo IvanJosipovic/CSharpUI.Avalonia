@@ -9,7 +9,8 @@ namespace CSharpUI.Avalonia;
 
 public static partial class StyledPropertyTestExtensions
 {
-    // Avalonia Property: CanSaveProperty
+    // Avalonia Property: CanSave
     public static StyledPropertyTest CanSave(this StyledPropertyTest control, bool value) =>
         control._set(() => control.CanSave = value);
+
 }

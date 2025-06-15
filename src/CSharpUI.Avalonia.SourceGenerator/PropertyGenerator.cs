@@ -1,12 +1,13 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using CSharpUI.Avalonia.SourceGenerator.Generators;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Diagnostics;
 
-namespace CSharpUI.Avalonia.SourceGenerator.Local;
+namespace CSharpUI.Avalonia.SourceGenerator;
 
 [Generator]
-public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
+public class PropertyGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -16,6 +17,7 @@ public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
             //Debugger.Launch();
         }
 #endif
+
         var classDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => s is ClassDeclarationSyntax,
@@ -23,7 +25,20 @@ public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
             .Where(static c => c is not null);
 
         context.RegisterSourceOutput(classDeclarations,
-            static (spc, data) => GenerateSource(spc, data!));
+            static (spc, data) =>
+            {
+                if (Extensions.InheritsFrom(data!, "Avalonia.Controls.Control"))
+                {
+                    var generator = new GeneratorHost();
+
+                    var code = generator.GenerateExtensions(data!);
+
+                    if (code != null)
+                    {
+                        spc.AddSource($"{Extensions.RemoveIllegalFileNameCharacters(data!.ToString())}.g.cs", code);
+                    }
+                }
+            });
     }
 
     private static INamedTypeSymbol? GetSemanticTarget(GeneratorSyntaxContext context)
@@ -31,7 +46,7 @@ public class PropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
         var classDecl = (ClassDeclarationSyntax)context.Node;
         var symbol = context.SemanticModel.GetDeclaredSymbol(classDecl);
 
-        if (symbol != null && InheritsFrom(symbol, "Avalonia.Controls.Control"))
+        if (symbol != null && Extensions.InheritsFrom(symbol, "Avalonia.Controls.Control"))
         {
             return symbol!;
         }

@@ -12,4 +12,5 @@ public static partial class CommonPropertyTestExtensions
     // Common Property: MyString
     public static CommonPropertyTest MyString(this CommonPropertyTest control, String value) =>
         control._set(() => control.MyString = value);
+
 }

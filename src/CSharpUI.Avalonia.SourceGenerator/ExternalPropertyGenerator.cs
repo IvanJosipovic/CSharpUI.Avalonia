@@ -1,11 +1,14 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using CSharpUI.Avalonia.SourceGenerator.Generators;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Text;
 
-namespace CSharpUI.Avalonia.SourceGenerator.External;
+namespace CSharpUI.Avalonia.SourceGenerator;
 
 [Generator]
-public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenerator
+public class ExternalPropertyGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -53,11 +56,18 @@ public class ExternalPropertyGenerator : SourceGeneratorBase, IIncrementalGenera
 
     private static void GetClasses(SourceProductionContext spc, IAssemblySymbol symbol)
     {
-        foreach (var publicClass in GetPublicClasses(symbol.GlobalNamespace))
+        var generator = new GeneratorHost();
+
+        foreach (var publicClass in Extensions.GetPublicClasses(symbol.GlobalNamespace))
         {
-            if (InheritsFrom(publicClass, "Avalonia.Controls.Control"))
+            if (Extensions.InheritsFrom(publicClass, "Avalonia.Controls.Control"))
             {
-                GenerateSource(spc, publicClass);
+                var code = generator.GenerateExtensions(publicClass);
+
+                if (code != null)
+                {
+                    spc.AddSource($"{Extensions.RemoveIllegalFileNameCharacters(publicClass.ToString())}.g.cs", code);
+                }
             }
         }
     }

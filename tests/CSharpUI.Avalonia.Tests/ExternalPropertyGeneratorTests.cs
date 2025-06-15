@@ -1,5 +1,5 @@
 using Avalonia;
-using CSharpUI.Avalonia.SourceGenerator.External;
+using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Tests;

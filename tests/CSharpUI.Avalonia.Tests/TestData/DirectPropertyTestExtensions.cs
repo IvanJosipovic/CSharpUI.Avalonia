@@ -9,7 +9,8 @@ namespace CSharpUI.Avalonia;
 
 public static partial class DirectPropertyTestExtensions
 {
-    // Avalonia Property: CanSaveProperty
+    // Avalonia Property: CanSave
     public static DirectPropertyTest CanSave(this DirectPropertyTest control, bool value) =>
         control._set(() => control.CanSave = value);
+
 }
