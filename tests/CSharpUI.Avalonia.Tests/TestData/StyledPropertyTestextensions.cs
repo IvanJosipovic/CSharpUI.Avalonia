@@ -15,8 +15,8 @@ public static partial class StyledPropertyTestExtensions
 
     /*ValueSetterGenerator*/
     /// <summary></summary>
-    public static T CanSave<T>(this T control, Boolean value) where T : StyledPropertyTest =>
-        control._set(() => control.CanSave = value!);
+    public static T CanSave<T>(this T control, Boolean value) where T : StyledPropertyTest
+        => control._set(() => control.CanSave = value!);
 
 
 
@@ -25,11 +25,11 @@ public static partial class StyledPropertyTestExtensions
 
     /*ValueStyleSetterGenerator*/
     public static Style<T> CanSave<T>(this Style<T> style, Boolean value) where T : StyledPropertyTest
-    => style._addSetter(StyledPropertyTest.CanSaveProperty!, value!);
+        => style._addSetter(StyledPropertyTest.CanSaveProperty!, value!);
 
     /*BindingStyleSetterGenerator*/
     public static Style<T> CanSave<T>(this Style<T> style, IBinding binding) where T : StyledPropertyTest
-    => style._addSetter(StyledPropertyTest.CanSaveProperty, binding);
+        => style._addSetter(StyledPropertyTest.CanSaveProperty, binding);
 
 
 

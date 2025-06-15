@@ -25,7 +25,7 @@ public class PropertyGeneratorTests
                       new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
         // Source Generator to test
-        var generator = new PropertyGenerator();
+        var generator = new Generator();
 
         CSharpGeneratorDriver.Create(generator)
                              .RunGeneratorsAndUpdateCompilation(compilation,

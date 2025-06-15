@@ -11,8 +11,8 @@ public class ValueStyleSetterGenerator : ExtensionGeneratorBase<PropertyExtensio
 
         //direct type access
         var extensionText =
-            $"public static Style<{info.ReturnType}> {info.ExtensionName}{info.GenericArg}(this Style<{info.ReturnType}> style, {info.ValueTypeSource} value) {info.GenericConstraint} {Extensions.NewLine}"
-            + $"=> style._addSetter({info.ControlTypeName}.{info.MemberName}Property!, value!);";
+            $"    public static Style<{info.ReturnType}> {info.ExtensionName}{info.GenericArg}(this Style<{info.ReturnType}> style, {info.ValueTypeSource} value) {info.GenericConstraint}{Extensions.NewLine}"
+          + $"        => style._addSetter({info.ControlTypeName}.{info.MemberName}Property!, value!);";
 
         return extensionText;
     }

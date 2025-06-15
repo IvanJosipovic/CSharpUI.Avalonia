@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace CSharpUI.Avalonia.SourceGenerator;
 
 [Generator]
-public class PropertyGenerator : IIncrementalGenerator
+public class Generator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {

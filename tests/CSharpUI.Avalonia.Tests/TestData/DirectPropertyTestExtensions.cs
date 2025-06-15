@@ -1,4 +1,6 @@
 #nullable enable
+using CSharpUI.Avalonia.Styles;
+using CSharpUI.Avalonia.CommonExtensions;
 using Avalonia;
 using System;
 using Tests;
@@ -12,8 +14,8 @@ public static partial class DirectPropertyTestExtensions
 
     /*ValueSetterGenerator*/
     /// <summary></summary>
-    public static T CanSave<T>(this T control, Boolean value) where T : DirectPropertyTest =>
-        control._set(() => control.CanSave = value!);
+    public static T CanSave<T>(this T control, Boolean value) where T : DirectPropertyTest
+        => control._set(() => control.CanSave = value!);
 
 
 

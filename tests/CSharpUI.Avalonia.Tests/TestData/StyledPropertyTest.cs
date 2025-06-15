@@ -9,6 +9,9 @@ public class StyledPropertyTest : ViewBase
     public static readonly StyledProperty<bool> CanSaveProperty =
         AvaloniaProperty.Register<StyledPropertyTest, bool>(nameof(CanSave));
 
+    /// <summary>
+    /// My Comment
+    /// </summary>
     public bool CanSave
     {
         get => GetValue(CanSaveProperty);

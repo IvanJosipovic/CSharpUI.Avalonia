@@ -20,8 +20,8 @@ public class ValueOverloadsSetterGenerator : ExtensionGeneratorBase<PropertyExte
                 var argVals = string.Join(", ", ps.Select(x => x.Name)); ;
 
                 extensionText += Extensions.NewLine +
-                                 $"public static {info.ReturnType} {info.ExtensionName}{info.GenericArg}(this {info.ReturnType} control, {argDefs}) {info.GenericConstraint} {Extensions.NewLine}" +
-                                 $"   => control._set(() => control.{info.MemberName} = new {info.ValueTypeSource}({argVals}));";
+                                 $"    public static {info.ReturnType} {info.ExtensionName}{info.GenericArg}(this {info.ReturnType} control, {argDefs}) {info.GenericConstraint} {Extensions.NewLine}" +
+                                 $"        => control._set(() => control.{info.MemberName} = new {info.ValueTypeSource}({argVals}));";
             }
         }
         return extensionText;

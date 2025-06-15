@@ -19,8 +19,8 @@ public class ValueOverloadsStyleSetterGenerator : ExtensionGeneratorBase<Propert
                 var argDefs = string.Join(", ", ps.Select(x => $"{x.Type} {x.Name}"));
                 var argVals = string.Join(", ", ps.Select(x => x.Name)); ;
 
-                extensionText += $"public static Style<{info.ReturnType}> {info.ExtensionName}{info.GenericArg}(this Style<{info.ReturnType}> style, {argDefs}) {info.GenericConstraint} {Extensions.NewLine}" +
-                                 $"   => style._addSetter({info.ControlTypeName}.{info.MemberName}Property, new {info.ValueTypeSource}({argVals}));";
+                extensionText += $"    public static Style<{info.ReturnType}> {info.ExtensionName}{info.GenericArg}(this Style<{info.ReturnType}> style, {argDefs}) {info.GenericConstraint}{Extensions.NewLine}" +
+                                 $"        => style._addSetter({info.ControlTypeName}.{info.MemberName}Property, new {info.ValueTypeSource}({argVals}));";
             }
         }
         return extensionText;

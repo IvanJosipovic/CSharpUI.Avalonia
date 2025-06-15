@@ -8,7 +8,7 @@ using System.Text;
 namespace CSharpUI.Avalonia.SourceGenerator;
 
 [Generator]
-public class ExternalPropertyGenerator : IIncrementalGenerator
+public class ExternalGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {

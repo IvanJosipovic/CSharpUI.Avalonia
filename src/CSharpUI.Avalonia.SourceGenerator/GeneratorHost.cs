@@ -83,8 +83,8 @@ public class GeneratorHost()
         //sb.AppendLine($"using System.Numerics;");
         //sb.AppendLine($"using System.Linq.Expressions;");
         //sb.AppendLine($"using System.Runtime.CompilerServices;");
-        sb.Append("using CSharpUI.Avalonia.Styles;");
-        sb.Append("using CSharpUI.Avalonia.CommonExtensions;");
+        sb.AppendLine("using CSharpUI.Avalonia.Styles;");
+        sb.AppendLine("using CSharpUI.Avalonia.CommonExtensions;");
         GetNamespaces(controlType).OrderBy(x => x).ToList().ForEach(x => sb.AppendLine($"using {x};"));
         sb.AppendLine();
         sb.AppendLine("namespace CSharpUI.Avalonia;");

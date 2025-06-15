@@ -43,7 +43,7 @@ public class EventExtensionInfo : IMemberExtensionInfo
         ControlTypeName = ControlType.ToString();
         EventName = EventInfo.Name;
         MemberName = EventName;
-        //IsObsolete = EventInfo.GetCustomAttribute<ObsoleteAttribute>() != null;
+        IsObsolete = EventInfo.GetAttributes().Any(a => a.AttributeClass?.Name == nameof(ObsoleteAttribute));
         EventHandler = EventInfo.Type.ToString();
 
         var methodInfo = eventInfo.Type.GetMembers("Invoke").FirstOrDefault();
@@ -58,7 +58,6 @@ public class EventExtensionInfo : IMemberExtensionInfo
                 var routedEventFieldInfo = ControlType.GetMembers(EventName + "Event").FirstOrDefault(x => x.IsStatic && x.DeclaredAccessibility == Accessibility.Public);
                 IsRoutedEvent = routedEventFieldInfo != null; //if routed event field located in base class, ignore it and count it classic event
             }
-
         }
 
         IsGeneric = !eventInfo.ContainingType.IsSealed;
