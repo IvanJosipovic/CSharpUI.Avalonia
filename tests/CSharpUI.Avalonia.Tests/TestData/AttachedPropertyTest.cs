@@ -9,6 +9,9 @@ namespace Tests;
 
 public class AttachedPropertyTest : ViewBase
 {
+    /// <summary>
+    /// My Comment
+    /// </summary>
     public static readonly AttachedProperty<ICommand> CommandProperty =
         AvaloniaProperty.RegisterAttached<AttachedPropertyTest, Interactive, ICommand>("Command", default!, false, BindingMode.OneTime);
 

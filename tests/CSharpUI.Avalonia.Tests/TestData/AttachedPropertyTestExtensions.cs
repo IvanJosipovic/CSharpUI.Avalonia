@@ -16,12 +16,12 @@ public static partial class AttachedPropertyTestExtensions
     // Command
 
     /*AttachedPropertyBindFromExpressionSetterGenerator*/
+    /// <summary>My Comment</summary>
     public static AttachedPropertyTest Command(this AttachedPropertyTest control, ICommand value)
     {
         AttachedPropertyTest.SetCommand(control, value);
         return control;
     }
-
 
 
 

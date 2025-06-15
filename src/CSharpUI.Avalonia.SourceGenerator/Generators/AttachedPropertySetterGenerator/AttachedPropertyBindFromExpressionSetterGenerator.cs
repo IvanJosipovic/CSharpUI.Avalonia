@@ -4,10 +4,10 @@ namespace CSharpUI.Avalonia.SourceGenerator.Generators.AttachedPropertySetterGen
 
 public class AttachedPropertyBindFromExpressionSetterGenerator : ExtensionGeneratorBase<AttachedPropertyExtensionInfo>
 {
-    protected override string? GetExtension(AttachedPropertyExtensionInfo info) =>
-        $"    public static {info.ReturnType} {info.MemberName}{info.GenericArg}(this {info.ReturnType} control, {info.ValueTypeSource} value){Extensions.NewLine}" +
-        $"    {{{Extensions.NewLine}" +
-        $"        {info.ControlTypeName}.Set{info.MemberName}(control, value);{Extensions.NewLine}" +
-        $"        return control;{Extensions.NewLine}" +
-        $"    }}{Extensions.NewLine}";
+    protected override string? GetExtension(AttachedPropertyExtensionInfo info) => $@"    /// <summary>{info.Comment}</summary>
+    public static {info.ReturnType} {info.MemberName}(this {info.ReturnType} control, {info.ValueTypeSource} value)
+    {{
+        {info.ControlTypeName}.Set{info.MemberName}(control, value);
+        return control;
+    }}";
 }

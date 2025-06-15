@@ -15,6 +15,9 @@ public class DirectPropertyTest : ViewBase
             o => o.CanSave
         );
 
+    /// <summary>
+    /// My Comment
+    /// </summary>
     public bool CanSave
     {
         get => _canSave;

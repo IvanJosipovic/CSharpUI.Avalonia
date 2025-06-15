@@ -15,9 +15,10 @@ public static partial class DirectPropertyTestExtensions
     // CanSave
 
     /*ValueSetterGenerator*/
-    /// <summary></summary>
+    /// <summary>My Comment</summary>
     public static T CanSave<T>(this T control, Boolean value) where T : DirectPropertyTest
         => control._set(() => control.CanSave = value!);
+
 
 
 
