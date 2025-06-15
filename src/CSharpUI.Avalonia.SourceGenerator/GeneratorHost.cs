@@ -36,7 +36,8 @@ public class GeneratorHost()
         new("Common Properties",
             t => t.GetMembers()
                 .OfType<IFieldSymbol>()
-                .Where(x => !IsAvaloniaPropertyField(x) && IsCommonPropertyField(x))
+                .Where(x => !IsAvaloniaPropertyField(x)
+                            && IsCommonPropertyField(x))
                 .Select(x => new PropertyExtensionInfo(x)),
 
             new ValueSetterGenerator()
@@ -77,8 +78,8 @@ public class GeneratorHost()
 
         var sb = new StringBuilder();
         sb.AppendLine("#nullable enable");
-        //sb.AppendLine($"using Avalonia.Data;");
-        //sb.AppendLine($"using Avalonia.Data.Converters;");
+        sb.AppendLine($"using Avalonia.Data;");
+        sb.AppendLine($"using Avalonia.Data.Converters;");
         //sb.AppendLine($"using System;");
         //sb.AppendLine($"using System.Numerics;");
         //sb.AppendLine($"using System.Linq.Expressions;");
@@ -194,21 +195,9 @@ public class GeneratorHost()
 
         if (field.Type.Name.StartsWith("AttachedProperty"))
         {
-            //Console.ForegroundColor = ConsoleColor.Magenta;
-            //Console.WriteLine($"{field.Name} is Attached Property.");
-
-            var isReadOnly = IsReadOnlyAttachedField(field);
-            if (isReadOnly)
-            {
-                //Console.ForegroundColor = ConsoleColor.Cyan;
-                //Console.WriteLine($"{field.Name} is read only - skipped.");
-                //Console.ForegroundColor = ConsoleColor.Gray;
-                return false;
-            }
-
-            //Console.ForegroundColor = ConsoleColor.Gray;
-            return true;
+            return !IsReadOnlyAttachedField(field);
         }
+
         return false;
     }
 
@@ -253,7 +242,7 @@ public class GeneratorHost()
 
         if (methodInfo is IMethodSymbol method)
         {
-            return method.DeclaredAccessibility == Accessibility.Public && method.IsStatic;
+            return !(method.DeclaredAccessibility == Accessibility.Public && method.IsStatic);
         }
 
         return false;

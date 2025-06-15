@@ -15,7 +15,7 @@ public class ExternalGenerator : IIncrementalGenerator
 #if DEBUG
         if (!Debugger.IsAttached)
         {
-            //Debugger.Launch();
+            Debugger.Launch();
         }
 #endif
         var attribute = context.SyntaxProvider

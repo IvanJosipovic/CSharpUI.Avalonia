@@ -1,4 +1,6 @@
 #nullable enable
+using Avalonia.Data;
+using Avalonia.Data.Converters;
 using CSharpUI.Avalonia.Styles;
 using CSharpUI.Avalonia.CommonExtensions;
 using Avalonia;

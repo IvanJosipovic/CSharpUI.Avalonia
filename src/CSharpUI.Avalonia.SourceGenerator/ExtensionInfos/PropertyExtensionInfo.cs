@@ -51,7 +51,7 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
         if (IsGeneric)
         {
             ReturnType = "T";
-            GenericConstraint = $"where T : {ControlTypeName}";
+            GenericConstraint = $" where T : {ControlTypeName}";
             GenericArg = "<T>";
         }
     }

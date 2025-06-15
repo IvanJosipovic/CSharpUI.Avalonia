@@ -1,8 +1,9 @@
 #nullable enable
-using Avalonia;
 using Avalonia.Data;
-using CSharpUI.Avalonia.CommonExtensions;
+using Avalonia.Data.Converters;
 using CSharpUI.Avalonia.Styles;
+using CSharpUI.Avalonia.CommonExtensions;
+using Avalonia;
 using System;
 using Tests;
 
@@ -14,7 +15,7 @@ public static partial class StyledPropertyTestExtensions
     // CanSave
 
     /*ValueSetterGenerator*/
-    /// <summary></summary>
+    /// <summary>My Comment</summary>
     public static T CanSave<T>(this T control, Boolean value) where T : StyledPropertyTest
         => control._set(() => control.CanSave = value!);
 
