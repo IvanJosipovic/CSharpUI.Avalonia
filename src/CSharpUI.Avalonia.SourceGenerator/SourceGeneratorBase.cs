@@ -58,9 +58,10 @@ public class SourceGeneratorBase
         // PROCESS AVALONIA PROPERTIES
         foreach (var field in members.OfType<IFieldSymbol>())
         {
-            if (field.Type is INamedTypeSymbol namedType &&
-                namedType.Name is "DirectProperty" or "StyledProperty" &&
-                HasAvaloniaPropertyPublicSetter(field))
+            if (field.Type is INamedTypeSymbol namedType
+                && namedType.Name is "DirectProperty" or "StyledProperty"
+                && HasAvaloniaPropertyPublicSetter(field)
+                && !IsReadOnlyField(field))
             {
                 sb.AppendLine($"    // Avalonia Property: {field.Name}");
 
@@ -88,9 +89,9 @@ public class SourceGeneratorBase
         // PROCESS COMMON PROPERTIES
         foreach (var property in members.OfType<IPropertySymbol>())
         {
-            if (!processedFields.Contains(property.Name + "Property") &&
-                IsPublic(property) && HasPublicSetter(property) &&
-                IsCommonInstanceProperty(property))
+            if (IsPublic(property)
+             && HasPublicSetter(property)
+             && IsCommonInstanceProperty(property))
             {
                 sb.AppendLine($"    // Common Property: {property.Name}");
 
@@ -222,6 +223,26 @@ public class SourceGeneratorBase
         return extensionText;
     }
 
+    private static bool IsAvaloniaPropertyField(IPropertySymbol property)
+    {
+        var field = property.ContainingType.GetMembers().OfType<IFieldSymbol>().FirstOrDefault(x => x.Name == property.Name + "Property");
+
+        if (field == null || field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
+            return false;
+
+        if (field.Type.Name.StartsWith("DirectProperty") ||
+            field.Type.Name.StartsWith("StyledProperty") ||
+            //some attached properties Mapped to properties of controls, i.e. TextBlock.TextWrapping
+            //so we need to add direct Extensions for them, additionally to AttachedProperty extensions
+            field.Type.Name.StartsWith("AttachedProperty") ||
+            field.Type.Name.StartsWith("AvaloniaProperty"))
+        {
+            return !IsReadOnlyField(field);
+        }
+
+        return false;
+    }
+
     #endregion
 
     #region Field
@@ -247,24 +268,6 @@ public class SourceGeneratorBase
             .FirstOrDefault(x => x.Name == backingPropertyName);
 
         return HasPublicSetter(property);
-    }
-
-    private static bool IsAvaloniaPropertyField(IFieldSymbol field)
-    {
-        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == nameof(ObsoleteAttribute)))
-            return false;
-
-        if (field.Type.Name.StartsWith("DirectProperty") ||
-            field.Type.Name.StartsWith("StyledProperty") ||
-            //some attached properties Mapped to properties of controls, i.e. TextBlock.TextWrapping
-            //so we need to add direct Extensions for them, additionally to AttachedProperty extensions
-            field.Type.Name.StartsWith("AttachedProperty") ||
-            field.Type.Name.StartsWith("AvaloniaProperty"))
-        {
-            return !IsReadOnlyField(field);
-        }
-
-        return false;
     }
 
     private static bool IsReadOnlyField(IFieldSymbol field)
@@ -339,7 +342,7 @@ public class SourceGeneratorBase
         }
         else
         {
-            throw new Exception("Unkown Type");
+            throw new Exception("Unknown Type");
         }
 
         var argsString = $"{returnType} value";
@@ -350,6 +353,8 @@ public class SourceGeneratorBase
 
         return extensionText;
     }
+
+
 
     #endregion
 

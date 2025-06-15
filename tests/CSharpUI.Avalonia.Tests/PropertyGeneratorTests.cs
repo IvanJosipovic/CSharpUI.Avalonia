@@ -83,4 +83,14 @@ public class PropertyGeneratorTests
 
         Assert.Equal(output, expectedOutput.Trim());
     }
+
+    [Fact]
+    public void CommonPropertyTest()
+    {
+        var (inputSource, expectedOutput) = GetTestSources(nameof(CommonPropertyTest), nameof(CommonPropertyTestExtensions));
+
+        var output = GetGeneratedOutput(inputSource);
+
+        Assert.Equal(output, expectedOutput.Trim());
+    }
 }
