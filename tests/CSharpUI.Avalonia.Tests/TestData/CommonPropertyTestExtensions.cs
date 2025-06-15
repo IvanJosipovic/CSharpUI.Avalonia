@@ -20,5 +20,4 @@ public static partial class CommonPropertyTestExtensions
 
 
 
-
 }

@@ -21,7 +21,6 @@ public static partial class StyledPropertyTestExtensions
 
 
 
-
     //================= Styles ======================//
     // CanSave
 

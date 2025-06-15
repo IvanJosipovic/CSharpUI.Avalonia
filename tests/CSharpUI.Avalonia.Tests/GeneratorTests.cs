@@ -6,7 +6,7 @@ using Tests;
 
 namespace CSharpUI.Avalonia.Tests;
 
-public class PropertyGeneratorTests
+public class GeneratorTests
 {
     private static string? GetGeneratedOutput(string sourceCode)
     {
@@ -22,7 +22,7 @@ public class PropertyGeneratorTests
         var compilation = CSharpCompilation.Create("PropertyGeneratorTests",
                       [syntaxTree],
                       references,
-                      new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+                      new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
 
         // Source Generator to test
         var generator = new Generator();
@@ -78,7 +78,7 @@ public class PropertyGeneratorTests
     }
 
     [Fact]
-    public void CommonPropertyTest()
+    public void CommonProperty()
     {
         var (inputSource, expectedOutput) = GetTestSources(nameof(CommonPropertyTest), nameof(CommonPropertyTestExtensions));
 

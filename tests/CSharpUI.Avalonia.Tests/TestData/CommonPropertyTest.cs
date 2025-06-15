@@ -9,7 +9,7 @@ public class CommonPropertyTest : ViewBase
     /// <summary>
     /// My Comment
     /// </summary>
-    public string MyString { get; set; }
+    public string MyString { get; set; } = "";
 
     protected override object Build()
     {

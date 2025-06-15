@@ -21,5 +21,4 @@ public static partial class DirectPropertyTestExtensions
 
 
 
-
 }

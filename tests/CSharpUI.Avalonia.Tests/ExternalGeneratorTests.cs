@@ -24,7 +24,7 @@ public class ExternalPropertyGeneratorTests
         var externalAssemblyCompilation = CSharpCompilation.Create("ExternalAssembly",
               [externalAssemblySyntaxTree],
               references,
-              new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+              new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
 
         var dll = new MemoryStream();
         var comments = new MemoryStream();
@@ -48,7 +48,7 @@ public class ExternalPropertyGeneratorTests
         var compilation = CSharpCompilation.Create("ExternalPropertyGeneratorTests",
                       [syntaxTree],
                       references,
-                      new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+                      new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
 
 
         // Source Generator to test
@@ -106,7 +106,7 @@ public class ExternalPropertyGeneratorTests
     }
 
     [Fact]
-    public void CommonPropertyTest()
+    public void CommonProperty()
     {
         var (inputSource, expectedOutput) = GetTestSources(nameof(CommonPropertyTest), nameof(CommonPropertyTestExtensions));
 
