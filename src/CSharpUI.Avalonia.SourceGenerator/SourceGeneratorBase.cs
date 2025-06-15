@@ -59,7 +59,7 @@ public class SourceGeneratorBase
         foreach (var field in members.OfType<IFieldSymbol>())
         {
             if (field.Type is INamedTypeSymbol namedType &&
-                namedType.Name is "DirectProperty" or "StyledProperty" or "AttachedProperty" &&
+                namedType.Name is "DirectProperty" or "StyledProperty" &&
                 HasAvaloniaPropertyPublicSetter(field))
             {
                 sb.AppendLine($"    // Avalonia Property: {field.Name}");
@@ -68,6 +68,19 @@ public class SourceGeneratorBase
                 // AppendIfNotNull(sb, GetCommonPropertyExpressionBindingSetterExtension(type, genericParams))
                 // AppendIfNotNull(sb, GetPropertySetterExtension(typeName, genericParams, field));
                 // AppendIfNotNull(sb, GetExpressionBindingSetterExtension(typeName, genericParams, field));
+                processedFields.Add(field.Name);
+            }
+        }
+
+        // PROCESS AVALONIA ATTACHED PROPERTIES
+        foreach (var field in members.OfType<IFieldSymbol>())
+        {
+            if (field.Type is INamedTypeSymbol namedType
+                && IsAttachedPropertyField(field))
+            {
+                sb.AppendLine($"    // Avalonia Attached Property: {field.Name}");
+
+                AppendIfNotNull(sb, GetAttachedPropertySetterExtension(typeName, genericParams, field));
                 processedFields.Add(field.Name);
             }
         }
@@ -212,6 +225,19 @@ public class SourceGeneratorBase
     #endregion
 
     #region Field
+    private static bool IsAttachedPropertyField(IFieldSymbol field)
+    {
+        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
+            return false;
+
+        if (field.Type.Name.StartsWith("AttachedProperty"))
+        {
+            return !IsReadOnlyAttachedField(field);
+        }
+
+        return false;
+    }
+
     private static bool HasAvaloniaPropertyPublicSetter(IFieldSymbol field)
     {
         var backingPropertyName = field.Name.RemoveTrailingProperty();
@@ -265,21 +291,16 @@ public class SourceGeneratorBase
     private static bool IsReadOnlyAttachedField(IFieldSymbol field)
     {
         var controlType = field.ContainingType;
-        var setterMethodName = "Set" + field.Name;
-
-        if (setterMethodName.EndsWith("Property"))
-        {
-            setterMethodName = setterMethodName.Substring(0, setterMethodName.Length - "Property".Length);
-        }
+        var setterMethodName = "Set" + field.Name.RemoveTrailingProperty();
 
         var methodInfo = controlType?.GetMembers(setterMethodName).FirstOrDefault();
 
         if (methodInfo is IMethodSymbol method)
         {
-            return method.DeclaredAccessibility == Accessibility.Public && method.IsStatic;
+            return !(method.DeclaredAccessibility == Accessibility.Public && method.IsStatic);
         }
 
-        return false;
+        return true;
     }
 
     private static string GetPropertySetterExtension(string controlTypeName, string genericParams, IFieldSymbol field)
@@ -302,6 +323,30 @@ public class SourceGeneratorBase
         var extensionText =
             $"    public static {controlTypeName} {extensionName}{genericParams}(this {controlTypeName} control, {argsString}) =>{NewLine}"
           + $"        control._set(() => control.{extensionName} = value);";
+
+        return extensionText;
+    }
+
+    private static string GetAttachedPropertySetterExtension(string controlTypeName, string genericParams, IFieldSymbol field)
+    {
+        var extensionName = field.Name.RemoveTrailingProperty();
+
+        var returnType = "";
+
+        if (field.Type is INamedTypeSymbol nts)
+        {
+            returnType = nts.TypeArguments.Last().ToString();
+        }
+        else
+        {
+            throw new Exception("Unkown Type");
+        }
+
+        var argsString = $"{returnType} value";
+
+        var extensionText =
+            $"    public static {controlTypeName} {extensionName}{genericParams}(this {controlTypeName} control, {argsString}) =>{NewLine}"
+          + $"        control._set(() => {controlTypeName}.Set{extensionName}(control, value));";
 
         return extensionText;
     }

@@ -1,11 +1,15 @@
 #nullable enable
+using System;
+using Avalonia.Data;
+using Avalonia.Data.Converters;
+using System.Runtime.CompilerServices;
 using Tests;
 
 namespace CSharpUI.Avalonia;
 
 public static partial class AttachedPropertyTestExtensions
 {
-    // CanSave
-    public static StyledPropertyTest CanSave(this StyledPropertyTest control, Boolean value) =>
-        control._set(() => control.CanSave = value);
+    // Avalonia Attached Property: CommandProperty
+    public static AttachedPropertyTest Command(this AttachedPropertyTest control, System.Windows.Input.ICommand value) =>
+        control._set(() => AttachedPropertyTest.SetCommand(control, value));
 }
