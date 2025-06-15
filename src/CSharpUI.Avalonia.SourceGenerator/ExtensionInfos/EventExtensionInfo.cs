@@ -55,7 +55,7 @@ public class EventExtensionInfo : IMemberExtensionInfo
 
             if (HasRoutedEventArgs(parameters))
             {
-                var routedEventFieldInfo = ControlType.GetMembers(EventName + "Event").First(x => x.IsStatic && x.DeclaredAccessibility == Accessibility.Public);
+                var routedEventFieldInfo = ControlType.GetMembers(EventName + "Event").FirstOrDefault(x => x.IsStatic && x.DeclaredAccessibility == Accessibility.Public);
                 IsRoutedEvent = routedEventFieldInfo != null; //if routed event field located in base class, ignore it and count it classic event
             }
 

@@ -20,7 +20,7 @@ public class GeneratorHost()
                 .Where(x => IsAvaloniaPropertyField(x))
                 .Select(x => new PropertyExtensionInfo(x)),
 
-            new BindFromExpressionSetterGenerator(),
+            new ValueSetterGenerator(),
             new ValueOverloadsSetterGenerator()
         ),
 
@@ -30,7 +30,6 @@ public class GeneratorHost()
                 .Where(IsAttachedPropertyField)
                 .Select(x => new AttachedPropertyExtensionInfo(x)),
 
-            new AttachedPropertyMagicalSetterGenerator(),
             new AttachedPropertyBindFromExpressionSetterGenerator()
         ),
 
@@ -40,9 +39,7 @@ public class GeneratorHost()
                 .Where(x => !IsAvaloniaPropertyField(x) && IsCommonPropertyField(x))
                 .Select(x => new PropertyExtensionInfo(x)),
 
-            new CommonPropertySetterExtension(),
-            new CommonPropertyBindingSetterExtension(),
-            new CommonPropertyExpressionBindingSetterExtension()
+            new ValueSetterGenerator()
         ),
 
         new("Events",
@@ -80,27 +77,88 @@ public class GeneratorHost()
 
         var sb = new StringBuilder();
         sb.AppendLine("#nullable enable");
-        sb.AppendLine($"using Avalonia.Data;");
-        sb.AppendLine($"using Avalonia.Data.Converters;");
-        sb.AppendLine($"using System;");
-        sb.AppendLine($"using System.Numerics;");
-        sb.AppendLine($"using System.Linq.Expressions;");
-        sb.AppendLine($"using System.Runtime.CompilerServices;");
+        //sb.AppendLine($"using Avalonia.Data;");
+        //sb.AppendLine($"using Avalonia.Data.Converters;");
+        //sb.AppendLine($"using System;");
+        //sb.AppendLine($"using System.Numerics;");
+        //sb.AppendLine($"using System.Linq.Expressions;");
+        //sb.AppendLine($"using System.Runtime.CompilerServices;");
+        sb.Append("using CSharpUI.Avalonia.Styles;");
+        sb.Append("using CSharpUI.Avalonia.CommonExtensions;");
+        GetNamespaces(controlType).OrderBy(x => x).ToList().ForEach(x => sb.AppendLine($"using {x};"));
         sb.AppendLine();
-        sb.AppendLine("namespace Avalonia.Markup.Declarative;");
+        sb.AppendLine("namespace CSharpUI.Avalonia;");
         sb.AppendLine();
-        sb.AppendLine($"public static partial class {controlType.Name}_MarkupExtensions");
+        sb.AppendLine($"public static partial class {Extensions.CleanIdentifier(controlType.Name)}Extensions");
         sb.AppendLine("{");
 
         foreach (var group in extensionGroups.Where(x => x.extensions != null))
         {
-            sb.AppendLine($"//================= {group.GroupName} ======================//");
+            sb.AppendLine($"    //================= {group.GroupName} ======================//");
             sb.AppendLine(group.extensions);
         }
 
         sb.AppendLine("}");
 
         return sb.ToString();
+    }
+
+    private static List<string> GetNamespaces(INamedTypeSymbol type)
+    {
+        var namespaces = new HashSet<string>();
+
+        void AddNamespace(INamespaceSymbol? ns)
+        {
+            if (ns == null || ns.IsGlobalNamespace) return;
+            namespaces.Add(ns.ToDisplayString());
+        }
+
+        void CollectFromType(ITypeSymbol? t)
+        {
+            if (t == null) return;
+            if (t is INamedTypeSymbol named)
+            {
+                AddNamespace(named.ContainingNamespace);
+                foreach (var arg in named.TypeArguments)
+                    CollectFromType(arg);
+            }
+            else if (t is IArrayTypeSymbol arr)
+            {
+                CollectFromType(arr.ElementType);
+            }
+            else if (t is IPointerTypeSymbol ptr)
+            {
+                CollectFromType(ptr.PointedAtType);
+            }
+        }
+
+        foreach (var member in type.GetMembers())
+        {
+            switch (member)
+            {
+                case IPropertySymbol prop:
+                    CollectFromType(prop.Type);
+                    foreach (var param in prop.Parameters)
+                        CollectFromType(param.Type);
+                    break;
+                case IMethodSymbol method:
+                    CollectFromType(method.ReturnType);
+                    foreach (var param in method.Parameters)
+                        CollectFromType(param.Type);
+                    break;
+                case IFieldSymbol field:
+                    CollectFromType(field.Type);
+                    break;
+                case IEventSymbol evt:
+                    CollectFromType(evt.Type);
+                    break;
+            }
+        }
+
+        // Also add the type's own namespace
+        AddNamespace(type.ContainingNamespace);
+
+        return [..namespaces];
     }
 
     private static bool IsAvaloniaPropertyField(IFieldSymbol field)
@@ -169,11 +227,11 @@ public class GeneratorHost()
     private static bool IsReadOnlyField(IFieldSymbol field)
     {
         var controlType = field.ContainingType;
-        var propertyName = field.Name.Replace("Property", "");
+        var propertyName = field.Name.RemoveTrailingProperty();
 
         if (field.AssociatedSymbol != null)
         {
-            propertyName = field.AssociatedSymbol.Name.Replace("Property", "");
+            propertyName = field.AssociatedSymbol.Name.RemoveTrailingProperty();
         }
 
         var symbol = controlType?.GetMembers(propertyName).FirstOrDefault();
@@ -189,7 +247,7 @@ public class GeneratorHost()
     private static bool IsReadOnlyAttachedField(IFieldSymbol field)
     {
         var controlType = field.ContainingType;
-        var setterMethodName = "Set" + field.Name.Replace("Property", "");
+        var setterMethodName = "Set" + field.Name.RemoveTrailingProperty();
 
         var methodInfo = controlType?.GetMembers(setterMethodName).FirstOrDefault();
 
@@ -204,10 +262,5 @@ public class GeneratorHost()
     public static bool IsStyledElement(INamedTypeSymbol controlType)
     {
         return controlType.AllInterfaces.Any(x => x.Name == "IStyleable");
-    }
-
-    public static bool IsDeclarativeViewBase(INamedTypeSymbol controlType)
-    {
-        return controlType.AllInterfaces.Any(x => x.Name == "IDeclarativeViewBase");
     }
 }

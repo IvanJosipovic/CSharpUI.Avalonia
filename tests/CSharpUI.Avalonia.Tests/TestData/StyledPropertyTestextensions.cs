@@ -1,16 +1,36 @@
 #nullable enable
-using System;
+using Avalonia;
 using Avalonia.Data;
-using Avalonia.Data.Converters;
-using System.Runtime.CompilerServices;
+using CSharpUI.Avalonia.CommonExtensions;
+using CSharpUI.Avalonia.Styles;
+using System;
 using Tests;
 
 namespace CSharpUI.Avalonia;
 
 public static partial class StyledPropertyTestExtensions
 {
-    // Avalonia Property: CanSave
-    public static StyledPropertyTest CanSave(this StyledPropertyTest control, bool value) =>
-        control._set(() => control.CanSave = value);
+    //================= Properties ======================//
+    // CanSave
+
+    /*ValueSetterGenerator*/
+    /// <summary></summary>
+    public static T CanSave<T>(this T control, Boolean value) where T : StyledPropertyTest =>
+        control._set(() => control.CanSave = value!);
+
+
+
+    //================= Styles ======================//
+    // CanSave
+
+    /*ValueStyleSetterGenerator*/
+    public static Style<T> CanSave<T>(this Style<T> style, Boolean value) where T : StyledPropertyTest
+    => style._addSetter(StyledPropertyTest.CanSaveProperty!, value!);
+
+    /*BindingStyleSetterGenerator*/
+    public static Style<T> CanSave<T>(this Style<T> style, IBinding binding) where T : StyledPropertyTest
+    => style._addSetter(StyledPropertyTest.CanSaveProperty, binding);
+
+
 
 }

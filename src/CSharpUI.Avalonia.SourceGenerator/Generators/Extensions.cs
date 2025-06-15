@@ -1,6 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace CSharpUI.Avalonia.SourceGenerator.Generators;
 
@@ -119,5 +121,55 @@ internal static class Extensions
         }
 
         return false;
+    }
+
+    internal static string? GetDocumentation(IFieldSymbol field)
+    {
+        var docs = field.GetDocumentationCommentXml();
+
+        if (!string.IsNullOrEmpty(docs))
+        {
+            docs = GetSummary(docs!);
+        }
+
+        if (string.IsNullOrEmpty(docs))
+        {
+            var propertyName = field.Name.RemoveTrailingProperty();
+
+            if (field.AssociatedSymbol != null)
+            {
+                propertyName = field.AssociatedSymbol!.MetadataName;
+            }
+
+            var property = field.ContainingType
+                .GetMembers()
+                .OfType<IPropertySymbol>()
+                .FirstOrDefault(p => p.Name == propertyName);
+
+            if (property != null)
+            {
+                docs = property.GetDocumentationCommentXml();
+                if (!string.IsNullOrEmpty(docs))
+                {
+                    docs = GetSummary(docs!);
+                }
+            }
+        }
+
+        static string? GetSummary(string comment)
+        {
+            try
+            {
+                var element = XElement.Parse(comment);
+                var summary = element.Element("summary")?.Value.Trim();
+                return summary;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
+        return docs;
     }
 }

@@ -19,7 +19,7 @@ public class PropertyGeneratorTests
                                   .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
                                   .Cast<MetadataReference>();
 
-        var compilation = CSharpCompilation.Create("AvaloniaPropertyExtensionsGeneratorTests",
+        var compilation = CSharpCompilation.Create("PropertyGeneratorTests",
                       [syntaxTree],
                       references,
                       new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
@@ -36,13 +36,6 @@ public class PropertyGeneratorTests
         Assert.Empty(diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error));
 
         var code = outputCompilation.SyntaxTrees.Skip(1).LastOrDefault()?.ToString();
-
-        // remove // Auto-generated code <date/time>
-        if (code != null)
-        {
-            var lines = code.Split([Environment.NewLine], StringSplitOptions.None);
-            code = string.Join(Environment.NewLine, lines.Where(line => !line.TrimStart().StartsWith("// Auto-generated code")));
-        }
 
         return code?.Trim();
     }

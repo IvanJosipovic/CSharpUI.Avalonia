@@ -26,25 +26,26 @@ public class ExternalPropertyGeneratorTests
               references,
               new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-        var stream = new MemoryStream();
-        var results = externalAssemblyCompilation.Emit(stream);
+        var dll = new MemoryStream();
+        var comments = new MemoryStream();
+        var results = externalAssemblyCompilation.Emit(dll, null, comments);
 
         if (!results.Success)
         {
             throw new Exception(results.Diagnostics.First().GetMessage());
         }
 
-        stream.Position = 0;
-        references.Add(MetadataReference.CreateFromStream(stream));
+        dll.Position = 0;
+        comments.Position = 0;
+        references.Add(MetadataReference.CreateFromStream(dll, documentation: XmlDocumentationProvider.CreateFromBytes(comments.ToArray())));
 
         var syntaxTree = CSharpSyntaxTree.ParseText("""
             using CSharpUI.Avalonia;
             using Tests;
             [assembly: GenerateExtensionsForAssembly(typeof(TestPointer))]
-            [assembly: GenerateExtensionsForAssembly(typeof(TestPointer))]
             """);
 
-        var compilation = CSharpCompilation.Create("SourceGeneratorTests",
+        var compilation = CSharpCompilation.Create("ExternalPropertyGeneratorTests",
                       [syntaxTree],
                       references,
                       new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
@@ -62,13 +63,6 @@ public class ExternalPropertyGeneratorTests
         Assert.Empty(diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error));
 
         var code = outputCompilation.SyntaxTrees.Skip(1).Last(x => !x.FilePath.EndsWith("TestPointerExtensions.g.cs")).ToString();
-
-        // remove // Auto-generated code <date/time>
-        if (code != null)
-        {
-            var lines = code.Split([Environment.NewLine], StringSplitOptions.None);
-            code = string.Join(Environment.NewLine, lines.Where(line => !line.TrimStart().StartsWith("// Auto-generated code")));
-        }
 
         return code?.Trim();
     }

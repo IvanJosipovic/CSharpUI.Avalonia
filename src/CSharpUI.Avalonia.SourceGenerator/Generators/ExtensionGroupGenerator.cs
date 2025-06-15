@@ -17,7 +17,7 @@ public class ExtensionGroupGenerator(
         var sb = new StringBuilder();
         foreach (var extensionInfo in membersQuery(avaloniaControlType))
         {
-            sb.AppendLine($" // {extensionInfo.MemberName}");
+            sb.AppendLine($"    // {extensionInfo.MemberName}");
 
             foreach (var generator in generators)
             {
@@ -25,7 +25,7 @@ public class ExtensionGroupGenerator(
                 if (!string.IsNullOrWhiteSpace(extensionCode))
                 {
                     sb.AppendLine();
-                    sb.AppendLine($"/*{generator.GetType().Name}*/");
+                    sb.AppendLine($"    /*{generator.GetType().Name}*/");
                     sb.AppendLine(extensionCode);
                     generationsCount++;
                 }
