@@ -17,7 +17,7 @@ public class GeneratorHost()
         new("Properties",
             t => t.GetMembers()
                 .OfType<IFieldSymbol>()
-                .Where(x => IsAvaloniaPropertyField(x))
+                .Where(x => x.IsAvaloniaPropertyField())
                 .Select(x => new PropertyExtensionInfo(x)),
 
             new ValueSetterGenerator(),
@@ -27,7 +27,7 @@ public class GeneratorHost()
         new("Attached Properties",
             t => t.GetMembers()
                 .OfType<IFieldSymbol>()
-                .Where(IsAttachedPropertyField)
+                .Where(x => x.IsAttachedPropertyField())
                 .Select(x => new AttachedPropertyExtensionInfo(x)),
 
             new AttachedPropertyBindFromExpressionSetterGenerator()
@@ -35,9 +35,9 @@ public class GeneratorHost()
 
         new("Common Properties",
             t => t.GetMembers()
-                .OfType<IFieldSymbol>()
-                .Where(x => !IsAvaloniaPropertyField(x)
-                            && IsCommonPropertyField(x))
+                .OfType<IPropertySymbol>()
+                .Where(x => !x.IsAvaloniaProperty()
+                            && x.IsCommonProperty())
                 .Select(x => new PropertyExtensionInfo(x)),
 
             new ValueSetterGenerator()
@@ -52,10 +52,10 @@ public class GeneratorHost()
             new ActionToEventGenerator()),
 
         new("Styles",
-            t => !IsStyledElement(t) ? [] : t
+            t => !t.IsStyledElement() ? [] : t
                 .GetMembers()
                 .OfType<IFieldSymbol>()
-                .Where(IsAcceptableStyledField)
+                .Where(x => x.IsAcceptableStyledField())
                 .Select(x => new PropertyExtensionInfo(x)),
 
             new ValueStyleSetterGenerator(),
@@ -86,7 +86,7 @@ public class GeneratorHost()
         //sb.AppendLine($"using System.Runtime.CompilerServices;");
         sb.AppendLine("using CSharpUI.Avalonia.Styles;");
         sb.AppendLine("using CSharpUI.Avalonia.CommonExtensions;");
-        GetNamespaces(controlType).OrderBy(x => x).ToList().ForEach(x => sb.AppendLine($"using {x};"));
+        controlType.GetNamespaces().OrderBy(x => x).ToList().ForEach(x => sb.AppendLine($"using {x};"));
         sb.AppendLine();
         sb.AppendLine("namespace CSharpUI.Avalonia;");
         sb.AppendLine();
@@ -102,154 +102,5 @@ public class GeneratorHost()
         sb.AppendLine("}");
 
         return sb.ToString();
-    }
-
-    private static List<string> GetNamespaces(INamedTypeSymbol type)
-    {
-        var namespaces = new HashSet<string>();
-
-        void AddNamespace(INamespaceSymbol? ns)
-        {
-            if (ns == null || ns.IsGlobalNamespace) return;
-            namespaces.Add(ns.ToDisplayString());
-        }
-
-        void CollectFromType(ITypeSymbol? t)
-        {
-            if (t == null) return;
-            if (t is INamedTypeSymbol named)
-            {
-                AddNamespace(named.ContainingNamespace);
-                foreach (var arg in named.TypeArguments)
-                    CollectFromType(arg);
-            }
-            else if (t is IArrayTypeSymbol arr)
-            {
-                CollectFromType(arr.ElementType);
-            }
-            else if (t is IPointerTypeSymbol ptr)
-            {
-                CollectFromType(ptr.PointedAtType);
-            }
-        }
-
-        foreach (var member in type.GetMembers())
-        {
-            switch (member)
-            {
-                case IPropertySymbol prop:
-                    CollectFromType(prop.Type);
-                    foreach (var param in prop.Parameters)
-                        CollectFromType(param.Type);
-                    break;
-                case IMethodSymbol method:
-                    CollectFromType(method.ReturnType);
-                    foreach (var param in method.Parameters)
-                        CollectFromType(param.Type);
-                    break;
-                case IFieldSymbol field:
-                    CollectFromType(field.Type);
-                    break;
-                case IEventSymbol evt:
-                    CollectFromType(evt.Type);
-                    break;
-            }
-        }
-
-        // Also add the type's own namespace
-        AddNamespace(type.ContainingNamespace);
-
-        return [..namespaces];
-    }
-
-    private static bool IsAvaloniaPropertyField(IFieldSymbol field)
-    {
-        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
-            return false;
-
-        if (field.Type.Name.StartsWith("DirectProperty") ||
-            field.Type.Name.StartsWith("StyledProperty") ||
-            //some attached properties Mapped to properties of controls, i.e. TextBlock.TextWrapping
-            //so we need to add direct Extensions for them, additionally to AttachedProperty extensions
-            field.Type.Name.StartsWith("AttachedProperty") ||
-            field.Type.Name.StartsWith("AvaloniaProperty"))
-        {
-            return !IsReadOnlyField(field);
-        }
-
-        return false;
-    }
-
-    private static bool IsCommonPropertyField(IFieldSymbol field)
-    {
-        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
-            return false;
-
-        return !IsReadOnlyField(field);
-    }
-
-    private static bool IsAttachedPropertyField(IFieldSymbol field)
-    {
-        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
-            return false;
-
-        if (field.Type.Name.StartsWith("AttachedProperty"))
-        {
-            return !IsReadOnlyAttachedField(field);
-        }
-
-        return false;
-    }
-
-    private static bool IsAcceptableStyledField(IFieldSymbol field)
-    {
-        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
-            return false;
-
-        if (field.Type.Name.StartsWith("StyledProperty") ||
-            field.Type.Name.StartsWith("AttachedProperty"))
-            return !IsReadOnlyField(field);
-
-        return false;
-    }
-
-    private static bool IsReadOnlyField(IFieldSymbol field)
-    {
-        var controlType = field.ContainingType;
-        var propertyName = field.Name.RemoveTrailingProperty();
-
-        if (field.AssociatedSymbol != null)
-        {
-            propertyName = field.AssociatedSymbol.Name.RemoveTrailingProperty();
-        }
-
-        var symbol = controlType?.GetMembers(propertyName).FirstOrDefault();
-
-        if (symbol is IPropertySymbol prop)
-        {
-            return !prop.HasPublicSetter();
-        }
-
-        return true;
-    }
-
-    private static bool IsReadOnlyAttachedField(IFieldSymbol field)
-    {
-        var controlType = field.ContainingType;
-        var setterMethodName = "Set" + field.Name.RemoveTrailingProperty();
-
-        var methodInfo = controlType?.GetMembers(setterMethodName).FirstOrDefault();
-
-        if (methodInfo is IMethodSymbol method)
-        {
-            return !(method.DeclaredAccessibility == Accessibility.Public && method.IsStatic);
-        }
-
-        return false;
-    }
-
-    public static bool IsStyledElement(INamedTypeSymbol controlType)
-    {
-        return controlType.AllInterfaces.Any(x => x.Name == "IStyleable");
     }
 }

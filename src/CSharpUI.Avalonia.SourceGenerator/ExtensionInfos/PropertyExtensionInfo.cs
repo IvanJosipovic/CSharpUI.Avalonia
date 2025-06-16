@@ -4,7 +4,8 @@ using Microsoft.CodeAnalysis;
 namespace CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 public class PropertyExtensionInfo : IMemberExtensionInfo
 {
-    public IFieldSymbol FieldInfo { get; }
+    public string FieldName { get; }
+    //public IFieldSymbol FieldInfo { get; }
     public ITypeSymbol ControlType { get; }
     public string ControlTypeName { get; }
     public string ExtensionName { get; protected set; }
@@ -21,11 +22,11 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
 
     public PropertyExtensionInfo(IFieldSymbol field)
     {
-        FieldInfo = field;
+        FieldName = field.Name;
         ControlType = field.ContainingType ?? throw new NullReferenceException("Control type can not be NULL");
         ExtensionName = field.Name.RemoveTrailingProperty();
         MemberName = field.Name.RemoveTrailingProperty();
-        Comment = Extensions.GetDocumentation(field);
+        Comment = field.GetDocumentation();
 
         if (field.AssociatedSymbol != null)
         {
@@ -56,8 +57,35 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
         }
     }
 
-    public static IMemberExtensionInfo Create(IFieldSymbol fieldInfo)
+    public PropertyExtensionInfo(IPropertySymbol property)
     {
-        return new PropertyExtensionInfo(fieldInfo);
+        //FieldInfo = property;
+        FieldName = "tst";
+        ControlType = property.ContainingType ?? throw new NullReferenceException("Control type can not be NULL");
+        ExtensionName = property.Name.RemoveTrailingProperty();
+        MemberName = property.Name.RemoveTrailingProperty();
+        Comment = property.GetDocumentation();
+
+        ValueType = property.Type;
+        ControlTypeName = ControlType.Name;
+
+        var t = (INamedTypeSymbol)property.Type;
+
+        var type = t.TypeArguments.LastOrDefault();
+
+        type ??= t;
+
+        ValueTypeSource = type.Name;
+
+        //IsAttachedProperty = property.Type.Name.StartsWith("AttachedProperty");
+        IsGeneric = !property.Type.IsSealed;
+
+        ReturnType = ControlTypeName;
+        if (IsGeneric)
+        {
+            ReturnType = "T";
+            GenericConstraint = $" where T : {ControlTypeName}";
+            GenericArg = "<T>";
+        }
     }
 }

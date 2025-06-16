@@ -8,10 +8,10 @@ public class AttachedPropertyExtensionInfo : PropertyExtensionInfo
 
     public AttachedPropertyExtensionInfo(IFieldSymbol field) : base(field)
     {
-        ExtensionName = $"{ControlType.Name}_{ExtensionName}";
+        ExtensionName = $"Set{ExtensionName}";
         var declaredType = field.ContainingType;
 
-        var symbol = declaredType.GetMembers().FirstOrDefault(x => x.Name == $"Set{MemberName}");
+        var symbol = declaredType.GetMembers().FirstOrDefault(x => x.Name == ExtensionName);
 
         if (symbol is IMethodSymbol method)
         {

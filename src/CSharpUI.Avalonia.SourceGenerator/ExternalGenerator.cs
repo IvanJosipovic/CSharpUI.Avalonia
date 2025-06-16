@@ -64,11 +64,6 @@ public class ExternalGenerator : IIncrementalGenerator
             {
                 var code = generator.GenerateExtensions(publicClass);
 
-
-                var test = publicClass.GetMembers();
-                //.OfType<IFieldSymbol>();
-
-
                 if (code != null)
                 {
                     spc.AddSource($"{Extensions.RemoveIllegalFileNameCharacters(publicClass.ToString())}.g.cs", code);

@@ -8,14 +8,14 @@ namespace CSharpUI.Avalonia.SourceGenerator.Generators;
 
 internal static class Extensions
 {
-    public static string NewLine = "\r\n";
+    internal static string NewLine = "\r\n";
 
     private static readonly char[] InvalidHintNameChars =
     [
         '<', '>', ':', '"', '/', '\\', '|', '?', '*'
     ];
 
-    public static string? CleanIdentifier(string name, bool @namespace = false)
+    internal static string? CleanIdentifier(string name, bool @namespace = false)
     {
         // trim off leading and trailing whitespace
         name = name.Trim();
@@ -73,7 +73,7 @@ internal static class Extensions
         return result;
     }
 
-    public static string RemoveIllegalFileNameCharacters(string fileName)
+    internal static string RemoveIllegalFileNameCharacters(string fileName)
     {
         return string.Concat(fileName.Select(c => InvalidHintNameChars.Contains(c) || char.IsControl(c) ? '_' : c));
     }
@@ -123,36 +123,31 @@ internal static class Extensions
         return false;
     }
 
-    internal static string? GetDocumentation(IFieldSymbol field)
+    internal static string? GetDocumentation(this IFieldSymbol field)
     {
-        var docs = field.GetDocumentationCommentXml();
+        var docs = "";
+        var propertyName = field.Name.RemoveTrailingProperty();
 
-        if (!string.IsNullOrEmpty(docs))
+        if (field.AssociatedSymbol != null)
         {
-            docs = GetSummary(docs!);
+            propertyName = field.AssociatedSymbol!.MetadataName;
+        }
+        else if (field.IsAttachedPropertyField())
+        {
+            propertyName = "Set" + propertyName;
         }
 
-        if (string.IsNullOrEmpty(docs))
+        var property = field.ContainingType
+            .GetMembers(propertyName)
+            //.OfType<IPropertySymbol>()
+            .FirstOrDefault();
+
+        if (property != null)
         {
-            var propertyName = field.Name.RemoveTrailingProperty();
-
-            if (field.AssociatedSymbol != null)
+            docs = property.GetDocumentationCommentXml();
+            if (!string.IsNullOrEmpty(docs))
             {
-                propertyName = field.AssociatedSymbol!.MetadataName;
-            }
-
-            var property = field.ContainingType
-                .GetMembers()
-                .OfType<IPropertySymbol>()
-                .FirstOrDefault(p => p.Name == propertyName);
-
-            if (property != null)
-            {
-                docs = property.GetDocumentationCommentXml();
-                if (!string.IsNullOrEmpty(docs))
-                {
-                    docs = GetSummary(docs!);
-                }
+                docs = GetSummary(docs!);
             }
         }
 
@@ -171,5 +166,205 @@ internal static class Extensions
         }
 
         return docs;
+    }
+
+    internal static string? GetDocumentation(this IPropertySymbol property)
+    {
+        var docs = property.GetDocumentationCommentXml();
+
+        if (!string.IsNullOrEmpty(docs))
+        {
+            docs = GetSummary(docs!);
+        }
+
+        static string? GetSummary(string comment)
+        {
+            try
+            {
+                var element = XElement.Parse(comment);
+                var summary = element.Element("summary")?.Value.Trim();
+                return summary;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
+        return docs;
+    }
+
+    internal static bool IsAvaloniaPropertyField(this IFieldSymbol field)
+    {
+        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
+            return false;
+
+        if (field.Type.Name.StartsWith("DirectProperty") ||
+            field.Type.Name.StartsWith("StyledProperty") ||
+            //some attached properties Mapped to properties of controls, i.e. TextBlock.TextWrapping
+            //so we need to add direct Extensions for them, additionally to AttachedProperty extensions
+            field.Type.Name.StartsWith("AttachedProperty") ||
+            field.Type.Name.StartsWith("AvaloniaProperty"))
+        {
+            return !field.IsReadOnlyField();
+        }
+
+        return false;
+    }
+
+    internal static bool IsReadOnlyField(this IFieldSymbol field)
+    {
+        var controlType = field.ContainingType;
+        var propertyName = field.Name.RemoveTrailingProperty();
+
+        if (field.AssociatedSymbol != null)
+        {
+            propertyName = field.AssociatedSymbol.Name.RemoveTrailingProperty();
+        }
+
+        var symbol = controlType?.GetMembers(propertyName).FirstOrDefault();
+
+        if (symbol is IPropertySymbol prop)
+        {
+            return !prop.HasPublicSetter();
+        }
+
+        return true;
+    }
+
+    internal static bool IsAttachedPropertyField(this IFieldSymbol field)
+    {
+        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
+            return false;
+
+        if (field.Type.Name.StartsWith("AttachedProperty"))
+        {
+            return !field.IsReadOnlyAttachedField();
+        }
+
+        return false;
+    }
+
+    internal static bool IsReadOnlyAttachedField(this IFieldSymbol field)
+    {
+        var controlType = field.ContainingType;
+        var setterMethodName = "Set" + field.Name.RemoveTrailingProperty();
+
+        var methodInfo = controlType?.GetMembers(setterMethodName).FirstOrDefault();
+
+        if (methodInfo is IMethodSymbol method)
+        {
+            return !(method.DeclaredAccessibility == Accessibility.Public && method.IsStatic);
+        }
+
+        return false;
+    }
+
+    internal static List<string> GetNamespaces(this INamedTypeSymbol type)
+    {
+        var namespaces = new HashSet<string>();
+
+        void AddNamespace(INamespaceSymbol? ns)
+        {
+            if (ns == null || ns.IsGlobalNamespace) return;
+            namespaces.Add(ns.ToDisplayString());
+        }
+
+        void CollectFromType(ITypeSymbol? t)
+        {
+            if (t == null) return;
+            if (t is INamedTypeSymbol named)
+            {
+                AddNamespace(named.ContainingNamespace);
+                foreach (var arg in named.TypeArguments)
+                    CollectFromType(arg);
+            }
+            else if (t is IArrayTypeSymbol arr)
+            {
+                CollectFromType(arr.ElementType);
+            }
+            else if (t is IPointerTypeSymbol ptr)
+            {
+                CollectFromType(ptr.PointedAtType);
+            }
+        }
+
+        foreach (var member in type.GetMembers())
+        {
+            switch (member)
+            {
+                case IPropertySymbol prop:
+                    CollectFromType(prop.Type);
+                    foreach (var param in prop.Parameters)
+                        CollectFromType(param.Type);
+                    break;
+                case IMethodSymbol method:
+                    CollectFromType(method.ReturnType);
+                    foreach (var param in method.Parameters)
+                        CollectFromType(param.Type);
+                    break;
+                case IFieldSymbol field:
+                    CollectFromType(field.Type);
+                    break;
+                case IEventSymbol evt:
+                    CollectFromType(evt.Type);
+                    break;
+            }
+        }
+
+        // Also add the type's own namespace
+        AddNamespace(type.ContainingNamespace);
+
+        return [.. namespaces];
+    }
+
+    internal static bool IsAvaloniaProperty(this IPropertySymbol property)
+    {
+        if (property.ContainingType.GetMembers(property.Name + "Property").FirstOrDefault() is not IFieldSymbol field) return false;
+
+        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
+            return false;
+
+        if (field.Type.Name.StartsWith("DirectProperty") ||
+            field.Type.Name.StartsWith("StyledProperty") ||
+            //some attached properties Mapped to properties of controls, i.e. TextBlock.TextWrapping
+            //so we need to add direct Extensions for them, additionally to AttachedProperty extensions
+            field.Type.Name.StartsWith("AttachedProperty") ||
+            field.Type.Name.StartsWith("AvaloniaProperty"))
+        {
+            return !IsReadOnlyField(field);
+        }
+
+        return false;
+    }
+
+    internal static bool IsCommonProperty(this IPropertySymbol property)
+    {
+        if (property.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
+            return false;
+
+        return !IsReadOnly(property);
+    }
+
+    internal static bool IsReadOnly(this IPropertySymbol property)
+    {
+        return !property.HasPublicSetter();
+    }
+
+    internal static bool IsAcceptableStyledField(this IFieldSymbol field)
+    {
+        if (field.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
+            return false;
+
+        if (field.Type.Name.StartsWith("StyledProperty") ||
+            field.Type.Name.StartsWith("AttachedProperty"))
+            return !IsReadOnlyField(field);
+
+        return false;
+    }
+
+    internal static bool IsStyledElement(this INamedTypeSymbol controlType)
+    {
+        return controlType.AllInterfaces.Any(x => x.Name == "IStyleable");
     }
 }
