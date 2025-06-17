@@ -63,6 +63,16 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
         ValueType = property.Type;
         ControlTypeName = ControlType.Name;
 
+        if (ControlType is INamedTypeSymbol ct)
+        {
+            if (ct.TypeArguments.Length > 0)
+            {
+                ControlTypeName += "<";
+                ControlTypeName += ct.TypeArguments.Select(x => x.Name).Aggregate((x,y) => x + ", " + y);
+                ControlTypeName += ">";
+            }
+        }
+
         if(property.Type is INamedTypeSymbol nts)
         {
             var type = nts.TypeArguments.LastOrDefault();
@@ -94,6 +104,15 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
             ReturnType = "T";
             GenericConstraint = $" where T : {ControlTypeName}";
             GenericArg = "<T>";
+
+            if (ControlType is INamedTypeSymbol ct2 )
+            {
+                if (ct2.TypeArguments.Length > 0)
+                {
+                    GenericConstraint += " " + ct2.TypeArguments.Select(x => $"where {x.Name} : class").Aggregate((x, y) => x + ", " + y);
+                    GenericArg = "<T, " + ct2.TypeArguments.Select(x => x.Name).Aggregate((x, y) => x + ", " + y) + ">";
+                }
+            }
         }
     }
 }
