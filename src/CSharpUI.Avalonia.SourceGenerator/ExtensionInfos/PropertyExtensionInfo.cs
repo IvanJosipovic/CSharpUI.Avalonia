@@ -33,13 +33,52 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
         ValueType = field.Type;
         ControlTypeName = ControlType.Name;
 
-        var t = (INamedTypeSymbol)field.Type;
+        if (ControlType is INamedTypeSymbol ct)
+        {
+            if (ct.TypeArguments.Length > 0)
+            {
+                ControlTypeName += "<";
+                ControlTypeName += ct.TypeArguments.Select(x => x.Name + (x.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "")).Aggregate((x, y) => x + ", " + y);
+                ControlTypeName += ">";
+                ValueTypeSource += ct.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
+            }
+        }
 
-        var type = t.TypeArguments.LastOrDefault();
+        if (field.Type is INamedTypeSymbol nts)
+        {
+            ValueTypeSource = nts.Name;
 
-        type ??= t;
+            var type = nts.TypeArguments.LastOrDefault();
 
-        ValueTypeSource = type.Name;
+            if (type != null)
+            {
+                ValueTypeSource = type.Name;
+
+                if (type is INamedTypeSymbol nts2)
+                {
+                    if (nts2.TypeArguments.Length > 0)
+                    {
+                        ValueTypeSource += "<";
+                        ValueTypeSource += nts2.TypeArguments.Select(x => x.Name + (x.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "")).Aggregate((x, y) => x + ", " + y);
+                        ValueTypeSource += ">";
+                        ValueTypeSource += nts2.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
+                    }
+                }
+            }
+            else
+            {
+                ValueTypeSource = nts.Name;
+            }
+        }
+        else if (field.Type is ITypeParameterSymbol tps)
+        {
+            ValueTypeSource = tps.Name;
+        }
+        else
+        {
+            ValueTypeSource = "";
+            throw new Exception("shouldnt be here");
+        }
 
         IsAttachedProperty = field.Type.Name.StartsWith("AttachedProperty");
         IsGeneric = !field.Type.IsSealed;
@@ -50,6 +89,15 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
             ReturnType = "T";
             GenericConstraint = $" where T : {ControlTypeName}";
             GenericArg = "<T>";
+
+            if (ControlType is INamedTypeSymbol ct2)
+            {
+                if (ct2.TypeArguments.Length > 0)
+                {
+                    GenericConstraint += " " + ct2.TypeArguments.Select(x => $"where {x.Name} : class").Aggregate((x, y) => x + ", " + y);
+                    GenericArg = "<T, " + ct2.TypeArguments.Select(x => x.Name).Aggregate((x, y) => x + ", " + y) + ">";
+                }
+            }
         }
     }
 
@@ -68,24 +116,39 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
             if (ct.TypeArguments.Length > 0)
             {
                 ControlTypeName += "<";
-                ControlTypeName += ct.TypeArguments.Select(x => x.Name).Aggregate((x,y) => x + ", " + y);
+                ControlTypeName += ct.TypeArguments.Select(x => x.Name + (x.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "")).Aggregate((x, y) => x + ", " + y);
                 ControlTypeName += ">";
+                ValueTypeSource += ct.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
             }
         }
 
-        if(property.Type is INamedTypeSymbol nts)
+        if (property.Type is INamedTypeSymbol nts)
         {
+            ValueTypeSource = nts.Name;
+
             var type = nts.TypeArguments.LastOrDefault();
+
             if (type != null)
             {
                 ValueTypeSource = type.Name;
+
+                if (type is INamedTypeSymbol nts2)
+                {
+                    if (nts2.TypeArguments.Length > 0)
+                    {
+                        ValueTypeSource += "<";
+                        ValueTypeSource += nts2.TypeArguments.Select(x => x.Name + (x.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "")).Aggregate((x, y) => x + ", " + y);
+                        ValueTypeSource += ">";
+                        ValueTypeSource += nts2.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
+                    }
+                }
             }
             else
             {
                 ValueTypeSource = nts.Name;
             }
         }
-        else if(property.Type is ITypeParameterSymbol tps)
+        else if (property.Type is ITypeParameterSymbol tps)
         {
             ValueTypeSource = tps.Name;
         }

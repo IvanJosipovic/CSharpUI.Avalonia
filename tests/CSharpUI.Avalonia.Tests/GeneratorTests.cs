@@ -97,4 +97,14 @@ public class GeneratorTests
 
         Assert.Equal(output, expectedOutput.Trim());
     }
+
+    [Fact]
+    public void GenericPropertyTest()
+    {
+        var (inputSource, expectedOutput) = GetTestSources(nameof(GenericPropertyTest), nameof(GenericPropertyTestExtensions));
+
+        var output = GetGeneratedOutput(inputSource);
+
+        Assert.Equal(output, expectedOutput.Trim());
+    }
 }
