@@ -7,7 +7,7 @@ using Avalonia;
 using System;
 using Tests;
 
-namespace CSharpUI.Avalonia;
+namespace CSharpUI.Avalonia.Extensions;
 
 public static partial class DirectPropertyTestExtensions
 {

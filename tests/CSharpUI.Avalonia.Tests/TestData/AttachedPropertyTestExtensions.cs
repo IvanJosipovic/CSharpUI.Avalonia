@@ -8,7 +8,7 @@ using System;
 using System.Windows.Input;
 using Tests;
 
-namespace CSharpUI.Avalonia;
+namespace CSharpUI.Avalonia.Extensions;
 
 public static partial class AttachedPropertyTestExtensions
 {

@@ -1,4 +1,5 @@
 using Avalonia;
+using CSharpUI.Avalonia.Extensions;
 using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -109,6 +110,16 @@ public class ExternalPropertyGeneratorTests
     public void CommonProperty()
     {
         var (inputSource, expectedOutput) = GetTestSources(nameof(CommonPropertyTest), nameof(CommonPropertyTestExtensions));
+
+        var output = GetGeneratedOutput(inputSource);
+
+        Assert.Equal(output, expectedOutput.Trim());
+    }
+
+    [Fact]
+    public void GenericBaseTest()
+    {
+        var (inputSource, expectedOutput) = GetTestSources(nameof(GenericBaseTest), nameof(GenericBaseTestExtensions));
 
         var output = GetGeneratedOutput(inputSource);
 

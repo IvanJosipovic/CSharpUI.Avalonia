@@ -8,15 +8,15 @@ using Tests;
 
 namespace CSharpUI.Avalonia.Extensions;
 
-public static partial class CommonPropertyTestExtensions
+public static partial class GenericBaseTestExtensions
 {
     //================= Common Properties ======================//
-    // MyString
+    // ViewModel
 
     /*ValueSetterGenerator*/
-    /// <summary>My Comment</summary>
-    public static CommonPropertyTest MyString(this CommonPropertyTest control, String value)
-        => control._set(() => control.MyString = value!);
+    /// <summary></summary>
+    public static T ViewModel<T, TViewModel>(this T control, TViewModel value) where T : GenericBaseTest<TViewModel> where TViewModel : class
+        => control._set(() => control.ViewModel = value!);
 
 
 

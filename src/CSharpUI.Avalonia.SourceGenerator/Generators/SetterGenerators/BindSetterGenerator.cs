@@ -12,6 +12,6 @@ public class BindSetterGenerator : ExtensionGeneratorBase<PropertyExtensionInfo>
 
         return
             $"    public static {info.ReturnType} {info.ExtensionName}{info.GenericArg}(this {info.ReturnType} control, IBinding binding){info.GenericConstraint}{Extensions.NewLine}" +
-            $"        => control._set({info.ControlTypeName}.{info.FieldName}, binding);";
+            $"        => control._set({info.ControlTypeName}.{info.MemberName}, binding);";
     }
 }

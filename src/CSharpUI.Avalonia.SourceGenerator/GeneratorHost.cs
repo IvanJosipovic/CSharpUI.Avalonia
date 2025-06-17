@@ -88,7 +88,7 @@ public class GeneratorHost()
         sb.AppendLine("using CSharpUI.Avalonia.CommonExtensions;");
         controlType.GetNamespaces().OrderBy(x => x).ToList().ForEach(x => sb.AppendLine($"using {x};"));
         sb.AppendLine();
-        sb.AppendLine("namespace CSharpUI.Avalonia;");
+        sb.AppendLine("namespace CSharpUI.Avalonia.Extensions;");
         sb.AppendLine();
         sb.AppendLine($"public static partial class {Extensions.CleanIdentifier(controlType.Name)}Extensions");
         sb.AppendLine("{");

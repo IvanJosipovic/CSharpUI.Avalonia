@@ -4,8 +4,6 @@ using Microsoft.CodeAnalysis;
 namespace CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 public class PropertyExtensionInfo : IMemberExtensionInfo
 {
-    public string FieldName { get; }
-    //public IFieldSymbol FieldInfo { get; }
     public ITypeSymbol ControlType { get; }
     public string ControlTypeName { get; }
     public string ExtensionName { get; protected set; }
@@ -19,10 +17,8 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
     public string GenericArg { get; set; } = "";
     public string? Comment { get; set; }
 
-
     public PropertyExtensionInfo(IFieldSymbol field)
     {
-        FieldName = field.Name;
         ControlType = field.ContainingType ?? throw new NullReferenceException("Control type can not be NULL");
         ExtensionName = field.Name.RemoveTrailingProperty();
         MemberName = field.Name.RemoveTrailingProperty();
@@ -59,8 +55,6 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
 
     public PropertyExtensionInfo(IPropertySymbol property)
     {
-        //FieldInfo = property;
-        FieldName = "tst";
         ControlType = property.ContainingType ?? throw new NullReferenceException("Control type can not be NULL");
         ExtensionName = property.Name.RemoveTrailingProperty();
         MemberName = property.Name.RemoveTrailingProperty();
@@ -69,13 +63,27 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
         ValueType = property.Type;
         ControlTypeName = ControlType.Name;
 
-        var t = (INamedTypeSymbol)property.Type;
-
-        var type = t.TypeArguments.LastOrDefault();
-
-        type ??= t;
-
-        ValueTypeSource = type.Name;
+        if(property.Type is INamedTypeSymbol nts)
+        {
+            var type = nts.TypeArguments.LastOrDefault();
+            if (type != null)
+            {
+                ValueTypeSource = type.Name;
+            }
+            else
+            {
+                ValueTypeSource = nts.Name;
+            }
+        }
+        else if(property.Type is ITypeParameterSymbol tps)
+        {
+            ValueTypeSource = tps.Name;
+        }
+        else
+        {
+            ValueTypeSource = "";
+            throw new Exception("shouldnt be here");
+        }
 
         //IsAttachedProperty = property.Type.Name.StartsWith("AttachedProperty");
         IsGeneric = !property.Type.IsSealed;
