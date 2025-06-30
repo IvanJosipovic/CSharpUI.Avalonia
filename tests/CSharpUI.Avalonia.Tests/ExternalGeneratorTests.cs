@@ -1,11 +1,11 @@
 using Avalonia;
-using CSharpUI.Avalonia.Extensions;
-using CSharpUI.Avalonia.SourceGenerator;
+using CSharpUIAvalonia;
+using CSharpUIAvalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Tests;
 
-namespace CSharpUI.Avalonia.Tests;
+namespace CSharpUIAvalonia.Tests;
 
 public class ExternalPropertyGeneratorTests
 {
@@ -41,7 +41,7 @@ public class ExternalPropertyGeneratorTests
         references.Add(MetadataReference.CreateFromStream(dll, documentation: XmlDocumentationProvider.CreateFromBytes(comments.ToArray())));
 
         var syntaxTree = CSharpSyntaxTree.ParseText("""
-            using CSharpUI.Avalonia;
+            using CSharpUIAvalonia;
             using Tests;
             [assembly: GenerateExtensionsForAssembly(typeof(TestPointer))]
             """);

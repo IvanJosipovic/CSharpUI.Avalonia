@@ -1,4 +1,4 @@
-﻿using CSharpUI.Avalonia;
+﻿using CSharpUIAvalonia;
 using ReactiveUI;
 
 namespace Tests;

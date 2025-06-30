@@ -1,8 +1,8 @@
-using CSharpUI.Avalonia.Samples.Reactive.ViewModels;
-using CSharpUI.Avalonia.Samples.Reactive.Views;
+using CSharpUIAvalonia.Samples.Reactive.ViewModels;
+using CSharpUIAvalonia.Samples.Reactive.Views;
 using ReactiveUI;
 
-namespace CSharpUI.Avalonia.Samples.Reactive;
+namespace CSharpUIAvalonia.Samples.Reactive;
 
 public class AppViewLocator : IViewLocator
 {

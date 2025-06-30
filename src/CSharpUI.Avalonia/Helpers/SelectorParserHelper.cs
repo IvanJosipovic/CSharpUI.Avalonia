@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Avalonia.Styling;
 
-namespace CSharpUI.Avalonia.Helpers;
+namespace CSharpUIAvalonia.Helpers;
 
 internal static class SelectorParserHelper
 {

@@ -1,4 +1,4 @@
-namespace CSharpUI.Avalonia.SourceGenerator.Generators;
+namespace CSharpUIAvalonia.SourceGenerator.Generators;
 
 public abstract class ExtensionGeneratorBase<TMemberExtensionInfo> : ExtensionGeneratorBase
 {

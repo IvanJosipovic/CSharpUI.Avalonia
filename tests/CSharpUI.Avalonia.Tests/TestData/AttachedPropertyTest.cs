@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Interactivity;
-using CSharpUI.Avalonia;
+using CSharpUIAvalonia;
 using System.Windows.Input;
 
 namespace Tests;

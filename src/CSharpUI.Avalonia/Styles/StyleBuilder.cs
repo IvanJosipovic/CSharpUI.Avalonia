@@ -1,6 +1,6 @@
 ﻿using Avalonia.Styling;
 
-namespace CSharpUI.Avalonia.Styles;
+namespace CSharpUIAvalonia.Styles;
 
 internal static class StyleBuilder
 {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
-using CSharpUI.Avalonia.Styles;
+using CSharpUIAvalonia.Styles;
 
-namespace CSharpUI.Avalonia;
+namespace CSharpUIAvalonia;
 
 public abstract class ViewBase<TViewModel> : ViewBase
 {

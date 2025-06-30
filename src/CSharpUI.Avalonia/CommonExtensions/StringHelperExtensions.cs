@@ -1,6 +1,6 @@
 ﻿using Avalonia.Markup.Xaml.MarkupExtensions;
 
-namespace CSharpUI.Avalonia.CommonExtensions;
+namespace CSharpUIAvalonia.CommonExtensions;
 
 public static class StringHelperExtensions
 {

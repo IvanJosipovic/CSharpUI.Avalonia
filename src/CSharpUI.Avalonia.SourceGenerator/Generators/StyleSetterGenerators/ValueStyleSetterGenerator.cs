@@ -1,6 +1,6 @@
-using CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
+using CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
 
-namespace CSharpUI.Avalonia.SourceGenerator.Generators.StyleSetterGenerators;
+namespace CSharpUIAvalonia.SourceGenerator.Generators.StyleSetterGenerators;
 
 public class ValueStyleSetterGenerator : ExtensionGeneratorBase<PropertyExtensionInfo>
 {

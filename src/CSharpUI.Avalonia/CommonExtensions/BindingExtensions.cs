@@ -1,6 +1,6 @@
 ﻿using Avalonia.Data.Converters;
 
-namespace CSharpUI.Avalonia.CommonExtensions;
+namespace CSharpUIAvalonia.CommonExtensions;
 
 public static class BindingExtensions
 {

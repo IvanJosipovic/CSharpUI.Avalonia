@@ -1,21 +1,21 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
-using CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
-using CSharpUI.Avalonia.SourceGenerator.Generators;
-using CSharpUI.Avalonia.SourceGenerator.Generators.AttachedPropertySetterGenerator;
-using CSharpUI.Avalonia.SourceGenerator.Generators.EventGenerators;
-using CSharpUI.Avalonia.SourceGenerator.Generators.SetterGenerators;
-using CSharpUI.Avalonia.SourceGenerator.Generators.StyleSetterGenerators;
+using CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
+using CSharpUIAvalonia.SourceGenerator.Generators;
+using CSharpUIAvalonia.SourceGenerator.Generators.AttachedPropertySetterGenerator;
+using CSharpUIAvalonia.SourceGenerator.Generators.EventGenerators;
+using CSharpUIAvalonia.SourceGenerator.Generators.SetterGenerators;
+using CSharpUIAvalonia.SourceGenerator.Generators.StyleSetterGenerators;
 using Microsoft.CodeAnalysis;
 
-namespace CSharpUI.Avalonia.SourceGenerator;
+namespace CSharpUIAvalonia.SourceGenerator;
 
 public class GeneratorHost()
 {
     readonly List<ExtensionGroupGenerator> groupGenerators =
     [
         new("Properties",
-            t => t.GetMembers()
+            t => t.GetAllMembers()
                 .OfType<IFieldSymbol>()
                 .Where(x => x.IsAvaloniaPropertyField())
                 .Select(x => new PropertyExtensionInfo(x)),
@@ -25,7 +25,7 @@ public class GeneratorHost()
         ),
 
         new("Attached Properties",
-            t => t.GetMembers()
+            t => t.GetAllMembers()
                 .OfType<IFieldSymbol>()
                 .Where(x => x.IsAttachedPropertyField())
                 .Select(x => new AttachedPropertyExtensionInfo(x)),
@@ -34,7 +34,7 @@ public class GeneratorHost()
         ),
 
         new("Common Properties",
-            t => t.GetMembers()
+            t => t.GetAllMembers()
                 .OfType<IPropertySymbol>()
                 .Where(x => !x.IsAvaloniaProperty()
                             && x.IsCommonProperty())
@@ -44,16 +44,17 @@ public class GeneratorHost()
         ),
 
         new("Events",
-            t => t.GetMembers()
+            t => t.GetAllMembers()
                 .OfType<IEventSymbol>()
-                .Where(x => SymbolEqualityComparer.Default.Equals(x.ContainingType, t))
+                .Where(x => x.DeclaredAccessibility == Accessibility.Public
+                        && SymbolEqualityComparer.Default.Equals(x.ContainingType, t))
                 .Select(x => new EventExtensionInfo(x)),
 
             new ActionToEventGenerator()),
 
         new("Styles",
             t => !t.IsStyledElement() ? [] : t
-                .GetMembers()
+                .GetAllMembers()
                 .OfType<IFieldSymbol>()
                 .Where(x => x.IsAcceptableStyledField())
                 .Select(x => new PropertyExtensionInfo(x)),
@@ -84,11 +85,11 @@ public class GeneratorHost()
         //sb.AppendLine($"using System.Numerics;");
         //sb.AppendLine($"using System.Linq.Expressions;");
         //sb.AppendLine($"using System.Runtime.CompilerServices;");
-        sb.AppendLine("using CSharpUI.Avalonia.Styles;");
-        sb.AppendLine("using CSharpUI.Avalonia.CommonExtensions;");
+        sb.AppendLine("using CSharpUIAvalonia.Styles;");
+        sb.AppendLine("using CSharpUIAvalonia.CommonExtensions;");
         controlType.GetNamespaces().OrderBy(x => x).ToList().ForEach(x => sb.AppendLine($"using {x};"));
         sb.AppendLine();
-        sb.AppendLine("namespace CSharpUI.Avalonia.Extensions;");
+        sb.AppendLine("namespace CSharpUIAvalonia;");
         sb.AppendLine();
         sb.AppendLine($"public static partial class {Extensions.CleanIdentifier(controlType.Name)}Extensions");
         sb.AppendLine("{");

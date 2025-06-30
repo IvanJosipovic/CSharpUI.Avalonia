@@ -1,6 +1,6 @@
-using CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
+using CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
 
-namespace CSharpUI.Avalonia.SourceGenerator.Generators.EventGenerators;
+namespace CSharpUIAvalonia.SourceGenerator.Generators.EventGenerators;
 
 public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
 {

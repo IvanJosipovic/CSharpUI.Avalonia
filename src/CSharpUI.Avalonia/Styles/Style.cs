@@ -1,8 +1,8 @@
 ﻿using Avalonia.Styling;
-using CSharpUI.Avalonia.Helpers;
+using CSharpUIAvalonia.Helpers;
 using System.Runtime.CompilerServices;
 
-namespace CSharpUI.Avalonia.Styles;
+namespace CSharpUIAvalonia.Styles;
 /// <summary>
 /// Typed style to support method chains with generic arguments
 /// </summary>

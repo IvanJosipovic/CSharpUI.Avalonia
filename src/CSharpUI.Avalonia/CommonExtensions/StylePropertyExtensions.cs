@@ -1,7 +1,7 @@
 ﻿using Avalonia.Styling;
-using CSharpUI.Avalonia.Styles;
+using CSharpUIAvalonia.Styles;
 
-namespace CSharpUI.Avalonia.CommonExtensions;
+namespace CSharpUIAvalonia.CommonExtensions;
 
 public static class StylePropertyExtensions
 {

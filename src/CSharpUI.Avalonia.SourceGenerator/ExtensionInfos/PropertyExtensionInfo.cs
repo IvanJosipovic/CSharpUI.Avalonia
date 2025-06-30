@@ -1,7 +1,7 @@
-using CSharpUI.Avalonia.SourceGenerator.Generators;
+using CSharpUIAvalonia.SourceGenerator.Generators;
 using Microsoft.CodeAnalysis;
 
-namespace CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
+namespace CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
 public class PropertyExtensionInfo : IMemberExtensionInfo
 {
     public ITypeSymbol ControlType { get; }
@@ -64,10 +64,6 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
                         ValueTypeSource += nts2.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
                     }
                 }
-            }
-            else
-            {
-                ValueTypeSource = nts.Name;
             }
         }
         else if (field.Type is ITypeParameterSymbol tps)
@@ -142,10 +138,6 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
                         ValueTypeSource += nts2.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
                     }
                 }
-            }
-            else
-            {
-                ValueTypeSource = nts.Name;
             }
         }
         else if (property.Type is ITypeParameterSymbol tps)

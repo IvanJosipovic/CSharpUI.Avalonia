@@ -1,10 +1,10 @@
-﻿using CSharpUI.Avalonia.SourceGenerator.Generators;
+﻿using CSharpUIAvalonia.SourceGenerator.Generators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Diagnostics;
 
-namespace CSharpUI.Avalonia.SourceGenerator;
+namespace CSharpUIAvalonia.SourceGenerator;
 
 [Generator]
 public class Generator : IIncrementalGenerator

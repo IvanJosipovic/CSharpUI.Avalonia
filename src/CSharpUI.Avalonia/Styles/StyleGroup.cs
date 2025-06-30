@@ -1,6 +1,6 @@
 ﻿using Avalonia.Styling;
 
-namespace CSharpUI.Avalonia.Styles;
+namespace CSharpUIAvalonia.Styles;
 
 public class StyleGroup(Func<Selector,Selector>? groupSelectorFunc = null) : List<object>
 {

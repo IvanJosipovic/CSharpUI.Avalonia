@@ -1,9 +1,9 @@
 ﻿using Avalonia.Styling;
-using CSharpUI.Avalonia.CommonExtensions;
-using CSharpUI.Avalonia.Samples.Reactive.ViewModels;
-using CSharpUI.Avalonia.Styles;
+using CSharpUIAvalonia.CommonExtensions;
+using CSharpUIAvalonia.Samples.Reactive.ViewModels;
+using CSharpUIAvalonia.Styles;
 
-namespace CSharpUI.Avalonia.Samples.Reactive.Views;
+namespace CSharpUIAvalonia.Samples.Reactive.Views;
 
 public class PageView1 : ReactiveViewBase<PageViewModel1>
 {

@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
-using CSharpUI.Avalonia;
+using CSharpUIAvalonia;
 
 namespace Tests;
 

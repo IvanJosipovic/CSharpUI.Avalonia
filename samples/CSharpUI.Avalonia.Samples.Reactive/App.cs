@@ -1,7 +1,8 @@
 ﻿using Avalonia.ReactiveUI;
-using CSharpUI.Avalonia.CommonExtensions;
-using CSharpUI.Avalonia.Samples.Reactive.ViewModels;
-using CSharpUI.Avalonia.Samples.Reactive.Views;
+using CSharpUIAvalonia;
+using CSharpUIAvalonia.CommonExtensions;
+using CSharpUIAvalonia.Samples.Reactive.ViewModels;
+using CSharpUIAvalonia.Samples.Reactive.Views;
 using Microsoft.Extensions.DependencyInjection;
 
 // Generates Extensions for External Assembles

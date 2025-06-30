@@ -1,4 +1,4 @@
-﻿namespace CSharpUI.Avalonia;
+﻿namespace CSharpUIAvalonia;
 
 /// <summary>
 /// IReloadable interface is used by HotReloadManager to reload controls after net6 updating assemblies on runtime

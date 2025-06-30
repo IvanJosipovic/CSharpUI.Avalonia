@@ -1,7 +1,7 @@
 ﻿using Avalonia.Data.Converters;
 using System.Globalization;
 
-namespace CSharpUI.Avalonia.CommonExtensions;
+namespace CSharpUIAvalonia.CommonExtensions;
 
 public static class ConverterExtensions
 {

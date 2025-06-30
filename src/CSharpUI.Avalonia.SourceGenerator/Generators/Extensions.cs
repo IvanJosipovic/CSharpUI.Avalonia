@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace CSharpUI.Avalonia.SourceGenerator.Generators;
+namespace CSharpUIAvalonia.SourceGenerator.Generators;
 
 internal static class Extensions
 {
@@ -203,7 +203,7 @@ internal static class Extensions
             field.Type.Name.StartsWith("StyledProperty") ||
             //some attached properties Mapped to properties of controls, i.e. TextBlock.TextWrapping
             //so we need to add direct Extensions for them, additionally to AttachedProperty extensions
-            field.Type.Name.StartsWith("AttachedProperty") ||
+            //field.Type.Name.StartsWith("AttachedProperty") ||
             field.Type.Name.StartsWith("AvaloniaProperty"))
         {
             return !field.IsReadOnlyField();
@@ -366,5 +366,29 @@ internal static class Extensions
     internal static bool IsStyledElement(this INamedTypeSymbol controlType)
     {
         return controlType.AllInterfaces.Any(x => x.Name == "IStyleable");
+    }
+
+    public static IEnumerable<ISymbol> GetAllMembers(this INamedTypeSymbol type)
+    {
+        var seen = new HashSet<string>();
+        var stack = new Stack<INamedTypeSymbol>();
+        stack.Push(type);
+
+        while (stack.Count > 0)
+        {
+            var current = stack.Pop();
+            foreach (var member in current.GetMembers())
+            {
+                // Avoid duplicates by signature
+                if (seen.Add(member.ToDisplayString()))
+                    yield return member;
+            }
+
+            if (current.BaseType != null)
+                stack.Push(current.BaseType);
+
+            foreach (var iface in current.Interfaces)
+                stack.Push(iface);
+        }
     }
 }

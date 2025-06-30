@@ -2,15 +2,15 @@
 using Avalonia.Controls.Templates;
 using Avalonia.Data.Converters;
 using Avalonia.Styling;
-using CSharpUI.Avalonia;
-using CSharpUI.Avalonia.Helpers;
+using CSharpUIAvalonia;
+using CSharpUIAvalonia.Helpers;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using AvaloniaToolTip = Avalonia.Controls.ToolTip;
 
-namespace CSharpUI.Avalonia;
+namespace CSharpUIAvalonia;
 
 public static class ControlPropertyExtensions
 {

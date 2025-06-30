@@ -2,7 +2,7 @@
 using System.Reactive;
 using ReactiveUI.SourceGenerators;
 
-namespace CSharpUI.Avalonia.Samples.Reactive.ViewModels;
+namespace CSharpUIAvalonia.Samples.Reactive.ViewModels;
 
 public partial class MainViewModel : ReactiveObject, IScreen
 {
