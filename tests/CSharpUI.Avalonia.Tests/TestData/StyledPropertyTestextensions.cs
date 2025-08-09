@@ -1,13 +1,13 @@
 #nullable enable
 using Avalonia.Data;
 using Avalonia.Data.Converters;
-using CSharpUIAvalonia.Styles;
-using CSharpUIAvalonia.CommonExtensions;
+using CSharpUI.Avalonia.Styles;
+using CSharpUI.Avalonia.CommonExtensions;
 using Avalonia;
 using System;
 using Tests;
 
-namespace CSharpUIAvalonia;
+namespace CSharpUI.Avalonia.Extensions;
 
 public static partial class StyledPropertyTestExtensions
 {

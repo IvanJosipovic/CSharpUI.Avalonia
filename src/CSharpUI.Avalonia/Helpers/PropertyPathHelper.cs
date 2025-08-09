@@ -1,4 +1,4 @@
-﻿namespace CSharpUIAvalonia.Helpers;
+﻿namespace CSharpUI.Avalonia.Helpers;
 
 internal static class PropertyPathHelper
 {

@@ -1,4 +1,4 @@
-﻿namespace CSharpUIAvalonia;
+﻿namespace CSharpUI.Avalonia;
 
 [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
 public class GenerateExtensionsForAssemblyAttribute : Attribute

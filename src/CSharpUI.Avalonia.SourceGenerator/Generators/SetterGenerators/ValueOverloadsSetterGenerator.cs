@@ -1,7 +1,7 @@
-using CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
+using CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 using Microsoft.CodeAnalysis;
 
-namespace CSharpUIAvalonia.SourceGenerator.Generators.SetterGenerators;
+namespace CSharpUI.Avalonia.SourceGenerator.Generators.SetterGenerators;
 
 public class ValueOverloadsSetterGenerator : ExtensionGeneratorBase<PropertyExtensionInfo>
 {

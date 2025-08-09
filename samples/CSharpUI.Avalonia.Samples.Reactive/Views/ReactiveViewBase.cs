@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 
-namespace CSharpUIAvalonia.Samples.Reactive.Views;
+namespace CSharpUI.Avalonia.Samples.Reactive.Views;
 
 public abstract class ReactiveViewBase<TViewModel> : ViewBase, IViewFor<TViewModel> where TViewModel : class
 {

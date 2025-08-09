@@ -1,6 +1,6 @@
-﻿using CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
+﻿using CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 
-namespace CSharpUIAvalonia.SourceGenerator.Generators.AttachedPropertySetterGenerator;
+namespace CSharpUI.Avalonia.SourceGenerator.Generators.AttachedPropertySetterGenerator;
 
 public class AttachedPropertyBindFromExpressionSetterGenerator : ExtensionGeneratorBase<AttachedPropertyExtensionInfo>
 {

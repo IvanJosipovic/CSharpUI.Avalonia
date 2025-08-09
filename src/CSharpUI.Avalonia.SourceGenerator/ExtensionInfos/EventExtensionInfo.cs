@@ -1,10 +1,10 @@
-using CSharpUIAvalonia.SourceGenerator.Generators;
+using CSharpUI.Avalonia.SourceGenerator.Generators;
 using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection.Metadata;
 
-namespace CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
+namespace CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 
 public class EventExtensionInfo : IMemberExtensionInfo
 {

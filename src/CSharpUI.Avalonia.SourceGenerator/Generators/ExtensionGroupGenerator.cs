@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using System.Text;
 
-namespace CSharpUIAvalonia.SourceGenerator.Generators;
+namespace CSharpUI.Avalonia.SourceGenerator.Generators;
 
 public class ExtensionGroupGenerator(
     string groupName,

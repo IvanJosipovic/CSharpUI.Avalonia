@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Reactive;
 
-namespace CSharpUIAvalonia.CommonExtensions;
+namespace CSharpUI.Avalonia.CommonExtensions;
 
 public static class ReactiveExtensions
 {

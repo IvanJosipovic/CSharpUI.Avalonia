@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 
-namespace CSharpUIAvalonia.Samples.Reactive.ViewModels;
+namespace CSharpUI.Avalonia.Samples.Reactive.ViewModels;
 
 public partial class PageViewModel2 : ReactiveObject, IRoutableViewModel
 {

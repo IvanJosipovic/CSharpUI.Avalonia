@@ -24,7 +24,7 @@ dotnet add package CSharpUI.Avalonia
 
 ---
 
-## Example View
+## 🖼️ Example View
 
 ```csharp
 public class PageView : ReactiveViewBase<PageViewModel>

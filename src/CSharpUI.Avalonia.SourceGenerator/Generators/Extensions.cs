@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace CSharpUIAvalonia.SourceGenerator.Generators;
+namespace CSharpUI.Avalonia.SourceGenerator.Generators;
 
 internal static class Extensions
 {

@@ -1,11 +1,12 @@
 using Avalonia;
-using CSharpUIAvalonia;
-using CSharpUIAvalonia.SourceGenerator;
+using CSharpUI.Avalonia;
+using CSharpUI.Avalonia.Extensions;
+using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Tests;
 
-namespace CSharpUIAvalonia.Tests;
+namespace CSharpUI.Avalonia.Tests;
 
 public class GeneratorTests
 {

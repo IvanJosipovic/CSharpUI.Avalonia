@@ -1,4 +1,4 @@
-﻿using CSharpUIAvalonia;
+﻿using CSharpUI.Avalonia;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -7,7 +7,7 @@ using System.Reflection;
 [assembly: System.Reflection.Metadata.MetadataUpdateHandler(typeof(HotReloadManager))]
 #pragma warning restore IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
 
-namespace CSharpUIAvalonia;
+namespace CSharpUI.Avalonia;
 
 public static class HotReloadManager
 {

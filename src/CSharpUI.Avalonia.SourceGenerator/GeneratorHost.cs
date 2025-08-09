@@ -1,14 +1,14 @@
 ﻿using System.Collections.Immutable;
 using System.Text;
-using CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
-using CSharpUIAvalonia.SourceGenerator.Generators;
-using CSharpUIAvalonia.SourceGenerator.Generators.AttachedPropertySetterGenerator;
-using CSharpUIAvalonia.SourceGenerator.Generators.EventGenerators;
-using CSharpUIAvalonia.SourceGenerator.Generators.SetterGenerators;
-using CSharpUIAvalonia.SourceGenerator.Generators.StyleSetterGenerators;
+using CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
+using CSharpUI.Avalonia.SourceGenerator.Generators;
+using CSharpUI.Avalonia.SourceGenerator.Generators.AttachedPropertySetterGenerator;
+using CSharpUI.Avalonia.SourceGenerator.Generators.EventGenerators;
+using CSharpUI.Avalonia.SourceGenerator.Generators.SetterGenerators;
+using CSharpUI.Avalonia.SourceGenerator.Generators.StyleSetterGenerators;
 using Microsoft.CodeAnalysis;
 
-namespace CSharpUIAvalonia.SourceGenerator;
+namespace CSharpUI.Avalonia.SourceGenerator;
 
 public class GeneratorHost()
 {
@@ -85,11 +85,11 @@ public class GeneratorHost()
         //sb.AppendLine($"using System.Numerics;");
         //sb.AppendLine($"using System.Linq.Expressions;");
         //sb.AppendLine($"using System.Runtime.CompilerServices;");
-        sb.AppendLine("using CSharpUIAvalonia.Styles;");
-        sb.AppendLine("using CSharpUIAvalonia.CommonExtensions;");
+        sb.AppendLine("using CSharpUI.Avalonia.Styles;");
+        sb.AppendLine("using CSharpUI.Avalonia.CommonExtensions;");
         controlType.GetNamespaces().OrderBy(x => x).ToList().ForEach(x => sb.AppendLine($"using {x};"));
         sb.AppendLine();
-        sb.AppendLine("namespace CSharpUIAvalonia;");
+        sb.AppendLine("namespace CSharpUI.Avalonia.Extensions;");
         sb.AppendLine();
         sb.AppendLine($"public static partial class {Extensions.CleanIdentifier(controlType.Name)}Extensions");
         sb.AppendLine("{");

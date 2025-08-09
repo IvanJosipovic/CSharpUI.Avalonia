@@ -1,6 +1,6 @@
-using CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
+using CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 
-namespace CSharpUIAvalonia.SourceGenerator.Generators.SetterGenerators;
+namespace CSharpUI.Avalonia.SourceGenerator.Generators.SetterGenerators;
 
 public class ValueSetterGenerator : ExtensionGeneratorBase<PropertyExtensionInfo>
 {

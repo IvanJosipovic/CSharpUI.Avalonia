@@ -1,4 +1,4 @@
-﻿namespace CSharpUIAvalonia.CommonExtensions;
+﻿namespace CSharpUI.Avalonia.CommonExtensions;
 
 public static class NativeMenuExtensions
 {

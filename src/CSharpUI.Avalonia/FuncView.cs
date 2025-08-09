@@ -1,4 +1,4 @@
-﻿namespace CSharpUIAvalonia;
+﻿namespace CSharpUI.Avalonia;
 
 public class FuncView<TViewModel>(TViewModel model, Func<TViewModel, Control> build) : ViewBase<TViewModel>(model)
 {

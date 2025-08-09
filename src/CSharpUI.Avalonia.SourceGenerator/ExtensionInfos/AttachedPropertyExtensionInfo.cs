@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
+namespace CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 
 public class AttachedPropertyExtensionInfo : PropertyExtensionInfo
 {

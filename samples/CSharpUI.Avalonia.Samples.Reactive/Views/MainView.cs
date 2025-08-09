@@ -1,10 +1,10 @@
 ﻿using Avalonia.Styling;
-using CSharpUIAvalonia;
-using CSharpUIAvalonia.CommonExtensions;
-using CSharpUIAvalonia.Samples.Reactive.ViewModels;
+using CSharpUI.Avalonia;
+using CSharpUI.Avalonia.CommonExtensions;
+using CSharpUI.Avalonia.Samples.Reactive.ViewModels;
 using System.Reactive.Linq;
 
-namespace CSharpUIAvalonia.Samples.Reactive.Views;
+namespace CSharpUI.Avalonia.Samples.Reactive.Views;
 
 public class MainView : ViewBase<MainViewModel>
 {

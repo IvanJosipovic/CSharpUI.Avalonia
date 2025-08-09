@@ -1,7 +1,7 @@
-using CSharpUIAvalonia.SourceGenerator.Generators;
+using CSharpUI.Avalonia.SourceGenerator.Generators;
 using Microsoft.CodeAnalysis;
 
-namespace CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
+namespace CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 public class PropertyExtensionInfo : IMemberExtensionInfo
 {
     public ITypeSymbol ControlType { get; }

@@ -1,11 +1,11 @@
-﻿using CSharpUIAvalonia.SourceGenerator.Generators;
+﻿using CSharpUI.Avalonia.SourceGenerator.Generators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
 
-namespace CSharpUIAvalonia.SourceGenerator;
+namespace CSharpUI.Avalonia.SourceGenerator;
 
 [Generator]
 public class ExternalGenerator : IIncrementalGenerator
@@ -19,7 +19,7 @@ public class ExternalGenerator : IIncrementalGenerator
         }
 #endif
         var attribute = context.SyntaxProvider
-                         .ForAttributeWithMetadataName("CSharpUIAvalonia.GenerateExtensionsForAssemblyAttribute",
+                         .ForAttributeWithMetadataName("CSharpUI.Avalonia.GenerateExtensionsForAssemblyAttribute",
                                                        static (s, _) => true,
                                                        static (ctx, _) => GetSemanticTarget(ctx))
                          .SelectMany((assemblies, _) => assemblies)

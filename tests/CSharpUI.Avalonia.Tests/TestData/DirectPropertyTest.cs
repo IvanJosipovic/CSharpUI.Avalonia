@@ -1,4 +1,4 @@
-using CSharpUIAvalonia;
+using CSharpUI.Avalonia;
 using Avalonia;
 using Avalonia.Controls;
 
