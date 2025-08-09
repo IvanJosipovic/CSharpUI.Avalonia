@@ -15,7 +15,7 @@ public class GeneratorHost()
     readonly List<ExtensionGroupGenerator> groupGenerators =
     [
         new("Properties",
-            t => t.GetMembers()
+            t => t.GetAllMembers()
                 .OfType<IFieldSymbol>()
                 .Where(x => x.IsAvaloniaPropertyField())
                 .Select(x => new PropertyExtensionInfo(x)),
@@ -25,7 +25,7 @@ public class GeneratorHost()
         ),
 
         new("Attached Properties",
-            t => t.GetMembers()
+            t => t.GetAllMembers()
                 .OfType<IFieldSymbol>()
                 .Where(x => x.IsAttachedPropertyField())
                 .Select(x => new AttachedPropertyExtensionInfo(x)),
@@ -34,7 +34,7 @@ public class GeneratorHost()
         ),
 
         new("Common Properties",
-            t => t.GetMembers()
+            t => t.GetAllMembers()
                 .OfType<IPropertySymbol>()
                 .Where(x => !x.IsAvaloniaProperty()
                             && x.IsCommonProperty())
@@ -44,7 +44,7 @@ public class GeneratorHost()
         ),
 
         new("Events",
-            t => t.GetMembers()
+            t => t.GetAllMembers()
                 .OfType<IEventSymbol>()
                 .Where(x => x.DeclaredAccessibility == Accessibility.Public
                         && SymbolEqualityComparer.Default.Equals(x.ContainingType, t))
@@ -54,7 +54,7 @@ public class GeneratorHost()
 
         new("Styles",
             t => !t.IsStyledElement() ? [] : t
-                .GetMembers()
+                .GetAllMembers()
                 .OfType<IFieldSymbol>()
                 .Where(x => x.IsAcceptableStyledField())
                 .Select(x => new PropertyExtensionInfo(x)),
