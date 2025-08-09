@@ -1,9 +1,10 @@
 ﻿using Avalonia.Styling;
 using CSharpUIAvalonia.CommonExtensions;
 using CSharpUIAvalonia.Samples.Reactive.ViewModels;
+using CSharpUIAvalonia.Samples.Reactive.Views;
 using CSharpUIAvalonia.Styles;
 
-namespace CSharpUIAvalonia.Samples.Reactive.Views;
+namespace CSharpUI.Avalonia.Samples.Reactive.Views;
 
 public class PageView1 : ReactiveViewBase<PageViewModel1>
 {
@@ -12,12 +13,9 @@ public class PageView1 : ReactiveViewBase<PageViewModel1>
          new Style(x => x.Is<TextBlock>())
              .Setter(HorizontalAlignmentProperty, HorizontalAlignment.Center)
              .Setter(VerticalAlignmentProperty, VerticalAlignment.Center),
-         new Style(x => x.Is<TextBox>())
+         new Style(x => x.Is<TextBox>().Class("myTextBox"))
              .Setter(HorizontalAlignmentProperty, HorizontalAlignment.Center)
              .Setter(VerticalAlignmentProperty, VerticalAlignment.Center),
-         //new Style(x => x.Is<TextBox>().Class("bob"))
-         //    .Setter(Control.HorizontalAlignmentProperty, HorizontalAlignment.Center)
-         //    .Setter(Control.VerticalAlignmentProperty, VerticalAlignment.Center),
     ];
 
     protected override Control Build(PageViewModel1 vm) =>
@@ -25,11 +23,8 @@ public class PageView1 : ReactiveViewBase<PageViewModel1>
             .Children([
                 new TextBlock()
                     .ReactiveBinding(TextBox.TextProperty, vm, x => x.MyProperty),
-                //new TextBlock()
-                //    .ReactiveBinding(TextBox.TextProperty, vm, x => x.MyProperty),
                 new TextBox()
-                    .ReactiveBinding(TextBox.TextProperty, vm, x => x.MyProperty, x => vm.MyProperty = x ?? "1"),
-                new TextBox()
+                    .Class("myTextBox")
                     .ReactiveBinding(TextBox.TextProperty, vm, x => x.MyProperty, x => vm.MyProperty = x ?? ""),
             ]);
 }

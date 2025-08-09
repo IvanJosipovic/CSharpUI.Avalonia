@@ -279,7 +279,7 @@ public static class ControlPropertyExtensions
 		return control;
 	}
 
-	public static TElement Classes<TElement>(this TElement control, string className, [CallerLineNumber] int line = 0,
+	public static TElement Class<TElement>(this TElement control, string className, [CallerLineNumber] int line = 0,
 		[CallerMemberName] string? caller = default)
 		where TElement : Control
 	{

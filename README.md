@@ -24,6 +24,33 @@ dotnet add package CSharpUI.Avalonia
 
 ---
 
+## Example View
+
+```csharp
+public class PageView : ReactiveViewBase<PageViewModel>
+{
+    protected override StyleGroup? BuildStyles() =>
+    [
+         new Style(x => x.Is<TextBlock>())
+             .Setter(HorizontalAlignmentProperty, HorizontalAlignment.Center)
+             .Setter(VerticalAlignmentProperty, VerticalAlignment.Center),
+         new Style(x => x.Is<TextBox>().Class("myTextBox"))
+             .Setter(HorizontalAlignmentProperty, HorizontalAlignment.Center)
+             .Setter(VerticalAlignmentProperty, VerticalAlignment.Center),
+    ];
+
+    protected override Control Build(PageViewModel vm) =>
+        new StackPanel()
+            .Children([
+                new TextBlock()
+                    .ReactiveBinding(TextBox.TextProperty, vm, x => x.MyProperty),
+                new TextBox()
+                    .Class("myTextBox")
+                    .ReactiveBinding(TextBox.TextProperty, vm, x => x.MyProperty, x => vm.MyProperty = x ?? ""),
+            ]);
+}
+```
+
 
 ## ❤️ Attribution
 Includes portions derived from [Avalonia.Markup.Declarative](https://github.com/AvaloniaUI/Avalonia.Markup.Declarative) (MIT License)

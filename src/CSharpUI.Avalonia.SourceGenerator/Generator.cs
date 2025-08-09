@@ -27,16 +27,13 @@ public class Generator : IIncrementalGenerator
         context.RegisterSourceOutput(classDeclarations,
             static (spc, data) =>
             {
-                if (Extensions.InheritsFrom(data!, "Avalonia.Visual"))
+                var generator = new GeneratorHost();
+
+                var code = generator.GenerateExtensions(data!);
+
+                if (!string.IsNullOrEmpty(code))
                 {
-                    var generator = new GeneratorHost();
-
-                    var code = generator.GenerateExtensions(data!);
-
-                    if (code != null)
-                    {
-                        spc.AddSource($"{Extensions.RemoveIllegalFileNameCharacters(data!.ToString())}.g.cs", code);
-                    }
+                    spc.AddSource($"{Extensions.RemoveIllegalFileNameCharacters(data!.ToString())}.g.cs", code!);
                 }
             });
     }
