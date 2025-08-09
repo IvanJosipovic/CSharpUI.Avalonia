@@ -368,7 +368,7 @@ internal static class Extensions
         return controlType.AllInterfaces.Any(x => x.Name == "IStyleable");
     }
 
-    public static IEnumerable<ISymbol> GetAllMembers(this INamedTypeSymbol type)
+    internal static IEnumerable<ISymbol> GetAllMembers(this INamedTypeSymbol type)
     {
         var seen = new HashSet<string>();
         var stack = new Stack<INamedTypeSymbol>();

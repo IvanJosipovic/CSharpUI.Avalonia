@@ -1,4 +1,5 @@
-﻿using Avalonia.ReactiveUI;
+﻿using Avalonia;
+using Avalonia.ReactiveUI;
 using CSharpUIAvalonia;
 using CSharpUIAvalonia.CommonExtensions;
 using CSharpUIAvalonia.Samples.Reactive.ViewModels;

@@ -27,7 +27,7 @@ public class Generator : IIncrementalGenerator
         context.RegisterSourceOutput(classDeclarations,
             static (spc, data) =>
             {
-                if (Extensions.InheritsFrom(data!, "Avalonia.Controls.Control"))
+                if (Extensions.InheritsFrom(data!, "Avalonia.Visual"))
                 {
                     var generator = new GeneratorHost();
 
@@ -46,7 +46,7 @@ public class Generator : IIncrementalGenerator
         var classDecl = (ClassDeclarationSyntax)context.Node;
         var symbol = context.SemanticModel.GetDeclaredSymbol(classDecl);
 
-        if (symbol != null && Extensions.InheritsFrom(symbol, "Avalonia.Controls.Control"))
+        if (symbol != null && Extensions.InheritsFrom(symbol, "Avalonia.Visual"))
         {
             return symbol!;
         }

@@ -1,6 +1,8 @@
 using CSharpUIAvalonia.SourceGenerator.Generators;
 using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection.Metadata;
 
 namespace CSharpUIAvalonia.SourceGenerator.ExtensionInfos;
 
@@ -26,8 +28,8 @@ public class EventExtensionInfo : IMemberExtensionInfo
         EventParameterTypes.Count == 2 && EventParameterTypes[0] == "System.Object" &&
         EventParameterTypes[1].EndsWith("EventArgs");
 
-    public bool HasSingleParameter => EventParameterTypes.Count == 1;
-    public bool HasMultipleParameters => EventParameterTypes.Count > 1;
+    public bool HasSingleParameter => EventParameterTypes.Count == 0;
+    public bool HasMultipleParameters => EventParameterTypes.Count > 0;
 
 
     public EventExtensionInfo(IEventSymbol eventInfo)
@@ -40,13 +42,41 @@ public class EventExtensionInfo : IMemberExtensionInfo
 
         EventInfo = eventInfo;
         ControlType = eventInfo.ContainingType;
-        ControlTypeName = ControlType.ToString();
+        ControlTypeName = ControlType.Name;
         EventName = EventInfo.Name;
         MemberName = EventName;
         IsObsolete = EventInfo.GetAttributes().Any(a => a.AttributeClass?.Name == nameof(ObsoleteAttribute));
-        EventHandler = EventInfo.Type.ToString();
+        EventHandler = eventInfo.Type.Name;
+
+        if (eventInfo.Type is INamedTypeSymbol type)
+        {
+            if (type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+            {
+                if (type.TypeArguments[0] is INamedTypeSymbol type2)
+                {
+                    type = type2;
+                }
+            }
+
+            EventHandler = type.Name;
+
+            if (type.TypeArguments.Length > 0)
+            {
+                foreach (var item in type.TypeArguments)
+                {
+                    EventParameterTypes.Add(item.Name);
+                }
+
+                EventHandler += "<";
+                EventHandler += string.Join(",", EventParameterTypes);
+                EventHandler += ">";
+            }
+        }
+
+
 
         var methodInfo = eventInfo.Type.GetMembers("Invoke").FirstOrDefault();
+
         if (methodInfo is IMethodSymbol method)
         {
             var parameters = method.Parameters;

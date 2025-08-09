@@ -7,7 +7,8 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
     protected override string? GetExtension(EventExtensionInfo @event)
     {
         var eventHandler = @event.EventHandler;
-        var eventParameterTypes = @event.EventParameterTypes;
+        var eventParameterTypes = new List<string>() { "object?"};
+        eventParameterTypes.AddRange(@event.EventParameterTypes);
         var argsString = $"Action<{string.Join(", ", eventParameterTypes)}> action";
 
         // Generate the lambda parameter names (arg0, arg1, etc.)
@@ -30,17 +31,11 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
             lambdaParameters = "args";
         }
 
-        if (@event.HasStandardSignature)
-        {
-            argsString = $"Action<{string.Join(", ", eventParameterTypes.Skip(1))}> action";
-            actionCallStr = actionCallStr.Replace("arg0, ", "");
-        }
-
         var eventName = @event.EventName;
         var extensionName = "On" + eventName;
 
         var extensionBody =
-            $" =>{Extensions.NewLine} control._setEvent(({eventHandler}) (({lambdaParameters}) => {actionCallStr}), h => control.{eventName} += h);";
+            $"        => control._setEvent(({eventHandler})(({lambdaParameters}) => {actionCallStr}), h => control.{eventName} += h);";
 
         if (@event.IsRoutedEvent)
         {
@@ -55,8 +50,8 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
 
         var extensionText =
             (@event.IsObsolete ? "[Obsolete]" : "")
-            + $"public static {@event.ReturnType} {extensionName}{@event.GenericArg}"
-            + $"(this {@event.ReturnType} control, {argsString}) {@event.GenericConstraint} "
+            + $"    public static {@event.ReturnType} {extensionName}{@event.GenericArg}"
+            + $"(this {@event.ReturnType} control, {argsString}) {@event.GenericConstraint}{Extensions.NewLine}"
             + extensionBody;
 
         return extensionText;

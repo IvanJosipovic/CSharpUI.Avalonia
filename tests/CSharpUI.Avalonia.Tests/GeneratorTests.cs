@@ -55,7 +55,7 @@ public class GeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class GeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public class GeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public class GeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class GeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
     }
 
     [Fact]
@@ -105,6 +105,26 @@ public class GeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
+    }
+
+    [Fact]
+    public void EventTest()
+    {
+        var (inputSource, expectedOutput) = GetTestSources(nameof(EventTest), nameof(EventTestExtensions));
+
+        var output = GetGeneratedOutput(inputSource);
+
+        Assert.Equal(expectedOutput.Trim(), output);
+    }
+
+    [Fact]
+    public void EventTestGeneric()
+    {
+        var (inputSource, expectedOutput) = GetTestSources(nameof(EventTestGeneric), nameof(EventTestGenericExtensions));
+
+        var output = GetGeneratedOutput(inputSource);
+
+        Assert.Equal(expectedOutput.Trim(), output);
     }
 }

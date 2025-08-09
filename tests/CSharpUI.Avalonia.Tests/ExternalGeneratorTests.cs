@@ -13,6 +13,7 @@ public class ExternalPropertyGeneratorTests
     {
         var loadDll = typeof(AvaloniaObject);
         var loadDll1 = typeof(ViewBase);
+        var loadDll2 = typeof(EventHandler<>);
 
         var references = AppDomain.CurrentDomain.GetAssemblies()
                           .Where(assembly => !assembly.IsDynamic)
@@ -33,7 +34,7 @@ public class ExternalPropertyGeneratorTests
 
         if (!results.Success)
         {
-            throw new Exception(results.Diagnostics.First().GetMessage());
+            throw new Exception(results.Diagnostics.Where(x => x.Severity == DiagnosticSeverity.Error).First().GetMessage());
         }
 
         dll.Position = 0;
@@ -82,9 +83,8 @@ public class ExternalPropertyGeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
     }
-
 
     [Fact]
     public void StyledProperty()
@@ -93,7 +93,7 @@ public class ExternalPropertyGeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class ExternalPropertyGeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class ExternalPropertyGeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class ExternalPropertyGeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
     }
 
     [Fact]
@@ -133,6 +133,26 @@ public class ExternalPropertyGeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
-        Assert.Equal(output, expectedOutput.Trim());
+        Assert.Equal(expectedOutput.Trim(), output);
+    }
+
+    [Fact]
+    public void EventTest()
+    {
+        var (inputSource, expectedOutput) = GetTestSources(nameof(EventTest), nameof(EventTestExtensions));
+
+        var output = GetGeneratedOutput(inputSource);
+
+        Assert.Equal(expectedOutput.Trim(), output);
+    }
+
+    [Fact]
+    public void EventTestGeneric()
+    {
+        var (inputSource, expectedOutput) = GetTestSources(nameof(EventTestGeneric), nameof(EventTestGenericExtensions));
+
+        var output = GetGeneratedOutput(inputSource);
+
+        Assert.Equal(expectedOutput.Trim(), output);
     }
 }
