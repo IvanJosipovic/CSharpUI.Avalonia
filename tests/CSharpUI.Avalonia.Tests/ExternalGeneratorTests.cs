@@ -55,7 +55,7 @@ public class ExternalPropertyGeneratorTests
 
 
         // Source Generator to test
-        var generator = new ExternalGenerator();
+        var generator = new Generator();
 
         CSharpGeneratorDriver.Create(generator)
                              .RunGeneratorsAndUpdateCompilation(compilation,

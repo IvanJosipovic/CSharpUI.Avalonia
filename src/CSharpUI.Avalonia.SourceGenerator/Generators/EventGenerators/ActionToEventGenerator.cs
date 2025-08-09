@@ -39,12 +39,10 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
 
         if (@event.IsRoutedEvent)
         {
-            argsString += ", Avalonia.Interactivity.RoutingStrategies? routes = null";
+            argsString += ", RoutingStrategies? routes = null";
 
-            extensionBody = Extensions.NewLine + "{" + Extensions.NewLine +
-                            $"  control.AddHandler({@event.ControlTypeName}.{@eventName}Event, (_, args) => action(args), routes ?? {@event.ControlTypeName}.{@eventName}Event.RoutingStrategies);" + Extensions.NewLine +
-                            "  return control;" + Extensions.NewLine +
-                            "}" + Extensions.NewLine;
+            extensionBody = $"        => control.AddHandler({@event.ControlTypeName}.{@eventName}Event, (_, args) => action(args), routes ?? default(RoutingStrategies));";
+
         }
 
 
