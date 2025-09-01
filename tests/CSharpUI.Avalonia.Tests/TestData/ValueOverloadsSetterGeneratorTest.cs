@@ -7,13 +7,13 @@ using System.Windows.Input;
 
 namespace Tests;
 
-public class PropertTest2 : ViewBase
+public class ValueOverloadsSetterGeneratorTest : ViewBase
 {
     /// <summary>
     /// Defines the <see cref="Padding"/> property.
     /// </summary>
     public static readonly StyledProperty<Thickness> PaddingProperty =
-        Decorator.PaddingProperty.AddOwner<PropertTest2>();
+        Decorator.PaddingProperty.AddOwner<ValueOverloadsSetterGeneratorTest>();
 
     /// <summary>
     /// Gets or sets the padding to place around the <see cref="Text"/>.

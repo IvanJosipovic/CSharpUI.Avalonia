@@ -203,7 +203,7 @@ internal static class Extensions
             field.Type.Name.StartsWith("StyledProperty") ||
             //some attached properties Mapped to properties of controls, i.e. TextBlock.TextWrapping
             //so we need to add direct Extensions for them, additionally to AttachedProperty extensions
-            field.Type.Name.StartsWith("AttachedProperty") ||
+            //field.Type.Name.StartsWith("AttachedProperty") ||
             field.Type.Name.StartsWith("AvaloniaProperty"))
         {
             return !field.IsReadOnlyField();
@@ -392,49 +392,23 @@ internal static class Extensions
         }
     }
 
-    static string FormatTypeName(INamedTypeSymbol typeSymbol)
-    {
-        if (typeSymbol == null)
-            return string.Empty;
-
-        // Handle Nullable<T> for value types
-        if (typeSymbol.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T &&
-            typeSymbol.TypeArguments.Length == 1)
-        {
-            return $"{FormatTypeName((INamedTypeSymbol)typeSymbol.TypeArguments[0])}?";
-        }
-
-        // Handle generic types
-        if (typeSymbol.TypeArguments.Length > 0)
-        {
-            var typeArgs = string.Join(", ", typeSymbol.TypeArguments.Select(x => FormatTypeName((INamedTypeSymbol)x)));
-            return $"{typeSymbol.Name}<{typeArgs}>";
-        }
-
-        // Handle normal named types
-        return typeSymbol.Name;
-    }
-
-    public static string GetFullTypeName(this ITypeSymbol symbol)
+    internal static string GetFullTypeName(this ITypeSymbol symbol)
     {
         var fullName = symbol.Name;
 
         if (symbol is INamedTypeSymbol nts)
         {
-            if (symbol.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+            // Handle Nullable<T> for value types
+            if (nts.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T && nts.TypeArguments.Length == 1)
             {
-                if (nts.TypeArguments[0] is INamedTypeSymbol type2)
-                {
-                    symbol = type2;
-                    nts = type2;
-                }
+                return $"{GetFullTypeName(nts.TypeArguments[0])}?";
             }
 
+            // Handle generic types
             if (nts.TypeArguments.Length > 0)
             {
-                fullName += "<";
-                fullName += nts.TypeArguments.Select(x => x.Name + (x.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "")).Aggregate((x, y) => x + ", " + y);
-                fullName += ">";
+                var typeArgs = string.Join(", ", nts.TypeArguments.Select(x => GetFullTypeName(x)));
+                fullName = $"{nts.Name}<{typeArgs}>";
             }
         }
 
@@ -443,7 +417,7 @@ internal static class Extensions
         return fullName;
     }
 
-    public static ITypeSymbol GetLastGenericArgument(this ITypeSymbol type)
+    internal static ITypeSymbol GetLastGenericArgument(this ITypeSymbol type)
     {
         if (type is INamedTypeSymbol nts)
         {
