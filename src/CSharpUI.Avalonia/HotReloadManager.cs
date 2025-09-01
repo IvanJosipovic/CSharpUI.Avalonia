@@ -30,12 +30,6 @@ public static class HotReloadManager
 
     public static void UpdateApplication(Type[]? types)
     {
-        if (IsRiderSupportEnabled)
-        {
-            Console.WriteLine("Native hot reload is working disabling Rider Workaround");
-            DeactivateRiderHotReload();
-        }
-
         if (IsEnabled)
             ReloadInstances(types);
 
@@ -82,14 +76,11 @@ public static class HotReloadManager
 
         if (!Instances.TryGetValue(type, out var instances))
         {
-            instances = new HashSet<IReloadable>();
+            instances = [];
             Instances[type] = instances;
         }
 
         instances.Add(instance);
-
-        if (IsRiderSupportEnabled)
-            RegisterMethodWatchers(type);
     }
 
     internal static void UnregisterInstance(IReloadable instance)
@@ -107,86 +98,4 @@ public static class HotReloadManager
 
         instances.Remove(instance);
     }
-
-
-    #region Rider hotreload workaround support
-
-    private static readonly ConcurrentDictionary<Type, WatchMethodInfo[]> WatchMethods = new();
-    private static int _interval = 2000;
-    private static Timer? _watchMethodsTimer;
-    public static bool IsRiderSupportEnabled { get; private set; }
-
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.NonPublicMethods)]
-    private class WatchMethodInfo(MethodInfo method, int token)
-    {
-        public MethodInfo Method { get; } = method;
-        public int Token { get; set; } = token;
-    }
-
-    [RequiresUnreferencedCode("You should not use hot reload manager in AoT publish mode")]
-    public static void RegisterMethodWatchers(Type type)
-    {
-        var methods = type
-            .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
-            .Select(m => new WatchMethodInfo(m, m.GetMethodBody()?.LocalSignatureMetadataToken ?? -1))
-            .Where(x => x.Token > -1)
-            .ToArray();
-
-        WatchMethods.TryAdd(type, methods);
-    }
-    public static void UnregisterMethodWatchers(Type type)
-    {
-        WatchMethods.TryRemove(type, out _);
-    }
-
-    [RequiresUnreferencedCode("You should not use hot reload manager in AoT publish mode")]
-    public static void CheckMethodWereChanged()
-    {
-        HashSet<Type> changedInstances = [];
-
-        foreach (var (type, methods) in WatchMethods)
-            foreach (var watchMethodInfo in methods)
-            {
-                var currentToken = watchMethodInfo.Method.GetMethodBody()?.LocalSignatureMetadataToken ?? -1;
-                if (currentToken != watchMethodInfo.Token)
-                {
-                    watchMethodInfo.Token = currentToken;
-                    changedInstances.Add(type);
-                }
-            }
-
-        if(changedInstances.Count > 0)
-            ReloadInstances(changedInstances.ToArray());
-    }
-
-
-    public static void ActivateRiderHotReload()
-    {
-        IsRiderSupportEnabled = true;
-        StartWatchMethods();
-    }
-
-    public static void DeactivateRiderHotReload()
-    {
-        IsRiderSupportEnabled = false;
-        StopWatchMethods();
-    }
-
-    private static void StartWatchMethods()
-    {
-#pragma warning disable IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
-        _watchMethodsTimer = new Timer(_ => CheckMethodWereChanged(), null, _interval, _interval);
-#pragma warning restore IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
-    }
-
-    private static void StopWatchMethods()
-    {
-        _watchMethodsTimer?.Change(-1, -1);
-    }
-
-    public static void SetRiderRiderCheckInterval(int milliseconds) =>
-        _interval = milliseconds;
-
-
-    #endregion
 }

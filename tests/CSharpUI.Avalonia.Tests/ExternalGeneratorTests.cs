@@ -77,80 +77,30 @@ public class ExternalPropertyGeneratorTests
         return (File.ReadAllText(inputPath), File.ReadAllText(expectedPath));
     }
 
-    [Fact]
-    public void DirectProperty()
+    [Theory]
+    [InlineData(typeof(AttachedPropertyTest))]
+    [InlineData(typeof(CommonPropertyTest))]
+    [InlineData(typeof(DirectPropertyTest))]
+    [InlineData(typeof(EventTest))]
+    [InlineData(typeof(EventTestGeneric))]
+    [InlineData(typeof(GenericBaseTest<>))]
+    [InlineData(typeof(GenericPropertyTest))]
+    [InlineData(typeof(SealedClassTest))]
+    [InlineData(typeof(StyledPropertyTest))]
+    [InlineData(typeof(PropertTest2))]
+    public void Test(Type type)
     {
-        var (inputSource, expectedOutput) = GetTestSources(nameof(DirectPropertyTest), nameof(DirectPropertyTestExtensions));
+        var name = type.Name;
 
-        var output = GetGeneratedOutput(inputSource);
+        if (type.IsGenericType)
+        {
+            name = type.GetGenericTypeDefinition().Name;
+            // Remove the arity suffix (e.g., "`1")
+            var tickIndex = name.IndexOf('`');
+            name = tickIndex > 0 ? name[..tickIndex] : name;
+        }
 
-        Assert.Equal(expectedOutput.Trim(), output);
-    }
-
-    [Fact]
-    public void StyledProperty()
-    {
-        var (inputSource, expectedOutput) = GetTestSources(nameof(StyledPropertyTest), nameof(StyledPropertyTestExtensions));
-
-        var output = GetGeneratedOutput(inputSource);
-
-        Assert.Equal(expectedOutput.Trim(), output);
-    }
-
-    [Fact]
-    public void AttachedProperty()
-    {
-        var (inputSource, expectedOutput) = GetTestSources(nameof(AttachedPropertyTest), nameof(AttachedPropertyTestExtensions));
-
-        var output = GetGeneratedOutput(inputSource);
-
-        Assert.Equal(expectedOutput.Trim(), output);
-    }
-
-    [Fact]
-    public void CommonProperty()
-    {
-        var (inputSource, expectedOutput) = GetTestSources(nameof(CommonPropertyTest), nameof(CommonPropertyTestExtensions));
-
-        var output = GetGeneratedOutput(inputSource);
-
-        Assert.Equal(expectedOutput.Trim(), output);
-    }
-
-    [Fact]
-    public void GenericBaseTest()
-    {
-        var (inputSource, expectedOutput) = GetTestSources(nameof(GenericBaseTest), nameof(GenericBaseTestExtensions));
-
-        var output = GetGeneratedOutput(inputSource);
-
-        Assert.Equal(expectedOutput.Trim(), output);
-    }
-
-    [Fact]
-    public void GenericPropertyTest()
-    {
-        var (inputSource, expectedOutput) = GetTestSources(nameof(GenericPropertyTest), nameof(GenericPropertyTestExtensions));
-
-        var output = GetGeneratedOutput(inputSource);
-
-        Assert.Equal(expectedOutput.Trim(), output);
-    }
-
-    [Fact]
-    public void EventTest()
-    {
-        var (inputSource, expectedOutput) = GetTestSources(nameof(EventTest), nameof(EventTestExtensions));
-
-        var output = GetGeneratedOutput(inputSource);
-
-        Assert.Equal(expectedOutput.Trim(), output);
-    }
-
-    [Fact]
-    public void EventTestGeneric()
-    {
-        var (inputSource, expectedOutput) = GetTestSources(nameof(EventTestGeneric), nameof(EventTestGenericExtensions));
+        var (inputSource, expectedOutput) = GetTestSources(name, name + "Extensions");
 
         var output = GetGeneratedOutput(inputSource);
 

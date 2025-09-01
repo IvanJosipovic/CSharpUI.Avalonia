@@ -1,6 +1,8 @@
 ﻿using ReactiveUI;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reactive;
+using System.Reactive.Disposables;
 
 namespace CSharpUI.Avalonia.CommonExtensions;
 
@@ -27,18 +29,52 @@ public static class ReactiveExtensions
         Action<TValue?>? onChange,
         Func<TValue2?, TValue?>? valueSelector = null) where TControl : Control where TViewModel : ReactiveObject
     {
-        //One Way
-        model.ObservableForProperty(propertySelector, skipInitial: false).Value()
-             .SubscribeSafe(new AnonymousObserver<TValue2?>(v =>
+        var disposables = new CompositeDisposable();
+
+        // One Way
+        var oneWayDisp = model.ObservableForProperty(propertySelector, skipInitial: false).Value()
+            .SubscribeSafe(new AnonymousObserver<TValue2?>(v =>
             {
                 control.SetValue(prop, valueSelector == null ? v : valueSelector(v));
             }));
 
-        //Two Way
+        disposables.Add(oneWayDisp);
+
+        // Two Way
         if (onChange != null)
         {
-            control.GetObservable(prop).SubscribeSafe(new AnonymousObserver<TValue?>(onChange.Invoke));
+            var twoWayDisp = control.GetObservable(prop)
+                .SubscribeSafe(new AnonymousObserver<TValue?>(onChange.Invoke));
+            disposables.Add(twoWayDisp);
         }
+
+        // Dispose when control is detached from visual tree
+        void Cleanup(object? sender, VisualTreeAttachmentEventArgs e)
+        {
+            try
+            {
+                disposables.Dispose();
+            }
+            catch (Exception ex)
+            {
+                // Optionally log or handle the exception
+                Debug.WriteLine($"Error disposing subscriptions: {ex}");
+            }
+            finally
+            {
+                try
+                {
+                    control.DetachedFromVisualTree -= Cleanup;
+                }
+                catch (Exception ex)
+                {
+                    // Optionally log or handle the exception
+                    Debug.WriteLine($"Error detaching Cleanup handler: {ex}");
+                }
+            }
+        }
+
+        control.DetachedFromVisualTree += Cleanup;
 
         return control;
     }

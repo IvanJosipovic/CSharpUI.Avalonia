@@ -16,11 +16,15 @@ public class ValueOverloadsStyleSetterGenerator : ExtensionGeneratorBase<Propert
             foreach (var constructor in info.ValueType.GetMembers().OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.Constructor))
             {
                 var ps = constructor.Parameters;
+                if (ps.Length == 0)
+                {
+                    continue;
+                }
                 var argDefs = string.Join(", ", ps.Select(x => $"{x.Type} {x.Name}"));
                 var argVals = string.Join(", ", ps.Select(x => x.Name)); ;
 
                 extensionText += $"    public static Style<{info.ReturnType}> {info.ExtensionName}{info.GenericArg}(this Style<{info.ReturnType}> style, {argDefs}){info.GenericConstraint}{Extensions.NewLine}" +
-                                 $"        => style._addSetter({info.ControlTypeName}.{info.MemberName}Property, new {info.ValueTypeSource}({argVals}));";
+                                 $"        => style._addSetter({info.ControlTypeName}.{info.MemberName}Property, new {info.ValueTypeSource}({argVals}));{Extensions.NewLine}";
             }
         }
         return extensionText;

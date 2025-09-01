@@ -2,6 +2,7 @@ using CSharpUI.Avalonia.SourceGenerator.Generators;
 using Microsoft.CodeAnalysis;
 
 namespace CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
+
 public class PropertyExtensionInfo : IMemberExtensionInfo
 {
     public ITypeSymbol ControlType { get; }
@@ -19,10 +20,11 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
 
     public PropertyExtensionInfo(IFieldSymbol field)
     {
+        Comment = field.GetDocumentation();
+
         ControlType = field.ContainingType ?? throw new NullReferenceException("Control type can not be NULL");
         ExtensionName = field.Name.RemoveTrailingProperty();
         MemberName = field.Name.RemoveTrailingProperty();
-        Comment = field.GetDocumentation();
 
         if (field.AssociatedSymbol != null)
         {
@@ -30,54 +32,12 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
             MemberName = field.AssociatedSymbol.Name.RemoveTrailingProperty();
         }
 
-        ValueType = field.Type;
-        ControlTypeName = ControlType.Name;
-
-        if (ControlType is INamedTypeSymbol ct)
-        {
-            if (ct.TypeArguments.Length > 0)
-            {
-                ControlTypeName += "<";
-                ControlTypeName += ct.TypeArguments.Select(x => x.Name + (x.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "")).Aggregate((x, y) => x + ", " + y);
-                ControlTypeName += ">";
-                ValueTypeSource += ct.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
-            }
-        }
-
-        if (field.Type is INamedTypeSymbol nts)
-        {
-            ValueTypeSource = nts.Name;
-
-            var type = nts.TypeArguments.LastOrDefault();
-
-            if (type != null)
-            {
-                ValueTypeSource = type.Name;
-
-                if (type is INamedTypeSymbol nts2)
-                {
-                    if (nts2.TypeArguments.Length > 0)
-                    {
-                        ValueTypeSource += "<";
-                        ValueTypeSource += nts2.TypeArguments.Select(x => x.Name + (x.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "")).Aggregate((x, y) => x + ", " + y);
-                        ValueTypeSource += ">";
-                        ValueTypeSource += nts2.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
-                    }
-                }
-            }
-        }
-        else if (field.Type is ITypeParameterSymbol tps)
-        {
-            ValueTypeSource = tps.Name;
-        }
-        else
-        {
-            ValueTypeSource = "";
-            throw new Exception("shouldnt be here");
-        }
+        ValueType = field.Type.GetLastGenericArgument();
+        ControlTypeName = ControlType.GetFullTypeName();
+        ValueTypeSource = ValueType.GetFullTypeName();
 
         IsAttachedProperty = field.Type.Name.StartsWith("AttachedProperty");
-        IsGeneric = !field.Type.IsSealed;
+        IsGeneric = !ControlType.IsSealed;
 
         ReturnType = ControlTypeName;
         if (IsGeneric)
@@ -104,54 +64,12 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
         MemberName = property.Name.RemoveTrailingProperty();
         Comment = property.GetDocumentation();
 
-        ValueType = property.Type;
-        ControlTypeName = ControlType.Name;
+        ValueType = property.Type.GetLastGenericArgument();
+        ControlTypeName = ControlType.GetFullTypeName();
+        ValueTypeSource = ValueType.GetFullTypeName();
 
-        if (ControlType is INamedTypeSymbol ct)
-        {
-            if (ct.TypeArguments.Length > 0)
-            {
-                ControlTypeName += "<";
-                ControlTypeName += ct.TypeArguments.Select(x => x.Name + (x.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "")).Aggregate((x, y) => x + ", " + y);
-                ControlTypeName += ">";
-                ValueTypeSource += ct.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
-            }
-        }
-
-        if (property.Type is INamedTypeSymbol nts)
-        {
-            ValueTypeSource = nts.Name;
-
-            var type = nts.TypeArguments.LastOrDefault();
-
-            if (type != null)
-            {
-                ValueTypeSource = type.Name;
-
-                if (type is INamedTypeSymbol nts2)
-                {
-                    if (nts2.TypeArguments.Length > 0)
-                    {
-                        ValueTypeSource += "<";
-                        ValueTypeSource += nts2.TypeArguments.Select(x => x.Name + (x.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "")).Aggregate((x, y) => x + ", " + y);
-                        ValueTypeSource += ">";
-                        ValueTypeSource += nts2.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
-                    }
-                }
-            }
-        }
-        else if (property.Type is ITypeParameterSymbol tps)
-        {
-            ValueTypeSource = tps.Name;
-        }
-        else
-        {
-            ValueTypeSource = "";
-            throw new Exception("shouldnt be here");
-        }
-
-        //IsAttachedProperty = property.Type.Name.StartsWith("AttachedProperty");
-        IsGeneric = !property.Type.IsSealed;
+        IsAttachedProperty = property.Type.Name.StartsWith("AttachedProperty");
+        IsGeneric = !ControlType.IsSealed;
 
         ReturnType = ControlTypeName;
         if (IsGeneric)
@@ -160,7 +78,7 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
             GenericConstraint = $" where T : {ControlTypeName}";
             GenericArg = "<T>";
 
-            if (ControlType is INamedTypeSymbol ct2 )
+            if (ControlType is INamedTypeSymbol ct2)
             {
                 if (ct2.TypeArguments.Length > 0)
                 {

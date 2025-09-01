@@ -42,38 +42,11 @@ public class EventExtensionInfo : IMemberExtensionInfo
 
         EventInfo = eventInfo;
         ControlType = eventInfo.ContainingType;
-        ControlTypeName = ControlType.Name;
+        ControlTypeName = ControlType.GetFullTypeName();
         EventName = EventInfo.Name;
         MemberName = EventName;
+        EventHandler = eventInfo.Type.GetFullTypeName();
         IsObsolete = EventInfo.GetAttributes().Any(a => a.AttributeClass?.Name == nameof(ObsoleteAttribute));
-        EventHandler = eventInfo.Type.Name;
-
-        if (eventInfo.Type is INamedTypeSymbol type)
-        {
-            if (type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
-            {
-                if (type.TypeArguments[0] is INamedTypeSymbol type2)
-                {
-                    type = type2;
-                }
-            }
-
-            EventHandler = type.Name;
-
-            if (type.TypeArguments.Length > 0)
-            {
-                foreach (var item in type.TypeArguments)
-                {
-                    EventParameterTypes.Add(item.Name);
-                }
-
-                EventHandler += "<";
-                EventHandler += string.Join(",", EventParameterTypes);
-                EventHandler += ">";
-            }
-        }
-
-
 
         var methodInfo = eventInfo.Type.GetMembers("Invoke").FirstOrDefault();
 
@@ -99,7 +72,6 @@ public class EventExtensionInfo : IMemberExtensionInfo
             GenericConstraint = $"where T : {ControlTypeName}";
             GenericArg = "<T>";
         }
-
     }
 
     private static bool HasRoutedEventArgs(ImmutableArray<IParameterSymbol> parameters)

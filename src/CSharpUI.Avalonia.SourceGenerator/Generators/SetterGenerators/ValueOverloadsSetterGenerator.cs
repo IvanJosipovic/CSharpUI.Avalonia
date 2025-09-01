@@ -16,11 +16,15 @@ public class ValueOverloadsSetterGenerator : ExtensionGeneratorBase<PropertyExte
             foreach (var constructor in info.ValueType.GetMembers().OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.Constructor))
             {
                 var ps = constructor.Parameters;
+                if (ps.Length == 0 )
+                {
+                    continue;
+                }
                 var argDefs = string.Join(", ", ps.Select(x => $"{x.Type} {x.Name} = default"));
                 var argVals = string.Join(", ", ps.Select(x => x.Name)); ;
 
                 extensionText += Extensions.NewLine +
-                                 $"    public static {info.ReturnType} {info.ExtensionName}{info.GenericArg}(this {info.ReturnType} control, {argDefs}) {info.GenericConstraint} {Extensions.NewLine}" +
+                                 $"    public static {info.ReturnType} {info.ExtensionName}{info.GenericArg}(this {info.ReturnType} control, {argDefs}){info.GenericConstraint}{Extensions.NewLine}" +
                                  $"        => control._set(() => control.{info.MemberName} = new {info.ValueTypeSource}({argVals}));";
             }
         }
