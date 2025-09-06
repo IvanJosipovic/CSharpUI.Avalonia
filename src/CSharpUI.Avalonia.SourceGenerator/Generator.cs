@@ -64,7 +64,11 @@ public class Generator : IIncrementalGenerator
 
         context.RegisterPostInitializationOutput(pi =>
         {
-            pi.AddSource("GlobalUsings.g.cs", SourceText.From($"global using CSharpUI.Avalonia.Extensions;\n", Encoding.UTF8));
+            pi.AddSource("GlobalUsings.g.cs", SourceText.From("""
+                global using CSharpUI.Avalonia;
+                global using CSharpUI.Avalonia.Extensions;
+                global using CSharpUI.Avalonia.CommonExtensions;
+                """, Encoding.UTF8));
         });
     }
 

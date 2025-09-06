@@ -11,7 +11,7 @@ public class BindSetterGenerator : ExtensionGeneratorBase<PropertyExtensionInfo>
             return null;
 
         return
-            $"    public static {info.ReturnType} {info.ExtensionName}{info.GenericArg}(this {info.ReturnType} control, IBinding binding){info.GenericConstraint}{Extensions.NewLine}" +
+            $"    public static {info.ReturnType} {info.ExtensionName}{info.GenericArg}(this {info.ReturnType} control, global::Avalonia.Data.IBinding binding){info.GenericConstraint}{Extensions.NewLine}" +
             $"        => control._set({info.ControlTypeName}.{info.MemberName}, binding);";
     }
 }

@@ -1,11 +1,4 @@
 #nullable enable
-using Avalonia.Data;
-using CSharpUI.Avalonia.Styles;
-using CSharpUI.Avalonia.CommonExtensions;
-using Avalonia;
-using Avalonia.Collections;
-using System;
-using Tests;
 
 namespace CSharpUI.Avalonia.Extensions;
 
@@ -25,11 +18,11 @@ public static partial class GenericPropertyTestExtensions
     // Ticks
 
     /*ValueStyleSetterGenerator*/
-    public static Style<T> Ticks<T>(this Style<T> style, global::Avalonia.Collections.AvaloniaList<double>? value) where T : global::Tests.GenericPropertyTest
+    public static global::CSharpUI.Avalonia.Styles.Style<T> Ticks<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, global::Avalonia.Collections.AvaloniaList<double>? value) where T : global::Tests.GenericPropertyTest
         => style._addSetter(global::Tests.GenericPropertyTest.TicksProperty!, value!);
 
     /*BindingStyleSetterGenerator*/
-    public static Style<T> Ticks<T>(this Style<T> style, IBinding binding) where T : global::Tests.GenericPropertyTest
+    public static global::CSharpUI.Avalonia.Styles.Style<T> Ticks<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, global::Avalonia.Data.IBinding binding) where T : global::Tests.GenericPropertyTest
         => style._addSetter(global::Tests.GenericPropertyTest.TicksProperty, binding);
 
 

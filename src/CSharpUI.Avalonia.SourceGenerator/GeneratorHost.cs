@@ -95,15 +95,7 @@ public class GeneratorHost()
 
         var sb = new StringBuilder();
         sb.AppendLine("#nullable enable");
-        sb.AppendLine($"using Avalonia.Data;");
-        //sb.AppendLine($"using Avalonia.Data.Converters;");
-        //sb.AppendLine($"using System;");
-        //sb.AppendLine($"using System.Numerics;");
-        //sb.AppendLine($"using System.Linq.Expressions;");
-        //sb.AppendLine($"using System.Runtime.CompilerServices;");
-        sb.AppendLine("using CSharpUI.Avalonia.Styles;");
-        sb.AppendLine("using CSharpUI.Avalonia.CommonExtensions;");
-        controlType.GetNamespaces().OrderBy(x => x).ToList().ForEach(x => sb.AppendLine($"using {x};"));
+        //controlType.GetNamespaces().OrderBy(x => x).ToList().ForEach(x => sb.AppendLine($"using {x};"));
         sb.AppendLine();
         sb.AppendLine("namespace CSharpUI.Avalonia.Extensions;");
         sb.AppendLine();

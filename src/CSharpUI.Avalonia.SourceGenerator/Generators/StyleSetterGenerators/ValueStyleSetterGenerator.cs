@@ -16,7 +16,7 @@ public class ValueStyleSetterGenerator : ExtensionGeneratorBase<PropertyExtensio
 
         //direct type access
         var extensionText =
-            $"    public static Style<{info.ReturnType}> {info.ExtensionName}{info.GenericArg}(this Style<{info.ReturnType}> style, {info.ValueTypeSource} value){info.GenericConstraint}{Extensions.NewLine}"
+            $"    public static global::CSharpUI.Avalonia.Styles.Style<{info.ReturnType}> {info.ExtensionName}{info.GenericArg}(this global::CSharpUI.Avalonia.Styles.Style<{info.ReturnType}> style, {info.ValueTypeSource} value){info.GenericConstraint}{Extensions.NewLine}"
           + $"        => style._addSetter({info.ControlTypeName}.{info.MemberName}Property!, value!);";
 
         return extensionText;

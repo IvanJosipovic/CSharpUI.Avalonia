@@ -1,10 +1,4 @@
 #nullable enable
-using Avalonia.Data;
-using CSharpUI.Avalonia.Styles;
-using CSharpUI.Avalonia.CommonExtensions;
-using Avalonia;
-using System;
-using Tests;
 
 namespace CSharpUI.Avalonia.Extensions;
 
@@ -24,11 +18,11 @@ public static partial class StyledPropertyTestExtensions
     // CanSave
 
     /*ValueStyleSetterGenerator*/
-    public static Style<T> CanSave<T>(this Style<T> style, bool value) where T : global::Tests.StyledPropertyTest
+    public static global::CSharpUI.Avalonia.Styles.Style<T> CanSave<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, bool value) where T : global::Tests.StyledPropertyTest
         => style._addSetter(global::Tests.StyledPropertyTest.CanSaveProperty!, value!);
 
     /*BindingStyleSetterGenerator*/
-    public static Style<T> CanSave<T>(this Style<T> style, IBinding binding) where T : global::Tests.StyledPropertyTest
+    public static global::CSharpUI.Avalonia.Styles.Style<T> CanSave<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, global::Avalonia.Data.IBinding binding) where T : global::Tests.StyledPropertyTest
         => style._addSetter(global::Tests.StyledPropertyTest.CanSaveProperty, binding);
 
 
