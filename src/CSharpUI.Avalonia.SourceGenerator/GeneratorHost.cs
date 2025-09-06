@@ -36,7 +36,14 @@ public class GeneratorHost()
 
                     var found = props.FirstOrDefault(y => y.Name.RemoveTrailingProperty() == "Set" + x.MemberName.RemoveTrailingProperty());
 
-                    return found != null ;
+                    if (found != null){
+                    var paramType = found.Parameters[0].Type;
+
+                    var tName = t.IsOrInheritsFrom(paramType);
+
+                        return tName;
+                    }
+                    return false;
                 }),
 
             new AttachedPropertyBindFromExpressionSetterGenerator()

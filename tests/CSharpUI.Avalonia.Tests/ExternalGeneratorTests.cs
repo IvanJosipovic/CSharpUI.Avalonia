@@ -12,6 +12,8 @@ public class ExternalPropertyGeneratorTests
 {
 
     [Theory]
+    [InlineData(typeof(AttachedProperty2Test))]
+    [InlineData(typeof(AttachedProperty3Test))]
     [InlineData(typeof(AttachedPropertyTest))]
     [InlineData(typeof(CommonPropertyTest))]
     [InlineData(typeof(DirectPropertyTest))]
@@ -22,7 +24,6 @@ public class ExternalPropertyGeneratorTests
     [InlineData(typeof(SealedClassTest))]
     [InlineData(typeof(StyledPropertyTest))]
     [InlineData(typeof(ValueOverloadsSetterGeneratorTest))]
-    [InlineData(typeof(AttachedProperty2Test))]
     public void Test(Type type)
     {
         var name = type.Name;

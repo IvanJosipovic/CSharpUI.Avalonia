@@ -10,6 +10,8 @@ namespace CSharpUI.Avalonia.Tests;
 public class GeneratorTests
 {
     [Theory]
+    [InlineData(typeof(AttachedProperty2Test))]
+    [InlineData(typeof(AttachedProperty3Test))]
     [InlineData(typeof(AttachedPropertyTest))]
     [InlineData(typeof(CommonPropertyTest))]
     [InlineData(typeof(DirectPropertyTest))]
@@ -20,7 +22,7 @@ public class GeneratorTests
     [InlineData(typeof(SealedClassTest))]
     [InlineData(typeof(StyledPropertyTest))]
     [InlineData(typeof(ValueOverloadsSetterGeneratorTest))]
-    [InlineData(typeof(AttachedProperty2Test))]
+
     public void Text(Type type)
     {
         var name = type.Name;

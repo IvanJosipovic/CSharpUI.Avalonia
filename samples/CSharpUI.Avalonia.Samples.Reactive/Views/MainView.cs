@@ -1,4 +1,5 @@
-﻿using Avalonia.Styling;
+﻿using Avalonia.ReactiveUI;
+using Avalonia.Styling;
 using CSharpUI.Avalonia;
 using CSharpUI.Avalonia.CommonExtensions;
 using CSharpUI.Avalonia.Samples.Reactive.ViewModels;
@@ -16,18 +17,18 @@ public class MainView : ViewBase<MainViewModel>
         new Grid()
             .Rows("*, Auto")
             .Children([
-                //new RoutedViewHost
-                //    {
-                //        ViewLocator = new AppViewLocator()
-                //    }
-                //    .DefaultContent(
-                //        new TextBlock()
-                //            //.ReactiveBinding(TextBox.TextProperty, vm, x => x.MyProperty)
-                //            .HorizontalAlignment(HorizontalAlignment.Center)
-                //            .VerticalAlignment(VerticalAlignment.Center)
-                //    )
-                //    .Router(vm.Router)
-                //    .Row(0),
+                new RoutedViewHost
+                    {
+                        ViewLocator = new AppViewLocator()
+                    }
+                    .DefaultContent(
+                        new TextBlock()
+                            .ReactiveBinding(TextBox.TextProperty, vm!, x => x.MyProperty)
+                            .HorizontalAlignment(HorizontalAlignment.Center)
+                            .VerticalAlignment(VerticalAlignment.Center)
+                    )
+                    .Router(vm!.Router)
+                    .Row(0),
                 new StackPanel()
                     .Orientation(Orientation.Horizontal)
                     .Margin(new Thickness(15))
@@ -41,7 +42,7 @@ public class MainView : ViewBase<MainViewModel>
                     .Children([
                         new Button()
                             .Content("Go back")
-                            .Command(vm.GoBack),
+                            .Command(vm!.GoBack),
                         new Button()
                             .Content("Go next")
                             .Command(vm.GoNext),

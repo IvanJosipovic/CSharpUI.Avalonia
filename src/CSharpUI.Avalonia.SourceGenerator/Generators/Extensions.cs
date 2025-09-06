@@ -392,7 +392,7 @@ internal static class Extensions
         }
     }
 
-    private static readonly SymbolDisplayFormat FullyQualifiedGlobalFormat =
+    internal static readonly SymbolDisplayFormat FullyQualifiedGlobalFormat =
     SymbolDisplayFormat.FullyQualifiedFormat
         .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Included);
 
@@ -419,5 +419,26 @@ internal static class Extensions
         }
 
         return type;
+    }
+
+    public static bool IsOrInheritsFrom(this ITypeSymbol symbol, ITypeSymbol baseOrInterface)
+    {
+        if (symbol == null || baseOrInterface == null)
+            return false;
+
+        // exact match
+        if (SymbolEqualityComparer.Default.Equals(symbol, baseOrInterface))
+            return true;
+
+        // walk base types
+        for (var current = symbol.BaseType; current != null; current = current.BaseType)
+        {
+            if (SymbolEqualityComparer.Default.Equals(current, baseOrInterface))
+                return true;
+        }
+
+        // check interfaces
+        return symbol.AllInterfaces.Any(i =>
+            SymbolEqualityComparer.Default.Equals(i, baseOrInterface));
     }
 }

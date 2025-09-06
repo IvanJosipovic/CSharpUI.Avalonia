@@ -7,7 +7,7 @@ namespace CSharpUI.Avalonia.Samples.Reactive.ViewModels;
 public partial class MainViewModel : ReactiveObject, IScreen
 {
     [Reactive]
-    public partial string MyProperty { get; set; } = "Main View";
+    public partial string? MyProperty { get; set; } = "Main View";
 
     // The Router associated with this Screen.
     // Required by the IScreen interface.
