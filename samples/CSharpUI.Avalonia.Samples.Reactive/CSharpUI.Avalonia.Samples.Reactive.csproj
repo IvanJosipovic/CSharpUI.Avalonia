@@ -8,7 +8,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>preview</LangVersion>
     <PublishAot>true</PublishAot>
-    <!--<TrimmerSingleWarn>false</TrimmerSingleWarn>-->
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
