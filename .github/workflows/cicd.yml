@@ -61,6 +61,11 @@ jobs:
     steps:
     - uses: actions/checkout@v5
 
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v5
+      with:
+        global-json-file: global.json
+
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v5
       id: semantic
