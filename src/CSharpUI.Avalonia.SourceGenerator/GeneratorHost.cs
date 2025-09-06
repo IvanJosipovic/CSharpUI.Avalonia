@@ -1,12 +1,13 @@
-﻿using System.Collections.Immutable;
-using System.Text;
-using CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
+﻿using CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 using CSharpUI.Avalonia.SourceGenerator.Generators;
 using CSharpUI.Avalonia.SourceGenerator.Generators.AttachedPropertySetterGenerator;
 using CSharpUI.Avalonia.SourceGenerator.Generators.EventGenerators;
 using CSharpUI.Avalonia.SourceGenerator.Generators.SetterGenerators;
 using CSharpUI.Avalonia.SourceGenerator.Generators.StyleSetterGenerators;
 using Microsoft.CodeAnalysis;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Text;
 
 namespace CSharpUI.Avalonia.SourceGenerator;
 
@@ -28,7 +29,15 @@ public class GeneratorHost()
             t => t.GetMembers()
                 .OfType<IFieldSymbol>()
                 .Where(x => x.IsAttachedPropertyField())
-                .Select(x => new AttachedPropertyExtensionInfo(x)),
+                .Select(x => new AttachedPropertyExtensionInfo(x))
+                .Where(x => {
+
+                    var props = t.GetMembers().OfType<IMethodSymbol>();
+
+                    var found = props.FirstOrDefault(y => y.Name.RemoveTrailingProperty() == "Set" + x.MemberName.RemoveTrailingProperty());
+
+                    return found != null ;
+                }),
 
             new AttachedPropertyBindFromExpressionSetterGenerator()
         ),

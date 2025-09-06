@@ -20,7 +20,7 @@ public class GeneratorTests
     [InlineData(typeof(SealedClassTest))]
     [InlineData(typeof(StyledPropertyTest))]
     [InlineData(typeof(ValueOverloadsSetterGeneratorTest))]
-    [InlineData(typeof(TextBlockTest))]
+    [InlineData(typeof(AttachedProperty2Test))]
     public void Text(Type type)
     {
         var name = type.Name;

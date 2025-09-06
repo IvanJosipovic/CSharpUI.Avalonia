@@ -22,7 +22,7 @@ public class ExternalPropertyGeneratorTests
     [InlineData(typeof(SealedClassTest))]
     [InlineData(typeof(StyledPropertyTest))]
     [InlineData(typeof(ValueOverloadsSetterGeneratorTest))]
-    [InlineData(typeof(TextBlockTest))]
+    [InlineData(typeof(AttachedProperty2Test))]
     public void Test(Type type)
     {
         var name = type.Name;
