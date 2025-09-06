@@ -1,6 +1,6 @@
-using CSharpUI.Avalonia;
 using Avalonia;
 using Avalonia.Controls;
+using CSharpUI.Avalonia;
 
 namespace Tests;
 

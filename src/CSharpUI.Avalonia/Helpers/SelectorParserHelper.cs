@@ -1,5 +1,5 @@
-﻿using System.Text.RegularExpressions;
-using Avalonia.Styling;
+﻿using Avalonia.Styling;
+using System.Text.RegularExpressions;
 
 namespace CSharpUI.Avalonia.Helpers;
 

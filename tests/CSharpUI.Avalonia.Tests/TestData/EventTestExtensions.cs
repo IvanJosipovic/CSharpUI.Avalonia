@@ -1,7 +1,7 @@
 #nullable enable
 using Avalonia.Data;
-using CSharpUI.Avalonia.Styles;
 using CSharpUI.Avalonia.CommonExtensions;
+using CSharpUI.Avalonia.Styles;
 using System;
 using Tests;
 

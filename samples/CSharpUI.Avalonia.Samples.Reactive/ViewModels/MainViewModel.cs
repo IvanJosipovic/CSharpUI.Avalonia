@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
-using System.Reactive;
 using ReactiveUI.SourceGenerators;
+using System.Reactive;
 
 namespace CSharpUI.Avalonia.Samples.Reactive.ViewModels;
 
@@ -37,7 +37,7 @@ public partial class MainViewModel : ReactiveObject, IScreen
                 }
                 else
                 {
-                    return Router.Navigate.Execute(new PageViewModel2(this) { MyProperty = "Page View " + (Router.NavigationStack.Count + 1)});
+                    return Router.Navigate.Execute(new PageViewModel2(this) { MyProperty = "Page View " + (Router.NavigationStack.Count + 1) });
                 }
             }
         );

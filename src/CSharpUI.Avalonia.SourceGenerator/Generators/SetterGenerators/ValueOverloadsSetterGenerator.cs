@@ -16,7 +16,7 @@ public class ValueOverloadsSetterGenerator : ExtensionGeneratorBase<PropertyExte
             foreach (var constructor in info.ValueType.GetMembers().OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.Constructor))
             {
                 var ps = constructor.Parameters;
-                if (ps.Length == 0 )
+                if (ps.Length == 0)
                 {
                     continue;
                 }

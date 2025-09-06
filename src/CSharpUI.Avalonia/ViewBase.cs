@@ -1,6 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using CSharpUI.Avalonia.Styles;
+using System.Collections.Immutable;
 using System.Diagnostics;
-using CSharpUI.Avalonia.Styles;
 
 namespace CSharpUI.Avalonia;
 
@@ -146,7 +146,7 @@ public abstract class ViewBase : Decorator, IReloadable
             HotReloadManager.UnregisterInstance(this);
         }
     }
-#endregion
+    #endregion
 }
 
 internal class ViewBuildContext : IDisposable

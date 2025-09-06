@@ -11,7 +11,7 @@ internal static class PropertyPathHelper
         var propFound = false;
 
         //found closing bracket - ignore all characters that was before
-        var startIndex = Math.Max(0,path.LastIndexOf(')'));
+        var startIndex = Math.Max(0, path.LastIndexOf(')'));
 
         for (var i = startIndex; i < path.Length; i++)
         {
@@ -20,7 +20,7 @@ internal static class PropertyPathHelper
             //found special characters after property name, ie: @vm.Property ?? 0
             if (propFound && Array.IndexOf(StopChars, curChar) > -1)
                 return path.Substring(startIndex, i - startIndex);
-          
+
             if (!propFound && curChar == '.')
             {
                 //found start of property name

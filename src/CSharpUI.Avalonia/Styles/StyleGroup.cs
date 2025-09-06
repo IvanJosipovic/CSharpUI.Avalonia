@@ -2,7 +2,7 @@
 
 namespace CSharpUI.Avalonia.Styles;
 
-public class StyleGroup(Func<Selector,Selector>? groupSelectorFunc = null) : List<object>
+public class StyleGroup(Func<Selector, Selector>? groupSelectorFunc = null) : List<object>
 {
     public Func<Selector, Selector>? GroupSelectorFunc { get; } = groupSelectorFunc;
 

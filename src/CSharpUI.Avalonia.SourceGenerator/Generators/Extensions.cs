@@ -156,7 +156,7 @@ internal static class Extensions
             try
             {
                 var element = XElement.Parse(comment);
-                var summary = element.Element("summary")?.Value.Trim().Replace("\n","").Replace("\r","");
+                var summary = element.Element("summary")?.Value.Trim().Replace("\n", "").Replace("\r", "");
                 return summary;
             }
             catch (Exception)

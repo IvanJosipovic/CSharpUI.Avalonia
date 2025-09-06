@@ -7,7 +7,7 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
     protected override string? GetExtension(EventExtensionInfo @event)
     {
         var eventHandler = @event.EventHandler;
-        var eventParameterTypes = new List<string>() { "object?"};
+        var eventParameterTypes = new List<string>() { "object?" };
         eventParameterTypes.AddRange(@event.EventParameterTypes);
         var argsString = $"Action<{string.Join(", ", eventParameterTypes)}> action";
 
