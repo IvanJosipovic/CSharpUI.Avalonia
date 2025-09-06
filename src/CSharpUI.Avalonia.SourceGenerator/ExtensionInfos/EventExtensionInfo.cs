@@ -31,7 +31,6 @@ public class EventExtensionInfo : IMemberExtensionInfo
     public bool HasSingleParameter => EventParameterTypes.Count == 0;
     public bool HasMultipleParameters => EventParameterTypes.Count > 0;
 
-
     public EventExtensionInfo(IEventSymbol eventInfo)
     {
         if (eventInfo.ContainingType == null)

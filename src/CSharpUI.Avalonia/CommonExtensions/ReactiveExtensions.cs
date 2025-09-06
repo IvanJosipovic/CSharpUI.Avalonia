@@ -57,7 +57,6 @@ public static class ReactiveExtensions
             }
             catch (Exception ex)
             {
-                // Optionally log or handle the exception
                 Debug.WriteLine($"Error disposing subscriptions: {ex}");
             }
             finally
@@ -68,7 +67,6 @@ public static class ReactiveExtensions
                 }
                 catch (Exception ex)
                 {
-                    // Optionally log or handle the exception
                     Debug.WriteLine($"Error detaching Cleanup handler: {ex}");
                 }
             }
