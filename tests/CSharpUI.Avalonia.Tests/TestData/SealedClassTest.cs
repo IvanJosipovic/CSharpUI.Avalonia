@@ -1,13 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
-using Avalonia.Interactivity;
-using CSharpUI.Avalonia;
-using System.Windows.Input;
 
 namespace Tests;
 
-public sealed class SealedClassTest : ViewBase
+public sealed class SealedClassTest : Control
 {
     private bool _canSave = default;
 
@@ -25,10 +21,5 @@ public sealed class SealedClassTest : ViewBase
     {
         get => _canSave;
         set => SetAndRaise(CanSaveProperty, ref _canSave, value);
-    }
-
-    protected override object Build()
-    {
-        return new TextBox();
     }
 }

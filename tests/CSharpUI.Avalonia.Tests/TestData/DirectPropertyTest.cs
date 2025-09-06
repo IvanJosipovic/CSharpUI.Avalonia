@@ -1,10 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
-using CSharpUI.Avalonia;
 
 namespace Tests;
 
-public class DirectPropertyTest : ViewBase
+public class DirectPropertyTest : Control
 {
     private bool _canSave = default;
 
@@ -22,10 +21,5 @@ public class DirectPropertyTest : ViewBase
     {
         get => _canSave;
         set => SetAndRaise(CanSaveProperty, ref _canSave, value);
-    }
-
-    protected override object Build()
-    {
-        return new TextBox();
     }
 }

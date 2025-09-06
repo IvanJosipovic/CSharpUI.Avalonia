@@ -1,19 +1,5 @@
 ﻿using Avalonia;
-using Avalonia.Automation.Peers;
-using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Controls.Documents;
-using Avalonia.Layout;
-using Avalonia.Media;
-using Avalonia.Media.TextFormatting;
-using Avalonia.Metadata;
-using Avalonia.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using Point = Avalonia.Point;
-using Size = Avalonia.Size;
 
 namespace Tests;
 

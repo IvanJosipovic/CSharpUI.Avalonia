@@ -1,13 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
-using Avalonia.Interactivity;
-using CSharpUI.Avalonia;
-using System.Windows.Input;
 
 namespace Tests;
 
-public class ValueOverloadsSetterGeneratorTest : ViewBase
+public class ValueOverloadsSetterGeneratorTest : Control
 {
     /// <summary>
     /// Defines the <see cref="Padding"/> property.
@@ -22,10 +18,5 @@ public class ValueOverloadsSetterGeneratorTest : ViewBase
     {
         get => GetValue(PaddingProperty);
         set => SetValue(PaddingProperty, value);
-    }
-
-    protected override object Build()
-    {
-        return new TextBox();
     }
 }

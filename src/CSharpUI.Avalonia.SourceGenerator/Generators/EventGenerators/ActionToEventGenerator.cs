@@ -19,22 +19,8 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
         // Generate the action call string
         var actionCallStr = $"action({lambdaParameters})";
 
-        // If the delegate has more than one parameter, split them into individual arguments
-        if (@event.HasMultipleParameters)
-        {
-            lambdaParameters = string.Join(", ", @event.EventParameterTypes.Select((type, index) => $"arg{index}"));
-        }
-        else if (@event.HasSingleParameter)
-        {
-            lambdaParameters = "arg0, arg1";
-            actionCallStr = "action(arg0, arg1)";
-        }
-
-        var eventName = @event.EventName;
-        var extensionName = "On" + eventName;
-
         var extensionBody =
-            $"        => control._setEvent(({eventHandler})(({lambdaParameters}) => {actionCallStr}), h => control.{eventName} += h);";
+            $"        => control._setEvent(({eventHandler})(({lambdaParameters}) => {actionCallStr}), h => control.{@event.EventName} += h);";
 
         if (@event.IsRoutedEvent)
         {
@@ -42,13 +28,13 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
 
             extensionBody =
                   $"{Extensions.NewLine}{{{Extensions.NewLine}"
-                + $"        => control.AddHandler({@event.ControlTypeName}.{@eventName}Event, (_, args) => action(args), routes ?? default(RoutingStrategies));"
+                + $"        => control.AddHandler({@event.ControlTypeName}.{@event.EventName}Event, (_, args) => action(args), routes ?? default(RoutingStrategies));"
                 + $"}}{Extensions.NewLine}";
         }
 
         var extensionText =
-            (@event.IsObsolete ? "[Obsolete]" : "")
-            + $"    public static {@event.ReturnType} {extensionName}{@event.GenericArg}"
+            (@event.IsObsolete ? "[Obsolete]" + Extensions.NewLine : "")
+            + $"    public static {@event.ReturnType} {"On" + @event.EventName}{@event.GenericArg}"
             + $"(this {@event.ReturnType} control, {argsString}) {@event.GenericConstraint}{Extensions.NewLine}"
             + extensionBody;
 

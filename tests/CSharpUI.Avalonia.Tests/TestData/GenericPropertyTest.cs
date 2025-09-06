@@ -1,11 +1,10 @@
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
-using CSharpUI.Avalonia;
 
 namespace Tests;
 
-public class GenericPropertyTest : ViewBase
+public class GenericPropertyTest : Control
 {
     //
     // Summary:
@@ -27,10 +26,5 @@ public class GenericPropertyTest : ViewBase
         {
             SetValue(TicksProperty, value);
         }
-    }
-
-    protected override object Build()
-    {
-        return new TextBox();
     }
 }

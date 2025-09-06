@@ -95,7 +95,6 @@ public class GeneratorHost()
 
         var sb = new StringBuilder();
         sb.Append("#nullable enable" + Extensions.NewLine);
-        //controlType.GetNamespaces().OrderBy(x => x).ToList().ForEach(x => sb.AppendLine($"using {x};"));
         sb.Append(Extensions.NewLine);
         sb.Append("namespace CSharpUI.Avalonia.Extensions;" + Extensions.NewLine);
         sb.Append(Extensions.NewLine);

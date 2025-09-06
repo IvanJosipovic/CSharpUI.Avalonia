@@ -1,5 +1,4 @@
 using Avalonia;
-using CSharpUI.Avalonia.Extensions;
 using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;

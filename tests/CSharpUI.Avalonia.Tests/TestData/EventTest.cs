@@ -1,12 +1,9 @@
-using Avalonia;
-using Avalonia.Collections;
 using Avalonia.Controls;
-using CSharpUI.Avalonia;
-using System.ComponentModel;
+using System;
 
 namespace Tests;
 
-public class EventTest : ViewBase
+public class EventTest : Control
 {
     /// <summary>
     /// Occurs when the
@@ -21,9 +18,4 @@ public class EventTest : ViewBase
     /// property was changed from true to false and the drop-down is open.
     /// </summary>
     public event EventHandler? DropDownClosed2;
-
-    protected override object Build()
-    {
-        return new TextBox();
-    }
 }

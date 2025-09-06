@@ -2,12 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Interactivity;
-using CSharpUI.Avalonia;
 using System.Windows.Input;
 
 namespace Tests;
 
-public class AttachedPropertyTest : ViewBase
+public class AttachedPropertyTest : Control
 {
     /// <summary>
     /// My Comment
@@ -29,10 +28,5 @@ public class AttachedPropertyTest : ViewBase
     public static ICommand GetCommand(AvaloniaObject element)
     {
         return element.GetValue(CommandProperty);
-    }
-
-    protected override object Build()
-    {
-        return new TextBox();
     }
 }

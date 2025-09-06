@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using ReactiveUI;
 using Tests;
 
 namespace CSharpUI.Avalonia.Tests;
@@ -44,19 +45,25 @@ public class ExternalPropertyGeneratorTests
 
     private static string? GetGeneratedOutput(string externalAssemblySourceCode)
     {
-        EventHandler? var = default!;
-        EventHandler<object>? var2 = default!;
-
         var references = AppDomain.CurrentDomain.GetAssemblies()
-                   .Where(assembly => !assembly.IsDynamic)
-                   .Select(assembly => MetadataReference.CreateFromFile(assembly.Location)).ToList();
+                  .Where(assembly => !assembly.IsDynamic)
+                  .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
+                  .Cast<MetadataReference>()
+                  .ToList();
 
         var externalAssemblySyntaxTree = CSharpSyntaxTree.ParseText(externalAssemblySourceCode + "\n\r" + "public class TestPointer { }");
 
         var externalAssemblyCompilation = CSharpCompilation.Create("ExternalAssembly",
               [externalAssemblySyntaxTree],
               references,
-              new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
+              new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+                .WithConcurrentBuild(true)
+                .WithDeterministic(true)
+                .WithNullableContextOptions(NullableContextOptions.Enable)
+                .WithOptimizationLevel(OptimizationLevel.Release)
+                .WithOverflowChecks(false)
+                .WithPlatform(Platform.AnyCpu)
+              );
 
         var dll = new MemoryStream();
         var comments = new MemoryStream();

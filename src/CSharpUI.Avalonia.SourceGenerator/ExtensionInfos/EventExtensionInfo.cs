@@ -52,8 +52,6 @@ public class EventExtensionInfo : IMemberExtensionInfo
             EventHandler = "global::System." + EventHandler;
         }
 
-        IsObsolete = EventInfo.GetAttributes().Any(a => a.AttributeClass?.Name == nameof(ObsoleteAttribute));
-
         EventParameterTypes.Add("global::System.Object?");
 
         var eventArgType = eventInfo.Type;
@@ -69,8 +67,7 @@ public class EventExtensionInfo : IMemberExtensionInfo
         {
             if (nts2.IsGenericType)
             {
-                var t2 = nts2.TypeArguments[0];
-                EventParameterTypes.Add(t2.GetFullTypeName());
+                EventParameterTypes.Add(nts2.TypeArguments[0].GetFullTypeName());
             }
             else
             {
@@ -78,21 +75,7 @@ public class EventExtensionInfo : IMemberExtensionInfo
             }
         }
 
-        //var methodInfo = eventInfo.Type.GetMembers("Invoke").FirstOrDefault();
-
-        //if (methodInfo is IMethodSymbol method)
-        //{
-        //    var parameters = method.Parameters;
-        //    foreach (var parameter in parameters)
-        //        EventParameterTypes.Add(parameter.Type.GetFullTypeName());
-
-        //    if (HasRoutedEventArgs(parameters))
-        //    {
-        //        var routedEventFieldInfo = ControlType.GetMembers(EventName + "Event").FirstOrDefault(x => x.IsStatic && x.DeclaredAccessibility == Accessibility.Public);
-        //        IsRoutedEvent = routedEventFieldInfo != null; //if routed event field located in base class, ignore it and count it classic event
-        //    }
-        //}
-
+        IsObsolete = EventInfo.GetAttributes().Any(a => a.AttributeClass?.Name == nameof(ObsoleteAttribute));
         IsGeneric = !eventInfo.ContainingType.IsSealed;
 
         ReturnType = ControlTypeName;

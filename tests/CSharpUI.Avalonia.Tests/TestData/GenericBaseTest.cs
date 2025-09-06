@@ -1,9 +1,9 @@
-﻿using CSharpUI.Avalonia;
+﻿using Avalonia.Controls;
 using ReactiveUI;
 
 namespace Tests;
 
-public abstract class GenericBaseTest<TViewModel> : ViewBase, IViewFor<TViewModel> where TViewModel : class
+public abstract class GenericBaseTest<TViewModel> : Control, IViewFor<TViewModel> where TViewModel : class
 {
     public TViewModel? ViewModel
     {
