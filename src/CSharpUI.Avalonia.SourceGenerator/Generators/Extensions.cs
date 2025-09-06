@@ -392,25 +392,13 @@ internal static class Extensions
         }
     }
 
+    private static readonly SymbolDisplayFormat FullyQualifiedGlobalFormat =
+    SymbolDisplayFormat.FullyQualifiedFormat
+        .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Included);
+
     internal static string GetFullTypeName(this ITypeSymbol symbol)
     {
-        var fullName = symbol.Name;
-
-        if (symbol is INamedTypeSymbol nts)
-        {
-            // Handle Nullable<T> for value types
-            if (nts.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T && nts.TypeArguments.Length == 1)
-            {
-                return $"{GetFullTypeName(nts.TypeArguments[0])}?";
-            }
-
-            // Handle generic types
-            if (nts.TypeArguments.Length > 0)
-            {
-                var typeArgs = string.Join(", ", nts.TypeArguments.Select(x => GetFullTypeName(x)));
-                fullName = $"{nts.Name}<{typeArgs}>";
-            }
-        }
+        var fullName = symbol.ToDisplayString(FullyQualifiedGlobalFormat);
 
         fullName += symbol.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
 

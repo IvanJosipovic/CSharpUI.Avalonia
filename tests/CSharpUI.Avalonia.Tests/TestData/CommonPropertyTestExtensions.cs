@@ -15,7 +15,7 @@ public static partial class CommonPropertyTestExtensions
 
     /*ValueSetterGenerator*/
     /// <summary>My Comment</summary>
-    public static T MyString<T>(this T control, String value) where T : CommonPropertyTest
+    public static T MyString<T>(this T control, string value) where T : global::Tests.CommonPropertyTest
         => control._set(() => control.MyString = value!);
 
 

@@ -17,9 +17,9 @@ public static partial class AttachedPropertyTestExtensions
 
     /*AttachedPropertyBindFromExpressionSetterGenerator*/
     /// <summary>Accessor for Attached property .</summary>
-    public static T Command<T>(this T control, ICommand value) where T : AttachedPropertyTest
+    public static T Command<T>(this T control, global::System.Windows.Input.ICommand value) where T : global::Tests.AttachedPropertyTest
     {
-        AttachedPropertyTest.SetCommand(control, value);
+        global::Tests.AttachedPropertyTest.SetCommand(control, value);
         return control;
     }
 

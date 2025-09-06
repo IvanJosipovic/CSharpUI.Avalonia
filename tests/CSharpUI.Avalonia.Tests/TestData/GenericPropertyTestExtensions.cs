@@ -17,7 +17,7 @@ public static partial class GenericPropertyTestExtensions
 
     /*ValueSetterGenerator*/
     /// <summary></summary>
-    public static T Ticks<T>(this T control, AvaloniaList<Double>? value) where T : GenericPropertyTest
+    public static T Ticks<T>(this T control, global::Avalonia.Collections.AvaloniaList<double>? value) where T : global::Tests.GenericPropertyTest
         => control._set(() => control.Ticks = value!);
 
 
@@ -26,12 +26,12 @@ public static partial class GenericPropertyTestExtensions
     // Ticks
 
     /*ValueStyleSetterGenerator*/
-    public static Style<T> Ticks<T>(this Style<T> style, AvaloniaList<Double>? value) where T : GenericPropertyTest
-        => style._addSetter(GenericPropertyTest.TicksProperty!, value!);
+    public static Style<T> Ticks<T>(this Style<T> style, global::Avalonia.Collections.AvaloniaList<double>? value) where T : global::Tests.GenericPropertyTest
+        => style._addSetter(global::Tests.GenericPropertyTest.TicksProperty!, value!);
 
     /*BindingStyleSetterGenerator*/
-    public static Style<T> Ticks<T>(this Style<T> style, IBinding binding) where T : GenericPropertyTest
-        => style._addSetter(GenericPropertyTest.TicksProperty, binding);
+    public static Style<T> Ticks<T>(this Style<T> style, IBinding binding) where T : global::Tests.GenericPropertyTest
+        => style._addSetter(global::Tests.GenericPropertyTest.TicksProperty, binding);
 
 
 

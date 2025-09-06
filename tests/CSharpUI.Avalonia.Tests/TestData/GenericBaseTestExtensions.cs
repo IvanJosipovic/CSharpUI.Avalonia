@@ -15,7 +15,7 @@ public static partial class GenericBaseTestExtensions
 
     /*ValueSetterGenerator*/
     /// <summary></summary>
-    public static T ViewModel<T, TViewModel>(this T control, TViewModel? value) where T : GenericBaseTest<TViewModel> where TViewModel : class
+    public static T ViewModel<T, TViewModel>(this T control, TViewModel? value) where T : global::Tests.GenericBaseTest<TViewModel> where TViewModel : class
         => control._set(() => control.ViewModel = value!);
 
 

@@ -16,17 +16,17 @@ public static partial class ValueOverloadsSetterGeneratorTestExtensions
 
     /*ValueSetterGenerator*/
     /// <summary>Gets or sets the padding to place around the .</summary>
-    public static T Padding<T>(this T control, Thickness value) where T : ValueOverloadsSetterGeneratorTest
+    public static T Padding<T>(this T control, global::Avalonia.Thickness value) where T : global::Tests.ValueOverloadsSetterGeneratorTest
         => control._set(() => control.Padding = value!);
 
     /*ValueOverloadsSetterGenerator*/
 
-    public static T Padding<T>(this T control, double uniformLength = default) where T : ValueOverloadsSetterGeneratorTest
-        => control._set(() => control.Padding = new Thickness(uniformLength));
-    public static T Padding<T>(this T control, double horizontal = default, double vertical = default) where T : ValueOverloadsSetterGeneratorTest
-        => control._set(() => control.Padding = new Thickness(horizontal, vertical));
-    public static T Padding<T>(this T control, double left = default, double top = default, double right = default, double bottom = default) where T : ValueOverloadsSetterGeneratorTest
-        => control._set(() => control.Padding = new Thickness(left, top, right, bottom));
+    public static T Padding<T>(this T control, double uniformLength = default) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+        => control._set(() => control.Padding = new global::Avalonia.Thickness(uniformLength));
+    public static T Padding<T>(this T control, double horizontal = default, double vertical = default) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+        => control._set(() => control.Padding = new global::Avalonia.Thickness(horizontal, vertical));
+    public static T Padding<T>(this T control, double left = default, double top = default, double right = default, double bottom = default) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+        => control._set(() => control.Padding = new global::Avalonia.Thickness(left, top, right, bottom));
 
 
 
@@ -34,20 +34,20 @@ public static partial class ValueOverloadsSetterGeneratorTestExtensions
     // Padding
 
     /*ValueStyleSetterGenerator*/
-    public static Style<T> Padding<T>(this Style<T> style, Thickness value) where T : ValueOverloadsSetterGeneratorTest
-        => style._addSetter(ValueOverloadsSetterGeneratorTest.PaddingProperty!, value!);
+    public static Style<T> Padding<T>(this Style<T> style, global::Avalonia.Thickness value) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+        => style._addSetter(global::Tests.ValueOverloadsSetterGeneratorTest.PaddingProperty!, value!);
 
     /*BindingStyleSetterGenerator*/
-    public static Style<T> Padding<T>(this Style<T> style, IBinding binding) where T : ValueOverloadsSetterGeneratorTest
-        => style._addSetter(ValueOverloadsSetterGeneratorTest.PaddingProperty, binding);
+    public static Style<T> Padding<T>(this Style<T> style, IBinding binding) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+        => style._addSetter(global::Tests.ValueOverloadsSetterGeneratorTest.PaddingProperty, binding);
 
     /*ValueOverloadsStyleSetterGenerator*/
-    public static Style<T> Padding<T>(this Style<T> style, double uniformLength) where T : ValueOverloadsSetterGeneratorTest
-        => style._addSetter(ValueOverloadsSetterGeneratorTest.PaddingProperty, new Thickness(uniformLength));
-    public static Style<T> Padding<T>(this Style<T> style, double horizontal, double vertical) where T : ValueOverloadsSetterGeneratorTest
-        => style._addSetter(ValueOverloadsSetterGeneratorTest.PaddingProperty, new Thickness(horizontal, vertical));
-    public static Style<T> Padding<T>(this Style<T> style, double left, double top, double right, double bottom) where T : ValueOverloadsSetterGeneratorTest
-        => style._addSetter(ValueOverloadsSetterGeneratorTest.PaddingProperty, new Thickness(left, top, right, bottom));
+    public static Style<T> Padding<T>(this Style<T> style, double uniformLength) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+        => style._addSetter(global::Tests.ValueOverloadsSetterGeneratorTest.PaddingProperty, new global::Avalonia.Thickness(uniformLength));
+    public static Style<T> Padding<T>(this Style<T> style, double horizontal, double vertical) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+        => style._addSetter(global::Tests.ValueOverloadsSetterGeneratorTest.PaddingProperty, new global::Avalonia.Thickness(horizontal, vertical));
+    public static Style<T> Padding<T>(this Style<T> style, double left, double top, double right, double bottom) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+        => style._addSetter(global::Tests.ValueOverloadsSetterGeneratorTest.PaddingProperty, new global::Avalonia.Thickness(left, top, right, bottom));
 
 
 
