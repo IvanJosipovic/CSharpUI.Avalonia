@@ -7,25 +7,48 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CSharpUI.Avalonia;
 
+/// <summary>
+/// Manages Hot Reload functionality
+/// </summary>
 public static class HotReloadManager
 {
     private static readonly Dictionary<Type, HashSet<IReloadable>> Instances = new();
 
+    /// <summary>
+    /// Event that is raised after hot reload is applied
+    /// </summary>
     public static event Action<Type[]?>? HotReloaded;
 
+    /// <summary>
+    /// Indicates whether Hot Reload is enabled
+    /// </summary>
     public static bool IsEnabled { get; private set; }
 
+    /// <summary>
+    /// Enables Hot Reload functionality
+    /// </summary>
     public static void Activate() => IsEnabled = true;
 
+    /// <summary>
+    /// Disables Hot Reload functionality
+    /// </summary>
     public static void Deactivate() => IsEnabled = false;
 
     private static void OnHotReloaded(Type[]? types) => HotReloaded?.Invoke(types);
 
+    /// <summary>
+    /// Clears cache for specified types (not implemented)
+    /// </summary>
+    /// <param name="types"></param>
     public static void ClearCache(Type[]? types)
     {
         Console.WriteLine("ClearCache for types: " + PrintTypes(types));
     }
 
+    /// <summary>
+    /// Updates application for specified types
+    /// </summary>
+    /// <param name="types"></param>
     public static void UpdateApplication(Type[]? types)
     {
         if (IsEnabled)
@@ -50,6 +73,11 @@ public static class HotReloadManager
         }
     }
 
+    /// <summary>
+    /// Prints type names from the array
+    /// </summary>
+    /// <param name="types"></param>
+    /// <returns></returns>
     public static string PrintTypes(Type[]? types)
     {
         if (types != null)

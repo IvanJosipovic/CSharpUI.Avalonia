@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <LangVersion>preview</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
     <Title>CSharpUI.Avalonia</Title>
     <PackageId>CSharpUI.Avalonia</PackageId>
@@ -11,16 +14,18 @@
     <RepositoryUrl>https://github.com/IvanJosipovic/CSharpUI.Avalonia</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <LangVersion>preview</LangVersion>
     <IsAotCompatible>true</IsAotCompatible>
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     <ProjectReference Include="..\CSharpUI.Avalonia.SourceGenerator\CSharpUI.Avalonia.SourceGenerator.csproj" ReferenceOutputAssembly="true">
       <PrivateAssets>all</PrivateAssets>
     </ProjectReference>

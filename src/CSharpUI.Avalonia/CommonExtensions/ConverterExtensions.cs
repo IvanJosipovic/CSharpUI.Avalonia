@@ -3,8 +3,19 @@ using System.Globalization;
 
 namespace CSharpUI.Avalonia.CommonExtensions;
 
+/// <summary>
+/// Extensions for <see cref="IValueConverter"/>
+/// </summary>
 public static class ConverterExtensions
 {
+    /// <summary>
+    /// Tries to convert value using specified converter
+    /// </summary>
+    /// <typeparam name="TIn"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
+    /// <param name="converter"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
     public static TOut TryConvert<TIn, TOut>(this FuncValueConverter<TIn, TOut> converter, TIn value)
     {
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
