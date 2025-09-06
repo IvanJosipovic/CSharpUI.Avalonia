@@ -1,5 +1,9 @@
 # CSharpUI.Avalonia
 
+[![Nuget](https://img.shields.io/nuget/vpre/CSharpUI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/CSharpUI.Avalonia)
+[![Nuget)](https://img.shields.io/nuget/dt/CSharpUI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/CSharpUI.Avalonia)
+[![codecov](https://codecov.io/github/IvanJosipovic/CSharpUI.Avalonia/graph/badge.svg?token=WXS4sxWpVr)](https://codecov.io/github/IvanJosipovic/CSharpUI.Avalonia)
+
 **CSharpUI.Avalonia** is a fluent, type-safe, XAML-free UI composition library for [Avalonia](https://avaloniaui.net/). It lets you build cross-platform user interfaces entirely in C#, with full IDE support, strong typing.
 
 ---
