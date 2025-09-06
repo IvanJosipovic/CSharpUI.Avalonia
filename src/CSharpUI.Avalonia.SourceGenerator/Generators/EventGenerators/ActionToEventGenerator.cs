@@ -30,12 +30,6 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
             actionCallStr = "action(arg0, arg1)";
         }
 
-        if (@event.HasStandardSignature)
-        {
-            argsString = $"Action<{string.Join(", ", @event.EventParameterTypes.Skip(1))}> action";
-            actionCallStr = actionCallStr.Replace("arg0, ", "");
-        }
-
         var eventName = @event.EventName;
         var extensionName = "On" + eventName;
 

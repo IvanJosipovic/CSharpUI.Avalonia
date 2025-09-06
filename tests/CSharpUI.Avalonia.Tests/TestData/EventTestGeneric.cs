@@ -13,7 +13,14 @@ public class EventTestGeneric : ViewBase
     /// <see cref="P:Avalonia.Controls.AutoCompleteBox.IsDropDownOpen" />
     /// property is changing from true to false.
     /// </summary>
-    public event EventHandler<CancelEventArgs>? DropDownClosing;
+    public event EventHandler<CancelEventArgs> DropDownClosing;
+
+    /// <summary>
+    /// Occurs when the
+    /// <see cref="P:Avalonia.Controls.AutoCompleteBox.IsDropDownOpen" />
+    /// property is changing from true to false.
+    /// </summary>
+    public event EventHandler<CancelEventArgs>? DropDownClosing2;
 
     protected override object Build()
     {

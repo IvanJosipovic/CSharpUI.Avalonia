@@ -56,26 +56,26 @@ public class EventExtensionInfo : IMemberExtensionInfo
 
         EventParameterTypes.Add("global::System.Object?");
 
-        if (eventInfo.Type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T && eventInfo.Type is INamedTypeSymbol nts)
+        var eventArgType = eventInfo.Type;
+
+        if (eventArgType.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T && eventInfo.Type is INamedTypeSymbol nts)
         {
             var t = nts.TypeArguments[0];
 
-            if (t is INamedTypeSymbol nts2)
-            {
-                if (nts2.IsGenericType)
-                {
-                    var t2 = nts2.TypeArguments[0];
-                    EventParameterTypes.Add(t2.GetFullTypeName());
-                }
-                else
-                {
-                    EventParameterTypes.Add("global::System.EventArgs");
-                }
-            }
+            eventArgType = t;
         }
-        else
+
+        if (eventArgType is INamedTypeSymbol nts2)
         {
-            EventParameterTypes.Add("global::System.EventArgs");
+            if (nts2.IsGenericType)
+            {
+                var t2 = nts2.TypeArguments[0];
+                EventParameterTypes.Add(t2.GetFullTypeName());
+            }
+            else
+            {
+                EventParameterTypes.Add("global::System.EventArgs");
+            }
         }
 
         //var methodInfo = eventInfo.Type.GetMembers("Invoke").FirstOrDefault();
