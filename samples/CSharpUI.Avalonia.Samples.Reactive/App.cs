@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 // Generates Extensions for External Assembles
 [assembly: GenerateExtensionsForAssembly(typeof(AvaloniaObject))]
 [assembly: GenerateExtensionsForAssembly(typeof(Control))]
-[assembly: GenerateExtensionsForAssembly(typeof(RoutedViewHost))]
+[assembly: GenerateExtensionsForAssembly(typeof(ReactiveUserControl<>))]
 
 var services = new ServiceCollection();
 var lifetime = new ClassicDesktopStyleApplicationLifetime
