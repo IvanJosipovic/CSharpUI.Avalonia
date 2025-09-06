@@ -7,13 +7,12 @@ namespace CSharpUI.Avalonia.Styles;
 /// Typed style to support method chains with generic arguments
 /// </summary>
 /// <typeparam name="TControl">Type of the control that style will be applied to</typeparam>
-public class Style<TControl> : Style, IRelativeStyle
-    where TControl : StyledElement
+public class Style<TControl> : Style, IRelativeStyle where TControl : StyledElement
 {
     private Func<Selector, Selector> SelectorFunc { get; }
 
     /// <summary>
-    /// Creates Style with added .OfType<typeparam name="TControl"></typeparam> selector
+    /// Creates Style with added .OfType&lt;TControl&gt; selector
     /// </summary>
     public Style()
     {
@@ -22,7 +21,7 @@ public class Style<TControl> : Style, IRelativeStyle
     }
 
     /// <summary>
-    /// Creates Style with added .OfType<typeparam name="TControl"></typeparam> selector and use name="selectorFunc" to generate selector
+    /// Creates Style with added .OfType&lt;TControl&gt; selector and use name=&quot;selectorFunc&quot; to generate selector
     /// </summary>
     /// <param name="selectorFunc">Selector to control</param>
     /// <param name="expression">expression how selector was called</param>
@@ -40,6 +39,10 @@ public class Style<TControl> : Style, IRelativeStyle
             Selector = SelectorFunc(null!);
     }
 
+    /// <summary>
+    /// Update Selector with baseSelectorFunc if not null
+    /// </summary>
+    /// <param name="baseSelectorFunc"></param>
     public void UpdateSelector(Func<Selector, Selector>? baseSelectorFunc)
     {
         if (baseSelectorFunc != null)
