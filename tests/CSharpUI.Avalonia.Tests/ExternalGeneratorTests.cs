@@ -1,9 +1,6 @@
-using Avalonia;
-using Avalonia.Controls;
 using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using ReactiveUI;
 using Tests;
 
 namespace CSharpUI.Avalonia.Tests;

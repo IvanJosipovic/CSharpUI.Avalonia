@@ -1,5 +1,4 @@
 ﻿using Avalonia.Styling;
-using CSharpUI.Avalonia.CommonExtensions;
 using CSharpUI.Avalonia.Samples.Reactive.ViewModels;
 using CSharpUI.Avalonia.Styles;
 using ReactiveUI;

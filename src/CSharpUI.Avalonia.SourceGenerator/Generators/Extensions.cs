@@ -1,7 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace CSharpUI.Avalonia.SourceGenerator.Generators;

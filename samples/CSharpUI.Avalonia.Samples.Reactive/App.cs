@@ -1,7 +1,4 @@
-﻿using Avalonia;
-using Avalonia.ReactiveUI;
-using CSharpUI.Avalonia;
-using CSharpUI.Avalonia.CommonExtensions;
+﻿using Avalonia.ReactiveUI;
 using CSharpUI.Avalonia.Samples.Reactive.ViewModels;
 using CSharpUI.Avalonia.Samples.Reactive.Views;
 using Microsoft.Extensions.DependencyInjection;

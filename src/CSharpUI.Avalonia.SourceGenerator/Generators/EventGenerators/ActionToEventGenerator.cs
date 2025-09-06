@@ -1,6 +1,5 @@
 using CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 using Microsoft.CodeAnalysis;
-using System.Reflection;
 
 namespace CSharpUI.Avalonia.SourceGenerator.Generators.EventGenerators;
 

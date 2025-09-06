@@ -1,9 +1,6 @@
 using CSharpUI.Avalonia.SourceGenerator.Generators;
 using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Metadata;
 
 namespace CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 

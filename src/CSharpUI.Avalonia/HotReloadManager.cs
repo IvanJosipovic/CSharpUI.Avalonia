@@ -1,7 +1,5 @@
 ﻿using CSharpUI.Avalonia;
-using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 #pragma warning disable IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
 [assembly: System.Reflection.Metadata.MetadataUpdateHandler(typeof(HotReloadManager))]

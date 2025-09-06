@@ -6,7 +6,6 @@ using CSharpUI.Avalonia.SourceGenerator.Generators.SetterGenerators;
 using CSharpUI.Avalonia.SourceGenerator.Generators.StyleSetterGenerators;
 using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Text;
 
 namespace CSharpUI.Avalonia.SourceGenerator;
