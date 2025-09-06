@@ -2,6 +2,7 @@ using CSharpUI.Avalonia.SourceGenerator.Generators;
 using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Metadata;
 
 namespace CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
@@ -15,7 +16,7 @@ public class EventExtensionInfo : IMemberExtensionInfo
 
     public string EventHandler { get; }
     public string EventName { get; }
-    public List<string> EventParameterTypes { get; } = new List<string>();
+    public List<string> EventParameterTypes { get; } = [];
     public bool IsGeneric { get; }
     public string ReturnType { get; set; }
     public string GenericConstraint { get; set; } = "";
@@ -45,22 +46,52 @@ public class EventExtensionInfo : IMemberExtensionInfo
         EventName = EventInfo.Name;
         MemberName = EventName;
         EventHandler = eventInfo.Type.GetFullTypeName();
+
+        if (EventHandler.StartsWith("EventHandler"))
+        {
+            EventHandler = "global::System." + EventHandler;
+        }
+
         IsObsolete = EventInfo.GetAttributes().Any(a => a.AttributeClass?.Name == nameof(ObsoleteAttribute));
 
-        var methodInfo = eventInfo.Type.GetMembers("Invoke").FirstOrDefault();
+        EventParameterTypes.Add("global::System.Object?");
 
-        if (methodInfo is IMethodSymbol method)
+        if (eventInfo.Type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T && eventInfo.Type is INamedTypeSymbol nts)
         {
-            var parameters = method.Parameters;
-            foreach (var parameter in parameters)
-                EventParameterTypes.Add(parameter.Type.GetFullTypeName());
+            var t = nts.TypeArguments[0];
 
-            if (HasRoutedEventArgs(parameters))
+            if (t is INamedTypeSymbol nts2)
             {
-                var routedEventFieldInfo = ControlType.GetMembers(EventName + "Event").FirstOrDefault(x => x.IsStatic && x.DeclaredAccessibility == Accessibility.Public);
-                IsRoutedEvent = routedEventFieldInfo != null; //if routed event field located in base class, ignore it and count it classic event
+                if (nts2.IsGenericType)
+                {
+                    var t2 = nts2.TypeArguments[0];
+                    EventParameterTypes.Add(t2.GetFullTypeName());
+                }
+                else
+                {
+                    EventParameterTypes.Add("global::System.EventArgs");
+                }
             }
         }
+        else
+        {
+            EventParameterTypes.Add("global::System.EventArgs");
+        }
+
+        //var methodInfo = eventInfo.Type.GetMembers("Invoke").FirstOrDefault();
+
+        //if (methodInfo is IMethodSymbol method)
+        //{
+        //    var parameters = method.Parameters;
+        //    foreach (var parameter in parameters)
+        //        EventParameterTypes.Add(parameter.Type.GetFullTypeName());
+
+        //    if (HasRoutedEventArgs(parameters))
+        //    {
+        //        var routedEventFieldInfo = ControlType.GetMembers(EventName + "Event").FirstOrDefault(x => x.IsStatic && x.DeclaredAccessibility == Accessibility.Public);
+        //        IsRoutedEvent = routedEventFieldInfo != null; //if routed event field located in base class, ignore it and count it classic event
+        //    }
+        //}
 
         IsGeneric = !eventInfo.ContainingType.IsSealed;
 
@@ -77,7 +108,7 @@ public class EventExtensionInfo : IMemberExtensionInfo
     {
         return parameters.Any(x => IsRoutedEventArgType(x.Type));
 
-        bool IsRoutedEventArgType(ITypeSymbol? type)
+        static bool IsRoutedEventArgType(ITypeSymbol? type)
         {
             while (type != null)
             {

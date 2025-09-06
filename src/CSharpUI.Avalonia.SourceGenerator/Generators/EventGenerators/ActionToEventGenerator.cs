@@ -1,4 +1,6 @@
 using CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
+using Microsoft.CodeAnalysis;
+using System.Reflection;
 
 namespace CSharpUI.Avalonia.SourceGenerator.Generators.EventGenerators;
 
@@ -7,12 +9,12 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
     protected override string? GetExtension(EventExtensionInfo @event)
     {
         var eventHandler = @event.EventHandler;
-        var eventParameterTypes = new List<string>() { "object?" };
-        eventParameterTypes.AddRange(@event.EventParameterTypes);
-        var argsString = $"Action<{string.Join(", ", eventParameterTypes)}> action";
+        //var eventParameterTypes = new List<string>() { "global::System.Object?" };
+
+        var argsString = $"global::System.Action<{string.Join(", ", @event.EventParameterTypes)}> action";
 
         // Generate the lambda parameter names (arg0, arg1, etc.)
-        var lambdaParameters = string.Join(", ", eventParameterTypes.Select((type, index) => $"arg{index}"));
+        var lambdaParameters = string.Join(", ", @event.EventParameterTypes.Select((type, index) => $"arg{index}"));
 
         // Generate the action call string
         var actionCallStr = $"action({lambdaParameters})";
@@ -20,15 +22,18 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
         // If the delegate has more than one parameter, split them into individual arguments
         if (@event.HasMultipleParameters)
         {
-            lambdaParameters = string.Join(", ", eventParameterTypes.Select((type, index) => $"arg{index}"));
+            lambdaParameters = string.Join(", ", @event.EventParameterTypes.Select((type, index) => $"arg{index}"));
         }
         else if (@event.HasSingleParameter)
         {
-            lambdaParameters = "arg0";
+            lambdaParameters = "arg0, arg1";
+            actionCallStr = "action(arg0, arg1)";
         }
-        else
+
+        if (@event.HasStandardSignature)
         {
-            lambdaParameters = "args";
+            argsString = $"Action<{string.Join(", ", @event.EventParameterTypes.Skip(1))}> action";
+            actionCallStr = actionCallStr.Replace("arg0, ", "");
         }
 
         var eventName = @event.EventName;
@@ -39,12 +44,13 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
 
         if (@event.IsRoutedEvent)
         {
-            argsString += ", RoutingStrategies? routes = null";
+            argsString += ", global::Avalonia.Interactivity.RoutingStrategies? routes = null";
 
-            extensionBody = $"        => control.AddHandler({@event.ControlTypeName}.{@eventName}Event, (_, args) => action(args), routes ?? default(RoutingStrategies));";
-
+            extensionBody =
+                  $"{Extensions.NewLine}{{{Extensions.NewLine}"
+                + $"        => control.AddHandler({@event.ControlTypeName}.{@eventName}Event, (_, args) => action(args), routes ?? default(RoutingStrategies));"
+                + $"}}{Extensions.NewLine}";
         }
-
 
         var extensionText =
             (@event.IsObsolete ? "[Obsolete]" : "")

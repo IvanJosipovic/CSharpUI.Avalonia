@@ -1,9 +1,4 @@
 #nullable enable
-using Avalonia.Data;
-using CSharpUI.Avalonia.CommonExtensions;
-using CSharpUI.Avalonia.Styles;
-using System;
-using Tests;
 
 namespace CSharpUI.Avalonia.Extensions;
 
@@ -13,7 +8,16 @@ public static partial class EventTestExtensions
     // DropDownClosed
 
     /*ActionToEventGenerator*/
-    public static T OnDropDownClosed<T>(this T control, Action<object?, EventArgs> action) where T : EventTest
-        => control._setEvent((EventHandler)((arg0, arg1) => action(arg0, arg1)), h => control.DropDownClosed += h);
+    public static T OnDropDownClosed<T>(this T control, global::System.Action<global::System.Object?, global::System.EventArgs> action) where T : global::Tests.EventTest
+        => control._setEvent((global::System.EventHandler)((arg0, arg1) => action(arg0, arg1)), h => control.DropDownClosed += h);
+
+
+    // DropDownClosed2
+
+    /*ActionToEventGenerator*/
+    public static T OnDropDownClosed2<T>(this T control, global::System.Action<global::System.Object?, global::System.EventArgs> action) where T : global::Tests.EventTest
+        => control._setEvent((global::System.EventHandler?)((arg0, arg1) => action(arg0, arg1)), h => control.DropDownClosed2 += h);
+
+
 
 }

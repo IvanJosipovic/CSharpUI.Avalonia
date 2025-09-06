@@ -393,16 +393,24 @@ internal static class Extensions
     }
 
     internal static readonly SymbolDisplayFormat FullyQualifiedGlobalFormat =
-    SymbolDisplayFormat.FullyQualifiedFormat
-        .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Included);
+        new SymbolDisplayFormat(
+            globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
+            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+            genericsOptions:
+                SymbolDisplayGenericsOptions.IncludeTypeParameters
+                | SymbolDisplayGenericsOptions.IncludeVariance,
+            miscellaneousOptions:
+                SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers
+                | SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier
+        );
 
     internal static string GetFullTypeName(this ITypeSymbol symbol)
     {
         var fullName = symbol.ToDisplayString(FullyQualifiedGlobalFormat);
 
-        if (!fullName.EndsWith("?"))
+        if (!fullName.EndsWith("?") && symbol.NullableAnnotation == NullableAnnotation.Annotated)
         {
-            fullName += symbol.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
+            fullName += "?";
         }
 
         return fullName;

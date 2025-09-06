@@ -59,14 +59,14 @@ public class GeneratorHost()
             new ValueSetterGenerator()
         ),
 
-        //new("Events",
-        //    t => t.GetAllMembers()
-        //        .OfType<IEventSymbol>()
-        //        .Where(x => x.DeclaredAccessibility == Accessibility.Public
-        //                && SymbolEqualityComparer.Default.Equals(x.ContainingType, t))
-        //        .Select(x => new EventExtensionInfo(x)),
+        new("Events",
+            t => t.GetAllMembers()
+                .OfType<IEventSymbol>()
+                .Where(x => x.DeclaredAccessibility == Accessibility.Public
+                        && SymbolEqualityComparer.Default.Equals(x.ContainingType, t))
+                .Select(x => new EventExtensionInfo(x)),
 
-        //    new ActionToEventGenerator()),
+            new ActionToEventGenerator()),
 
         new("Styles",
             t => !t.IsStyledElement() ? [] : t

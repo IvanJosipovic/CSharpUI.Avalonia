@@ -14,11 +14,11 @@ public static partial class ValueOverloadsSetterGeneratorTestExtensions
 
     /*ValueOverloadsSetterGenerator*/
 
-    public static T Padding<T>(this T control, double uniformLength) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+    public static T Padding<T>(this T control, global::System.Double uniformLength) where T : global::Tests.ValueOverloadsSetterGeneratorTest
         => control._set(() => control.Padding = new global::Avalonia.Thickness(uniformLength));
-    public static T Padding<T>(this T control, double horizontal, double vertical) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+    public static T Padding<T>(this T control, global::System.Double horizontal, global::System.Double vertical) where T : global::Tests.ValueOverloadsSetterGeneratorTest
         => control._set(() => control.Padding = new global::Avalonia.Thickness(horizontal, vertical));
-    public static T Padding<T>(this T control, double left, double top, double right, double bottom) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+    public static T Padding<T>(this T control, global::System.Double left, global::System.Double top, global::System.Double right, global::System.Double bottom) where T : global::Tests.ValueOverloadsSetterGeneratorTest
         => control._set(() => control.Padding = new global::Avalonia.Thickness(left, top, right, bottom));
 
 
@@ -35,11 +35,11 @@ public static partial class ValueOverloadsSetterGeneratorTestExtensions
         => style._addSetter(global::Tests.ValueOverloadsSetterGeneratorTest.PaddingProperty, binding);
 
     /*ValueOverloadsStyleSetterGenerator*/
-    public static global::CSharpUI.Avalonia.Styles.Style<T> Padding<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, double uniformLength) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+    public static global::CSharpUI.Avalonia.Styles.Style<T> Padding<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, global::System.Double uniformLength) where T : global::Tests.ValueOverloadsSetterGeneratorTest
         => style._addSetter(global::Tests.ValueOverloadsSetterGeneratorTest.PaddingProperty, new global::Avalonia.Thickness(uniformLength));
-    public static global::CSharpUI.Avalonia.Styles.Style<T> Padding<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, double horizontal, double vertical) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+    public static global::CSharpUI.Avalonia.Styles.Style<T> Padding<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, global::System.Double horizontal, global::System.Double vertical) where T : global::Tests.ValueOverloadsSetterGeneratorTest
         => style._addSetter(global::Tests.ValueOverloadsSetterGeneratorTest.PaddingProperty, new global::Avalonia.Thickness(horizontal, vertical));
-    public static global::CSharpUI.Avalonia.Styles.Style<T> Padding<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, double left, double top, double right, double bottom) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+    public static global::CSharpUI.Avalonia.Styles.Style<T> Padding<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, global::System.Double left, global::System.Double top, global::System.Double right, global::System.Double bottom) where T : global::Tests.ValueOverloadsSetterGeneratorTest
         => style._addSetter(global::Tests.ValueOverloadsSetterGeneratorTest.PaddingProperty, new global::Avalonia.Thickness(left, top, right, bottom));
 
 

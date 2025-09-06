@@ -9,7 +9,7 @@ public static partial class SealedClassTestExtensions
 
     /*ValueSetterGenerator*/
     /// <summary>My Comment</summary>
-    public static global::Tests.SealedClassTest CanSave(this global::Tests.SealedClassTest control, bool value)
+    public static global::Tests.SealedClassTest CanSave(this global::Tests.SealedClassTest control, global::System.Boolean value)
         => control._set(() => control.CanSave = value!);
 
 

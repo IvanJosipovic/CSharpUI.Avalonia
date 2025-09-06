@@ -1,6 +1,5 @@
 using Avalonia;
-using CSharpUI.Avalonia;
-using CSharpUI.Avalonia.Extensions;
+using Avalonia.Controls;
 using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -45,15 +44,12 @@ public class ExternalPropertyGeneratorTests
 
     private static string? GetGeneratedOutput(string externalAssemblySourceCode)
     {
-        var loadDll = typeof(AvaloniaObject);
-        var loadDll1 = typeof(ViewBase);
-        var loadDll2 = typeof(EventHandler<>);
+        EventHandler? var = default!;
+        EventHandler<object>? var2 = default!;
 
         var references = AppDomain.CurrentDomain.GetAssemblies()
-                          .Where(assembly => !assembly.IsDynamic)
-                          .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
-                          .Cast<MetadataReference>()
-                          .ToList();
+                   .Where(assembly => !assembly.IsDynamic)
+                   .Select(assembly => MetadataReference.CreateFromFile(assembly.Location)).ToList();
 
         var externalAssemblySyntaxTree = CSharpSyntaxTree.ParseText(externalAssemblySourceCode + "\n\r" + "public class TestPointer { }");
 
@@ -68,7 +64,9 @@ public class ExternalPropertyGeneratorTests
 
         if (!results.Success)
         {
-            throw new Exception(results.Diagnostics.Where(x => x.Severity == DiagnosticSeverity.Error).First().GetMessage());
+            var failures = results.Diagnostics.Where(diagnostic => diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
+
+            throw new Exception(failures.Select(x => $"Error creating Assembly: {x.Id}: {x.GetMessage()}").Aggregate((x,y) => x + "\n\r" + y));
         }
 
         dll.Position = 0;

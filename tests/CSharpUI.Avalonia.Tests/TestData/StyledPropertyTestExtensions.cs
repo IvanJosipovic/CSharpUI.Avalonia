@@ -9,7 +9,7 @@ public static partial class StyledPropertyTestExtensions
 
     /*ValueSetterGenerator*/
     /// <summary>My Comment</summary>
-    public static T CanSave<T>(this T control, bool value) where T : global::Tests.StyledPropertyTest
+    public static T CanSave<T>(this T control, global::System.Boolean value) where T : global::Tests.StyledPropertyTest
         => control._set(() => control.CanSave = value!);
 
 
@@ -18,7 +18,7 @@ public static partial class StyledPropertyTestExtensions
     // CanSave
 
     /*ValueStyleSetterGenerator*/
-    public static global::CSharpUI.Avalonia.Styles.Style<T> CanSave<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, bool value) where T : global::Tests.StyledPropertyTest
+    public static global::CSharpUI.Avalonia.Styles.Style<T> CanSave<T>(this global::CSharpUI.Avalonia.Styles.Style<T> style, global::System.Boolean value) where T : global::Tests.StyledPropertyTest
         => style._addSetter(global::Tests.StyledPropertyTest.CanSaveProperty!, value!);
 
     /*BindingStyleSetterGenerator*/
