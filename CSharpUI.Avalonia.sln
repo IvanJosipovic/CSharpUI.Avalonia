@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36202.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpUI.Avalonia", "src\CSharpUI.Avalonia\CSharpUI.Avalonia.csproj", "{92674FB0-8EA3-4383-88F0-38418D9E058C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpUI.Avalonia.Samples.Reactive", "samples\CSharpUI.Avalonia.Samples.Reactive\CSharpUI.Avalonia.Samples.Reactive.csproj", "{FE8AFB4B-C8C7-4451-B803-751331195C8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpUI.Avalonia.Tests", "tests\CSharpUI.Avalonia.Tests\CSharpUI.Avalonia.Tests.csproj", "{85F4D70B-F46E-DA60-2AF2-9446AEE381E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpUI.Avalonia.SourceGenerator", "src\CSharpUI.Avalonia.SourceGenerator\CSharpUI.Avalonia.SourceGenerator.csproj", "{790A0826-0001-B652-0BD4-1985755B86A8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.github\workflows\cicd.yml = .github\workflows\cicd.yml
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{92674FB0-8EA3-4383-88F0-38418D9E058C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92674FB0-8EA3-4383-88F0-38418D9E058C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92674FB0-8EA3-4383-88F0-38418D9E058C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92674FB0-8EA3-4383-88F0-38418D9E058C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE8AFB4B-C8C7-4451-B803-751331195C8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE8AFB4B-C8C7-4451-B803-751331195C8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE8AFB4B-C8C7-4451-B803-751331195C8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE8AFB4B-C8C7-4451-B803-751331195C8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85F4D70B-F46E-DA60-2AF2-9446AEE381E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85F4D70B-F46E-DA60-2AF2-9446AEE381E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85F4D70B-F46E-DA60-2AF2-9446AEE381E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85F4D70B-F46E-DA60-2AF2-9446AEE381E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{790A0826-0001-B652-0BD4-1985755B86A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{790A0826-0001-B652-0BD4-1985755B86A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{790A0826-0001-B652-0BD4-1985755B86A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{790A0826-0001-B652-0BD4-1985755B86A8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {50769731-2CD4-4E4A-A51A-066760466579}
+	EndGlobalSection
+EndGlobal

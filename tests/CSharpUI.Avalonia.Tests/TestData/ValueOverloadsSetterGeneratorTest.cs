@@ -1,0 +1,22 @@
+using Avalonia;
+using Avalonia.Controls;
+
+namespace Tests;
+
+public class ValueOverloadsSetterGeneratorTest : Control
+{
+    /// <summary>
+    /// Defines the <see cref="Padding"/> property.
+    /// </summary>
+    public static readonly StyledProperty<Thickness> PaddingProperty =
+        Decorator.PaddingProperty.AddOwner<ValueOverloadsSetterGeneratorTest>();
+
+    /// <summary>
+    /// Gets or sets the padding to place around the <see cref="Text"/>.
+    /// </summary>
+    public Thickness Padding
+    {
+        get => GetValue(PaddingProperty);
+        set => SetValue(PaddingProperty, value);
+    }
+}

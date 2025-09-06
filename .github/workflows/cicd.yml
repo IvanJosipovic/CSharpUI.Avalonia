@@ -1,0 +1,79 @@
+name: CICD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+      - 'alpha'
+      - 'beta'
+  pull_request:
+    types: [opened, reopened, synchronize]
+  merge_group:
+
+jobs:
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        global-json-file: global.json
+
+    - name: .NET Build
+      run: dotnet build -c Release
+
+    - name: .NET Pack
+      run: dotnet pack -c Release -p:Version=0.0.1-alpha${{ github.run_id }}
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: NuGet
+        path: src/**/*.nupkg
+
+    - name: .NET Test
+      working-directory: tests/CSharpUI.Avalonia.Tests
+      run: dotnet run -c Release /p:DebugSymbols=true /p:DebugType=full -- --report-xunit-trx --report-xunit-trx-filename test-results.trx --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml
+
+    - name: Test Report
+      uses: dorny/test-reporter@v2
+      if: success() || failure()
+      with:
+        name: Tests
+        path: tests/**/TestResults/test-results.trx
+        reporter: dotnet-trx
+
+    - name: Coverage
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: coverage.cobertura.xml
+        fail_ci_if_error: false
+
+  create-release:
+    if: ${{ github.event_name != 'pull_request' }}
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build-test]
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Semantic Release
+      uses: cycjimmy/semantic-release-action@v4
+      id: semantic
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        extra_plugins: |
+          conventional-changelog-conventionalcommits
+
+    - name: .NET Pack
+      if: steps.semantic.outputs.new_release_published == 'true'
+      run: dotnet pack -c Release -p:Version=${{ steps.semantic.outputs.new_release_version }}
+
+    - name: .NET NuGet Push
+      if: steps.semantic.outputs.new_release_published == 'true'
+      run: dotnet nuget push src/**/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}

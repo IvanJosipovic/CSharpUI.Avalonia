@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <Title>CSharpUI.Avalonia</Title>
+    <PackageId>CSharpUI.Avalonia</PackageId>
+    <Description>Fluent, XAML-free UI composition library for Avalonia in pure C#</Description>
+    <Authors>Ivan Josipovic</Authors>
+    <PackageTags>Avalonia CSharp Fluent Builder Markup</PackageTags>
+    <RepositoryUrl>https://github.com/IvanJosipovic/CSharpUI.Avalonia</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <LangVersion>preview</LangVersion>
+    <IsAotCompatible>true</IsAotCompatible>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CSharpUI.Avalonia.SourceGenerator\CSharpUI.Avalonia.SourceGenerator.csproj" ReferenceOutputAssembly="true">
+      <PrivateAssets>all</PrivateAssets>
+    </ProjectReference>
+    <None Remove="$(OutputPath)/$(AssemblyName).SourceGenerator.dll" />
+    <!-- Package the generator in the analyzer directory of the nuget package -->
+    <None Include="../CSharpUI.Avalonia.SourceGenerator/bin/$(Configuration)/netstandard2.0/CSharpUI.Avalonia.SourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.5" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.5" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="System.Collections.Immutable" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Avalonia" />
+    <Using Include="Avalonia.Controls" />
+    <Using Include="Avalonia.Data" />
+    <Using Include="Avalonia.Interactivity" />
+    <Using Include="Avalonia.Layout" />
+    <Using Include="Avalonia.Media" />
+    <Using Include="Avalonia.Threading" />
+    <Using Include="System" />
+    <Using Include="System.Collections" />
+    <Using Include="System.Collections.ObjectModel" />
+    <Using Include="System.ComponentModel" />
+  </ItemGroup></Project>
