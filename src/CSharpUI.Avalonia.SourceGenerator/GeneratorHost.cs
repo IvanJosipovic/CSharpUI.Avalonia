@@ -94,21 +94,21 @@ public class GeneratorHost()
             return null;
 
         var sb = new StringBuilder();
-        sb.AppendLine("#nullable enable");
+        sb.Append("#nullable enable" + Extensions.NewLine);
         //controlType.GetNamespaces().OrderBy(x => x).ToList().ForEach(x => sb.AppendLine($"using {x};"));
-        sb.AppendLine();
-        sb.AppendLine("namespace CSharpUI.Avalonia.Extensions;");
-        sb.AppendLine();
-        sb.AppendLine($"public static partial class {Extensions.CleanIdentifier(controlType.Name)}Extensions");
-        sb.AppendLine("{");
+        sb.Append(Extensions.NewLine);
+        sb.Append("namespace CSharpUI.Avalonia.Extensions;" + Extensions.NewLine);
+        sb.Append(Extensions.NewLine);
+        sb.Append($"public static partial class {Extensions.CleanIdentifier(controlType.Name)}Extensions" + Extensions.NewLine);
+        sb.Append("{" + Extensions.NewLine);
 
         foreach (var group in extensionGroups.Where(x => x.extensions != null))
         {
-            sb.AppendLine($"    //================= {group.GroupName} ======================//");
-            sb.AppendLine(group.extensions);
+            sb.Append($"    //================= {group.GroupName} ======================//" + Extensions.NewLine);
+            sb.Append(group.extensions + Extensions.NewLine);
         }
 
-        sb.AppendLine("}");
+        sb.Append("}");
 
         return sb.ToString();
     }
