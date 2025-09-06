@@ -55,6 +55,25 @@ public class PageView : ReactiveViewBase<PageViewModel>
 }
 ```
 
+## 🖼️ Example ViewModel
+
+```csharap
+public partial class PageViewModel : ReactiveObject, IRoutableViewModel
+{
+    public IScreen HostScreen { get; }
+
+    public string? UrlPathSegment => "page";
+
+    public PageViewModel1(IScreen screen)
+    {
+        HostScreen = screen;
+    }
+
+    [Reactive]
+    public partial string MyProperty { get; set; } = "Page View";
+}
+```
+
 
 ## ❤️ Attribution
 Includes portions derived from [Avalonia.Markup.Declarative](https://github.com/AvaloniaUI/Avalonia.Markup.Declarative) (MIT License)
