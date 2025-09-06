@@ -17,22 +17,22 @@ public class ExtensionGroupGenerator(
         var sb = new StringBuilder();
         foreach (var extensionInfo in membersQuery(avaloniaControlType))
         {
-            sb.AppendLine($"    // {extensionInfo.MemberName}");
+            sb.Append($"    // {extensionInfo.MemberName}{Extensions.NewLine}");
 
             foreach (var generator in generators)
             {
                 var extensionCode = generator.GetExtension(extensionInfo);
                 if (!string.IsNullOrWhiteSpace(extensionCode))
                 {
-                    sb.AppendLine();
-                    sb.AppendLine($"    /*{generator.GetType().Name}*/");
-                    sb.AppendLine(extensionCode);
+                    sb.Append(Extensions.NewLine);
+                    sb.Append($"    /*{generator.GetType().Name}*/{Extensions.NewLine}");
+                    sb.Append(extensionCode + Extensions.NewLine);
                     generationsCount++;
                 }
             }
 
-            sb.AppendLine();
-            sb.AppendLine();
+            sb.Append(Extensions.NewLine);
+            sb.Append(Extensions.NewLine);
         }
 
         return generationsCount == 0 ? null : sb.ToString();
