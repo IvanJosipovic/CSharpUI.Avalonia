@@ -57,7 +57,7 @@ public class PageView : ReactiveViewBase<PageViewModel>
 
 ## 🖼️ Example ViewModel
 
-```csharap
+```csharp
 public partial class PageViewModel : ReactiveObject, IRoutableViewModel
 {
     public IScreen HostScreen { get; }
