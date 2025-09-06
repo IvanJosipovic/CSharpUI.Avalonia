@@ -4,24 +4,36 @@ using System.Diagnostics;
 
 namespace CSharpUI.Avalonia;
 
+/// <summary>
+/// Generic ViewBase
+/// </summary>
+/// <typeparam name="TViewModel"></typeparam>
 public abstract class ViewBase<TViewModel> : ViewBase
 {
+    /// <summary>
+    /// View Model from the DataContext
+    /// </summary>
     public virtual TViewModel? ViewModel
     {
         get => (TViewModel)DataContext!;
         set => DataContext = value;
     }
 
-    protected ViewBase(TViewModel viewModel)
-        : base(true)
+    /// <summary>
+    /// Initializes ViewBase with specified view model
+    /// </summary>
+    /// <param name="viewModel"></param>
+    protected ViewBase(TViewModel viewModel) : base(true)
     {
         DataContext = viewModel;
         OnCreatedCore();
         Initialize();
     }
 
+    /// <inheritdoc/>
     protected abstract object Build(TViewModel? vm);
 
+    /// <inheritdoc/>
     protected override object Build() => Build(ViewModel);
 }
 
@@ -30,7 +42,6 @@ public abstract class ViewBase<TViewModel> : ViewBase
 /// </summary>
 
 public abstract class ViewBase : Decorator, IReloadable
-
 {
     private INameScope? _nameScope;
 
@@ -39,17 +50,35 @@ public abstract class ViewBase : Decorator, IReloadable
     /// </summary>
     protected INameScope Scope => _nameScope ??= new NameScope();
 
+    /// <summary>
+    /// Action called when view is initialized
+    /// </summary>
     public event Action? ViewInitialized;
 
+    /// <summary>
+    /// Called to build the view's content
+    /// </summary>
+    /// <returns></returns>
     protected abstract object Build();
 
+    /// <summary>
+    /// Sets up styles for the view
+    /// </summary>
+    /// <returns></returns>
     protected virtual StyleGroup? BuildStyles() => null;
 
+    /// <summary>
+    /// Initializes ViewBase with deferred loading set to false
+    /// </summary>
     protected ViewBase() : this(false)
     {
 
     }
 
+    /// <summary>
+    /// Initializes ViewBase
+    /// </summary>
+    /// <param name="deferredLoading"></param>
     protected ViewBase(bool deferredLoading)
     {
         if (!deferredLoading)
@@ -59,8 +88,14 @@ public abstract class ViewBase : Decorator, IReloadable
         }
     }
 
+    /// <summary>
+    /// Called after the view is initialized.
+    /// </summary>
     protected virtual void OnAfterInitialized() { }
 
+    /// <summary>
+    /// Called from constructor, right before initialization and building UI
+    /// </summary>
     protected internal void OnCreatedCore() => OnCreated();
 
     /// <summary>
@@ -71,6 +106,10 @@ public abstract class ViewBase : Decorator, IReloadable
     {
     }
 
+    /// <summary>
+    /// Called to initialize the view, build its content, and apply styles.
+    /// </summary>
+    /// <exception cref="ViewBuildingException"></exception>
     public void Initialize()
     {
         try
@@ -104,6 +143,9 @@ public abstract class ViewBase : Decorator, IReloadable
     }
 
     #region Hot reload stuff
+    /// <summary>
+    /// Reloads the view by rebuilding its content.
+    /// </summary>
     public void Reload()
     {
         Dispatcher.UIThread.InvokeAsync(() =>
@@ -122,11 +164,17 @@ public abstract class ViewBase : Decorator, IReloadable
         });
     }
 
+    /// <summary>
+    /// Called before the view is reloaded.
+    /// </summary>
     protected virtual void OnBeforeReload()
     {
     }
 
-
+    /// <summary>
+    /// Called when the view is attached to the visual tree.
+    /// </summary>
+    /// <param name="e"></param>
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
@@ -138,6 +186,10 @@ public abstract class ViewBase : Decorator, IReloadable
         }
     }
 
+    /// <summary>
+    /// Called when the view is detached from the visual tree.
+    /// </summary>
+    /// <param name="e"></param>
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
@@ -196,4 +248,9 @@ internal enum ViewBuildContextState
     ViewBuilding
 }
 
+/// <summary>
+/// Exception thrown when a view fails to build.
+/// </summary>
+/// <param name="message"></param>
+/// <param name="innerException"></param>
 public class ViewBuildingException(string message, Exception innerException) : Exception(message, innerException);

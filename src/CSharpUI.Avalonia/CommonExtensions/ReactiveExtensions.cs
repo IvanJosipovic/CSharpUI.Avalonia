@@ -6,6 +6,9 @@ using System.Reactive.Disposables;
 
 namespace CSharpUI.Avalonia.CommonExtensions;
 
+/// <summary>
+/// Extensions for ReactiveUI Objects
+/// </summary>
 public static class ReactiveExtensions
 {
     /// <summary>

@@ -12,8 +12,18 @@ using AvaloniaToolTip = Avalonia.Controls.ToolTip;
 
 namespace CSharpUI.Avalonia;
 
+/// <summary>
+/// Extensions for setting Avalonia properties in a fluent way
+/// </summary>
 public static class ControlPropertyExtensions
 {
+    /// <summary>
+    /// Used to execute action that sets multiple properties on control
+    /// </summary>
+    /// <typeparam name="TControl"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="setAction"></param>
+    /// <returns></returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TControl _set<TControl>(this TControl control, Action setAction)
     {
@@ -63,8 +73,20 @@ public static class ControlPropertyExtensions
         return control;
     }
 
+    /// <summary>
+    /// Converts Color to Brush
+    /// </summary>
+    /// <param name="color"></param>
+    /// <returns></returns>
     public static Brush ToBrush(this Color color) => new SolidColorBrush(color);
 
+    /// <summary>
+    /// Shortcut for DockPanel.Dock (in xaml: DockPanel.Dock) extension
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="dock"></param>
+    /// <returns></returns>
     public static TElement Dock<TElement>(this TElement control, Dock dock)
         where TElement : Control
     {
@@ -73,7 +95,7 @@ public static class ControlPropertyExtensions
     }
 
     /// <summary>
-    /// It's a shortcut for Grid_Column (in xaml: Grid.Column) extension
+    /// Shortcut for Grid_Column (in xaml: Grid.Column) extension
     /// </summary>
     /// <typeparam name="TElement"></typeparam>
     /// <param name="control">Control for positioning</param>
@@ -87,7 +109,7 @@ public static class ControlPropertyExtensions
     }
 
     /// <summary>
-    /// It's a shortcut for Grid_Row (in xaml: Grid.Row) extension
+    /// Shortcut for Grid_Row (in xaml: Grid.Row) extension
     /// </summary>
     /// <typeparam name="TElement">Control type</typeparam>
     /// <param name="control">Control for positioning</param>
@@ -101,7 +123,7 @@ public static class ControlPropertyExtensions
     }
 
     /// <summary>
-    /// It's a shortcut for Grid_ColumnDefinitions (in xaml: Grid.ColumnDefinitions) extension
+    /// Shortcut for Grid_ColumnDefinitions (in xaml: Grid.ColumnDefinitions) extension
     /// </summary>
     /// <typeparam name="TElement">Grid</typeparam>
     /// <param name="control">Grid control</param>
@@ -115,7 +137,7 @@ public static class ControlPropertyExtensions
     }
 
     /// <summary>
-    /// It's a shortcut for Grid_RowDefinitions (in xaml: Grid.RowDefinitions) extension
+    /// Shortcut for Grid_RowDefinitions (in xaml: Grid.RowDefinitions) extension
     /// </summary>
     /// <typeparam name="TElement">Grid</typeparam>
     /// <param name="control">Grid control</param>
@@ -129,7 +151,7 @@ public static class ControlPropertyExtensions
     }
 
     /// <summary>
-    /// It's a shortcut for Grid_ColumnDefinitions (in xaml: Grid.ColumnDefinitions) extension
+    /// Shortcut for Grid_ColumnDefinitions (in xaml: Grid.ColumnDefinitions) extension
     /// </summary>
     /// <typeparam name="TElement">Grid</typeparam>
     /// <param name="control">Grid control</param>
@@ -143,7 +165,7 @@ public static class ControlPropertyExtensions
     }
 
     /// <summary>
-    /// It's a shortcut for Grid_RowDefinitions (in xaml: Grid.RowDefinitions) extension
+    /// Shortcut for Grid_RowDefinitions (in xaml: Grid.RowDefinitions) extension
     /// </summary>
     /// <typeparam name="TElement">Grid</typeparam>
     /// <param name="control">Grid control</param>
@@ -157,7 +179,7 @@ public static class ControlPropertyExtensions
     }
 
     /// <summary>
-    /// It's a shortcut for Grid_ColumnSpan (in xaml: Grid.ColumnSpan) extension
+    /// Shortcut for Grid_ColumnSpan (in xaml: Grid.ColumnSpan) extension
     /// </summary>
     /// <typeparam name="TElement">Control Type</typeparam>
     /// <param name="control">Control for positioning</param>
@@ -171,7 +193,7 @@ public static class ControlPropertyExtensions
     }
 
     /// <summary>
-    /// It's a shortcut for Grid_RowSpan (in xaml: Grid.RowSpan) extension
+    /// Shortcut for Grid_RowSpan (in xaml: Grid.RowSpan) extension
     /// </summary>
     /// <typeparam name="TElement">Control type</typeparam>
     /// <param name="control">Control for positioning</param>
@@ -183,6 +205,14 @@ public static class ControlPropertyExtensions
         Grid.SetRowSpan(control, value);
         return control;
     }
+
+    /// <summary>
+    /// Adds children to Panel and returns the panel for method chaining
+    /// </summary>
+    /// <typeparam name="TPanel"></typeparam>
+    /// <param name="container"></param>
+    /// <param name="children"></param>
+    /// <returns></returns>
     public static TPanel Children<TPanel>(this TPanel container, params Control[] children)
         where TPanel : Panel
     {
@@ -191,6 +221,13 @@ public static class ControlPropertyExtensions
         return container;
     }
 
+    /// <summary>
+    /// Adds items to ItemsControl and returns the control for method chaining
+    /// </summary>
+    /// <typeparam name="TItemsControl"></typeparam>
+    /// <param name="container"></param>
+    /// <param name="items"></param>
+    /// <returns></returns>
     public static TItemsControl Items<TItemsControl>(this TItemsControl container, params AvaloniaObject[] items)
         where TItemsControl : ItemsControl
     {
@@ -200,9 +237,23 @@ public static class ControlPropertyExtensions
         return container;
     }
 
+    /// <summary>
+    /// Sets ItemTemplate for TabControl
+    /// </summary>
+    /// <typeparam name="TItem"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="build"></param>
+    /// <returns></returns>
     public static TabControl ItemTemplate<TItem>(this TabControl control, Func<TItem, Control> build) =>
         control.ItemTemplate<TItem, TabControl>(build);
 
+    /// <summary>
+    /// Sets ItemTemplate for TabControl
+    /// </summary>
+    /// <typeparam name="TItem"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="build"></param>
+    /// <returns></returns>
     public static SelectingItemsControl ItemTemplate<TItem>(this SelectingItemsControl control,
         Func<TItem, Control> build) =>
         control.ItemTemplate<TItem, SelectingItemsControl>(build);
@@ -210,6 +261,14 @@ public static class ControlPropertyExtensions
     //public static ItemsControl ItemTemplate<TItem>(this ItemsControl control, Func<TItem, Control> build) =>
     //	ItemTemplate<TItem, ItemsControl>(control, build);
 
+    /// <summary>
+    /// Sets ItemTemplate for ItemsControl and its descendants
+    /// </summary>
+    /// <typeparam name="TItem"></typeparam>
+    /// <typeparam name="TItemsControl"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="build"></param>
+    /// <returns></returns>
     public static TItemsControl ItemTemplate<TItem, TItemsControl>(this TItemsControl control,
         Func<TItem, Control> build)
         where TItemsControl : ItemsControl
@@ -218,22 +277,52 @@ public static class ControlPropertyExtensions
         return control;
     }
 
+    /// <summary>
+    /// Sets ItemTemplate for MenuFlyout
+    /// </summary>
+    /// <typeparam name="TItem"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="build"></param>
+    /// <returns></returns>
     public static MenuFlyout ItemTemplate<TItem>(this MenuFlyout control, Func<TItem, Control> build)
     {
         control.ItemTemplate = new FuncDataTemplate<TItem>((val, _) => build(val));
         return control;
     }
+
+    /// <summary>
+    /// Sets ItemTemplate for MenuItem
+    /// </summary>
+    /// <typeparam name="TItem"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="build"></param>
+    /// <returns></returns>
     public static MenuItem ItemTemplate<TItem>(this MenuItem control, Func<TItem, Control> build)
     {
         control.ItemTemplate = new FuncDataTemplate<TItem>((val, _) => build(val));
         return control;
     }
+
+    /// <summary>
+    /// Sets ItemTemplate for Menu
+    /// </summary>
+    /// <typeparam name="TItem"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="build"></param>
+    /// <returns></returns>
     public static Menu ItemTemplate<TItem>(this Menu control, Func<TItem, Control> build)
     {
         control.ItemTemplate = new FuncDataTemplate<TItem>((val, _) => build(val));
         return control;
     }
 
+    /// <summary>
+    /// Sets ItemsPanel for ItemsControl
+    /// </summary>
+    /// <typeparam name="TItemsControl"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="panel"></param>
+    /// <returns></returns>
     public static TItemsControl ItemsPanel<TItemsControl>(this TItemsControl control, Panel panel)
         where TItemsControl : ItemsControl
     {
@@ -247,12 +336,28 @@ public static class ControlPropertyExtensions
         object ITemplate.Build() => throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Used to execute action that sets multiple properties on control
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="process"></param>
+    /// <returns></returns>
     public static TElement With<TElement>(this TElement control, Action<TElement> process)
     {
         process?.Invoke(control);
         return control;
     }
 
+
+    /// <summary>
+    /// Sets control Name and registers it in the specified INameScope
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="name"></param>
+    /// <param name="ns"></param>
+    /// <returns></returns>
     public static TElement Name<TElement>(this TElement control, string name, INameScope ns)
         where TElement : Control
     {
@@ -261,6 +366,13 @@ public static class ControlPropertyExtensions
         return control;
     }
 
+    /// <summary>
+    /// Adds styles to control and returns the control for method chaining
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="styles"></param>
+    /// <returns></returns>
     public static TElement Styles<TElement>(this TElement control, params Style[] styles)
         where TElement : Control
     {
@@ -270,6 +382,13 @@ public static class ControlPropertyExtensions
         return control;
     }
 
+    /// <summary>
+    /// Adds styles to control and returns the control for method chaining
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="styles"></param>
+    /// <returns></returns>
     public static TElement Styles<TElement>(this TElement control, IEnumerable<Style> styles)
         where TElement : Control
     {
@@ -279,6 +398,15 @@ public static class ControlPropertyExtensions
         return control;
     }
 
+    /// <summary>
+    /// Adds class to control and returns the control for method chaining
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="className"></param>
+    /// <param name="line"></param>
+    /// <param name="caller"></param>
+    /// <returns></returns>
     public static TElement Class<TElement>(this TElement control, string className, [CallerLineNumber] int line = 0,
         [CallerMemberName] string? caller = default)
         where TElement : Control
@@ -287,26 +415,33 @@ public static class ControlPropertyExtensions
         return control;
     }
 
-    [RequiresUnreferencedCode("Uses Binding which depends on Reflection")]
-    public static TElement BindClass<TElement>(this TElement control, bool value, string className,
-        object? bindingSource = null, [CallerLineNumber] int line = 0, [CallerMemberName] string? caller = default,
-        [CallerArgumentExpression(nameof(value))] string? ps = null)
-        where TElement : Control
-    {
-        var path = PropertyPathHelper.GetNameFromPropertyPath(ps);
-        var binding = new Binding(path, BindingMode.OneWay);
+    //[RequiresUnreferencedCode("Uses Binding which depends on Reflection")]
+    //public static TElement BindClass<TElement>(this TElement control, bool value, string className,
+    //    object? bindingSource = null, [CallerLineNumber] int line = 0, [CallerMemberName] string? caller = default,
+    //    [CallerArgumentExpression(nameof(value))] string? ps = null)
+    //    where TElement : Control
+    //{
+    //    var path = PropertyPathHelper.GetNameFromPropertyPath(ps);
+    //    var binding = new Binding(path, BindingMode.OneWay);
 
-        if (bindingSource != null)
-            binding.Source = bindingSource;
+    //    if (bindingSource != null)
+    //        binding.Source = bindingSource;
 
-        control.BindClass(className, binding, null!);
-        return control;
-    }
+    //    control.BindClass(className, binding, null!);
+    //    return control;
+    //}
 
-    public static StackTrace GetDeeperStackTrace(int depth) =>
-        depth > 0 ? GetDeeperStackTrace(depth - 1) : new StackTrace(0, true);
+    //public static StackTrace GetDeeperStackTrace(int depth) =>
+    //    depth > 0 ? GetDeeperStackTrace(depth - 1) : new StackTrace(0, true);
 
 
+    /// <summary>
+    /// Adds DataTemplates to control and returns the control for method chaining
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="dataTemplate"></param>
+    /// <returns></returns>
     public static TElement DataTemplates<TElement>(this TElement control, params IDataTemplate[] dataTemplate)
         where TElement : Control
     {
@@ -315,6 +450,15 @@ public static class ControlPropertyExtensions
         return control;
     }
 
+    /// <summary>
+    /// Sets AvaloniaProperty value or binding to control and returns the control for method chaining
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="property"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
     public static TElement SetProp<TElement, TValue>(this TElement control, AvaloniaProperty property,
         TValue value)
         where TElement : Control
@@ -331,6 +475,14 @@ public static class ControlPropertyExtensions
         return control;
     }
 
+    /// <summary>
+    /// Sets ToolTip value or binding to control and returns the control for method chaining
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="control"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
     public static TElement ToolTip<TElement, TValue>(this TElement control, TValue value)
         where TElement : Control
     {
@@ -354,11 +506,9 @@ public static class ControlPropertyExtensions
     /// <param name="control">target button</param>
     /// <param name="flyout">flyout to activate</param>
     /// <returns></returns>
-    public static TElement AddFlyoutOnClick<TElement>(this TElement control, FlyoutBase flyout)
-        where TElement : Button
+    public static TElement AddFlyoutOnClick<TElement>(this TElement control, FlyoutBase flyout) where TElement : Button
     {
-
-        //todo fix
+        control.Click += (_, _) => flyout.ShowAt(control);
         //control.OnClick(_ => flyout.ShowAt(control));
         return control;
     }
