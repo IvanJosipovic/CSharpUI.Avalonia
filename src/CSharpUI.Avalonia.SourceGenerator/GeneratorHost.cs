@@ -80,7 +80,7 @@ public class GeneratorHost()
         var sb = new StringBuilder();
         sb.AppendLine("#nullable enable");
         sb.AppendLine($"using Avalonia.Data;");
-        sb.AppendLine($"using Avalonia.Data.Converters;");
+        //sb.AppendLine($"using Avalonia.Data.Converters;");
         //sb.AppendLine($"using System;");
         //sb.AppendLine($"using System.Numerics;");
         //sb.AppendLine($"using System.Linq.Expressions;");

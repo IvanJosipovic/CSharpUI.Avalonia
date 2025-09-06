@@ -20,7 +20,7 @@ public class ValueOverloadsStyleSetterGenerator : ExtensionGeneratorBase<Propert
                 {
                     continue;
                 }
-                var argDefs = string.Join(", ", ps.Select(x => $"{x.Type} {x.Name}"));
+                var argDefs = string.Join(", ", ps.Select(x => $"{x.Type.GetFullTypeName()} {x.Name}"));
                 var argVals = string.Join(", ", ps.Select(x => x.Name)); ;
 
                 extensionText += $"    public static Style<{info.ReturnType}> {info.ExtensionName}{info.GenericArg}(this Style<{info.ReturnType}> style, {argDefs}){info.GenericConstraint}{Extensions.NewLine}" +

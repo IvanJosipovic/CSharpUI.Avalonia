@@ -400,7 +400,10 @@ internal static class Extensions
     {
         var fullName = symbol.ToDisplayString(FullyQualifiedGlobalFormat);
 
-        fullName += symbol.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
+        if (!fullName.EndsWith("?"))
+        {
+            fullName += symbol.NullableAnnotation == NullableAnnotation.Annotated ? "?" : "";
+        }
 
         return fullName;
     }
