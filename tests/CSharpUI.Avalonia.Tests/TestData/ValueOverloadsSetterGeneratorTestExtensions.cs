@@ -20,11 +20,11 @@ public static partial class ValueOverloadsSetterGeneratorTestExtensions
 
     /*ValueOverloadsSetterGenerator*/
 
-    public static T Padding<T>(this T control, double uniformLength = default) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+    public static T Padding<T>(this T control, double uniformLength) where T : global::Tests.ValueOverloadsSetterGeneratorTest
         => control._set(() => control.Padding = new global::Avalonia.Thickness(uniformLength));
-    public static T Padding<T>(this T control, double horizontal = default, double vertical = default) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+    public static T Padding<T>(this T control, double horizontal, double vertical) where T : global::Tests.ValueOverloadsSetterGeneratorTest
         => control._set(() => control.Padding = new global::Avalonia.Thickness(horizontal, vertical));
-    public static T Padding<T>(this T control, double left = default, double top = default, double right = default, double bottom = default) where T : global::Tests.ValueOverloadsSetterGeneratorTest
+    public static T Padding<T>(this T control, double left, double top, double right, double bottom) where T : global::Tests.ValueOverloadsSetterGeneratorTest
         => control._set(() => control.Padding = new global::Avalonia.Thickness(left, top, right, bottom));
 
 

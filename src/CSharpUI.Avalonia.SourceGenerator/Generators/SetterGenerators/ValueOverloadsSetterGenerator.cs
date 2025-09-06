@@ -20,7 +20,7 @@ public class ValueOverloadsSetterGenerator : ExtensionGeneratorBase<PropertyExte
                 {
                     continue;
                 }
-                var argDefs = string.Join(", ", ps.Select(x => $"{x.Type.GetFullTypeName()} {x.Name} = default!"));
+                var argDefs = string.Join(", ", ps.Select(x => $"{x.Type.GetFullTypeName()} {x.Name}"));
                 var argVals = string.Join(", ", ps.Select(x => x.Name)); ;
 
                 extensionText += Extensions.NewLine +
