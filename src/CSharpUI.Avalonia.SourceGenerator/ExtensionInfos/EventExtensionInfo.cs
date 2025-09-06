@@ -53,7 +53,7 @@ public class EventExtensionInfo : IMemberExtensionInfo
         {
             var parameters = method.Parameters;
             foreach (var parameter in parameters)
-                EventParameterTypes.Add(parameter.Type.Name);
+                EventParameterTypes.Add(parameter.Type.GetFullTypeName());
 
             if (HasRoutedEventArgs(parameters))
             {
