@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace CSharpUI.Avalonia.SourceGenerator.Generators;
@@ -143,7 +144,7 @@ internal static class Extensions
 
         if (property != null)
         {
-            docs = property.GetDocumentationCommentXml();
+            docs = property.GetDocumentationCommentXml(expandIncludes: true);
             if (!string.IsNullOrEmpty(docs))
             {
                 docs = GetSummary(docs!);
@@ -155,7 +156,7 @@ internal static class Extensions
 
     internal static string? GetDocumentation(this IPropertySymbol property)
     {
-        var docs = property.GetDocumentationCommentXml();
+        var docs = property.GetDocumentationCommentXml(expandIncludes: true);
 
         if (!string.IsNullOrEmpty(docs))
         {
@@ -170,13 +171,21 @@ internal static class Extensions
         try
         {
             var element = XElement.Parse(comment);
-            var summary = element.Element("summary")?.Value.Trim().Replace("\n", "").Replace("\r", "");
+            var summary = element.Element("summary")?.Value.Trim().Replace("\n", "").Replace("\r", "").NormalizeSpaces();
             return summary;
         }
         catch (Exception)
         {
         }
         return null;
+    }
+
+    public static string NormalizeSpaces(this string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        return Regex.Replace(input, @"\s+", " ");
     }
 
     internal static bool IsAvaloniaPropertyField(this IFieldSymbol field)

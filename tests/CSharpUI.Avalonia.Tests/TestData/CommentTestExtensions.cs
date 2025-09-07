@@ -8,7 +8,7 @@ public static partial class CommentTestExtensions
     // ItemsSource
 
     /*ValueSetterGenerator*/
-    /// <summary>Gets or sets a collection that is used to generate the items for the    drop-down portion of the  control.</summary>
+    /// <summary>Gets or sets a collection that is used to generate the items for the drop-down portion of the control.</summary>
     public static T ItemsSource<T>(this T control, global::System.Collections.IEnumerable? value) where T : global::Tests.CommentTest
         => control._set(() => control.ItemsSource = value!);
 
@@ -18,7 +18,7 @@ public static partial class CommentTestExtensions
     // ValueMemberBinding
 
     /*ValueSetterGenerator*/
-    /// <summary>Gets or sets the   that    is used to get the values for display in the text portion of    the     control.</summary>
+    /// <summary>Gets or sets the that is used to get the values for display in the text portion of the control.</summary>
     public static T ValueMemberBinding<T>(this T control, global::Avalonia.Data.IBinding? value) where T : global::Tests.CommentTest
         => control._set(() => control.ValueMemberBinding = value!);
 
