@@ -12,6 +12,7 @@ public class ExternalPropertyGeneratorTests
     [InlineData(typeof(AttachedProperty2Test))]
     [InlineData(typeof(AttachedProperty3Test))]
     [InlineData(typeof(AttachedPropertyTest))]
+    [InlineData(typeof(CommentTest))]
     [InlineData(typeof(CommonPropertyTest))]
     [InlineData(typeof(DirectPropertyTest))]
     [InlineData(typeof(EventTest))]

@@ -12,6 +12,7 @@ public class GeneratorTests
     [InlineData(typeof(AttachedProperty2Test))]
     [InlineData(typeof(AttachedProperty3Test))]
     [InlineData(typeof(AttachedPropertyTest))]
+    [InlineData(typeof(CommentTest))]
     [InlineData(typeof(CommonPropertyTest))]
     [InlineData(typeof(DirectPropertyTest))]
     [InlineData(typeof(EventTest))]
@@ -21,7 +22,6 @@ public class GeneratorTests
     [InlineData(typeof(SealedClassTest))]
     [InlineData(typeof(StyledPropertyTest))]
     [InlineData(typeof(ValueOverloadsSetterGeneratorTest))]
-
     public void Text(Type type)
     {
         var name = type.Name;

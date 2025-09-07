@@ -150,20 +150,6 @@ internal static class Extensions
             }
         }
 
-        static string? GetSummary(string comment)
-        {
-            try
-            {
-                var element = XElement.Parse(comment);
-                var summary = element.Element("summary")?.Value.Trim().Replace("\n", "").Replace("\r", "");
-                return summary;
-            }
-            catch (Exception)
-            {
-            }
-            return null;
-        }
-
         return docs;
     }
 
@@ -176,21 +162,21 @@ internal static class Extensions
             docs = GetSummary(docs!);
         }
 
-        static string? GetSummary(string comment)
-        {
-            try
-            {
-                var element = XElement.Parse(comment);
-                var summary = element.Element("summary")?.Value.Trim();
-                return summary;
-            }
-            catch (Exception)
-            {
-            }
-            return null;
-        }
-
         return docs;
+    }
+
+    static string? GetSummary(string comment)
+    {
+        try
+        {
+            var element = XElement.Parse(comment);
+            var summary = element.Element("summary")?.Value.Trim().Replace("\n", "").Replace("\r", "");
+            return summary;
+        }
+        catch (Exception)
+        {
+        }
+        return null;
     }
 
     internal static bool IsAvaloniaPropertyField(this IFieldSymbol field)
