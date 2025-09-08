@@ -1,4 +1,5 @@
 ﻿using CSharpUI.Avalonia;
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
 #pragma warning disable IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
@@ -12,7 +13,7 @@ namespace CSharpUI.Avalonia;
 /// </summary>
 public static class HotReloadManager
 {
-    private static readonly Dictionary<Type, HashSet<IReloadable>> Instances = new();
+    private static readonly ConcurrentDictionary<Type, HashSet<IReloadable>> Instances = new();
 
     /// <summary>
     /// Event that is raised after hot reload is applied

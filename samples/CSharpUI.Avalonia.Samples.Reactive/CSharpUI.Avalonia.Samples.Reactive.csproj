@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>preview</LangVersion>
-    <PublishAot>true</PublishAot>
+    <PublishAot Condition="'$(Configuration)'=='Release'">true</PublishAot>
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
