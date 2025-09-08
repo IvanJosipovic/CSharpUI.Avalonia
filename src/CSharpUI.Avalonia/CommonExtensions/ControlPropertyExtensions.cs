@@ -2,7 +2,6 @@
 using Avalonia.Controls.Templates;
 using Avalonia.Data.Converters;
 using Avalonia.Styling;
-using CSharpUI.Avalonia;
 using CSharpUI.Avalonia.Helpers;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -10,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using AvaloniaToolTip = Avalonia.Controls.ToolTip;
 
-namespace CSharpUI.Avalonia;
+namespace CSharpUI.Avalonia.CommonExtensions;
 
 /// <summary>
 /// Extensions for setting Avalonia properties in a fluent way
@@ -40,11 +39,10 @@ public static class ControlPropertyExtensions
     /// <param name="propertyToBindTo"></param>
     /// <param name="bindingMode"></param>
     /// <param name="converter"></param>
-    /// <param name="overrideView"></param>
     /// <returns></returns>
     [RequiresUnreferencedCode("Uses Binding which uses Reflection")]
     public static TControl _set<TControl>(this TControl control, AvaloniaProperty avaloniaProperty,
-        AvaloniaProperty propertyToBindTo, BindingMode? bindingMode, IValueConverter? converter, ViewBase? overrideView)
+        AvaloniaProperty propertyToBindTo, BindingMode? bindingMode, IValueConverter? converter)
         where TControl : AvaloniaObject
     {
         var binding = new Binding()

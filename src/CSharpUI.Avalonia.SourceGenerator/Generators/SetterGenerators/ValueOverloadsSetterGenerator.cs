@@ -9,7 +9,7 @@ public class ValueOverloadsSetterGenerator : ExtensionGeneratorBase<PropertyExte
     {
         var extensionText = "";
         // overloads for primitive types like margin
-        if (!info.ValueType.ContainingNamespace.ToString().StartsWith("System")
+        if (!info.ValueType.ContainingNamespace?.ToString().StartsWith("System") == true
             && info.ValueType.IsValueType
             && info.ValueType.GetMembers().OfType<IMethodSymbol>().Where(m => m.MethodKind == MethodKind.Constructor).Count() > 1)
         {
@@ -23,9 +23,10 @@ public class ValueOverloadsSetterGenerator : ExtensionGeneratorBase<PropertyExte
                 var argDefs = string.Join(", ", ps.Select(x => $"{x.Type.GetFullTypeName()} {x.Name}"));
                 var argVals = string.Join(", ", ps.Select(x => x.Name)); ;
 
-                extensionText += Extensions.NewLine +
-                                 $"    public static {info.ReturnType} {info.ExtensionName}{info.GenericArg}(this {info.ReturnType} control, {argDefs}){info.GenericConstraint}{Extensions.NewLine}" +
-                                 $"        => control._set(() => control.{info.MemberName} = new {info.ValueTypeSource}({argVals}));";
+                extensionText +=
+                    $"    /// <summary>{info.Comment}</summary>{Extensions.NewLine}" +
+                    $"    public static {info.ReturnType} {info.ExtensionName}{info.GenericArg}(this {info.ReturnType} control, {argDefs}){info.GenericConstraint}{Extensions.NewLine}" +
+                    $"        => control._set(() => control.{info.MemberName} = new {info.ValueTypeSource}({argVals}));{Extensions.NewLine}{Extensions.NewLine}";
             }
         }
         return extensionText;

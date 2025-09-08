@@ -1,4 +1,4 @@
-using CSharpUI.Avalonia.Samples.Reactive.ViewModels;
+﻿using CSharpUI.Avalonia.Samples.Reactive.ViewModels;
 
 namespace CSharpUI.Avalonia.Samples.Reactive.Views;
 

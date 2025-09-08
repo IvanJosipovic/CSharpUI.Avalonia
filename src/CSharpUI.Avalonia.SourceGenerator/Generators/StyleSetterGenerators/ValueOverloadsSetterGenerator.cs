@@ -23,8 +23,10 @@ public class ValueOverloadsStyleSetterGenerator : ExtensionGeneratorBase<Propert
                 var argDefs = string.Join(", ", ps.Select(x => $"{x.Type.GetFullTypeName()} {x.Name}"));
                 var argVals = string.Join(", ", ps.Select(x => x.Name)); ;
 
-                extensionText += $"    public static global::CSharpUI.Avalonia.Styles.Style<{info.ReturnType}> {info.ExtensionName}{info.GenericArg}(this global::CSharpUI.Avalonia.Styles.Style<{info.ReturnType}> style, {argDefs}){info.GenericConstraint}{Extensions.NewLine}" +
-                                 $"        => style._addSetter({info.ControlTypeName}.{info.MemberName}Property, new {info.ValueTypeSource}({argVals}));{Extensions.NewLine}";
+                extensionText +=
+                    $"    /// <summary>{info.Comment}</summary>{Extensions.NewLine}" +
+                    $"    public static global::CSharpUI.Avalonia.Styles.Style<{info.ReturnType}> {info.ExtensionName}{info.GenericArg}(this global::CSharpUI.Avalonia.Styles.Style<{info.ReturnType}> style, {argDefs}){info.GenericConstraint}{Extensions.NewLine}" +
+                    $"        => style._addSetter({info.ControlTypeName}.{info.MemberName}Property, new {info.ValueTypeSource}({argVals}));{Extensions.NewLine}{Extensions.NewLine}";
             }
         }
         return extensionText;

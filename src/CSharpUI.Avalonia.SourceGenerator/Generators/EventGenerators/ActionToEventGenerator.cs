@@ -32,10 +32,10 @@ public class ActionToEventGenerator : ExtensionGeneratorBase<EventExtensionInfo>
         }
 
         var extensionText =
-            (@event.IsObsolete ? "[Obsolete]" + Extensions.NewLine : "")
-            + $"    public static {@event.ReturnType} {"On" + @event.EventName}{@event.GenericArg}"
-            + $"(this {@event.ReturnType} control, {argsString}) {@event.GenericConstraint}{Extensions.NewLine}"
-            + extensionBody;
+            $"    /// <summary>{@event.Comment}</summary>{Extensions.NewLine}" +
+            (@event.IsObsolete ? "    [Obsolete]" + Extensions.NewLine : "") +
+            $"    public static {@event.ReturnType} {"On" + @event.EventName}{@event.GenericArg}(this {@event.ReturnType} control, {argsString}) {@event.GenericConstraint}{Extensions.NewLine}" +
+            extensionBody;
 
         return extensionText;
     }

@@ -9,6 +9,8 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
     public string ControlTypeName { get; }
     public string ExtensionName { get; protected set; }
     public string MemberName { get; }
+    public string FieldName { get; }
+
     public ITypeSymbol ValueType { get; }
     public object ValueTypeSource { get; }
     public bool IsGeneric { get; }
@@ -25,6 +27,7 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
         ControlType = field.ContainingType ?? throw new NullReferenceException("Control type can not be NULL");
         ExtensionName = field.Name.RemoveTrailingProperty();
         MemberName = field.Name.RemoveTrailingProperty();
+        FieldName = field.Name;
 
         if (field.AssociatedSymbol != null)
         {
@@ -59,10 +62,12 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
 
     public PropertyExtensionInfo(IPropertySymbol property)
     {
+        Comment = property.GetDocumentation();
+
         ControlType = property.ContainingType ?? throw new NullReferenceException("Control type can not be NULL");
         ExtensionName = property.Name.RemoveTrailingProperty();
         MemberName = property.Name.RemoveTrailingProperty();
-        Comment = property.GetDocumentation();
+        FieldName = property.Name + "Propert";
 
         ValueType = property.Type.GetLastGenericArgument();
         ControlTypeName = ControlType.GetFullTypeName();

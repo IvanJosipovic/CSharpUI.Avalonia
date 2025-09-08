@@ -18,6 +18,8 @@ public class EventExtensionInfo : IMemberExtensionInfo
     public string ReturnType { get; set; }
     public string GenericConstraint { get; set; } = "";
     public string GenericArg { get; set; } = "";
+    public string? Comment { get; set; }
+
 
     public bool IsRoutedEvent { get; set; }
     public bool IsObsolete { get; set; }
