@@ -30,16 +30,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="System" />
     <Using Include="Avalonia" />
     <Using Include="Avalonia.Controls" />
     <Using Include="Avalonia.Controls.ApplicationLifetimes" />
     <Using Include="Avalonia.Data" />
     <Using Include="Avalonia.Interactivity" />
-    <Using Include="CSharpUI.Avalonia" />
-    <Using Include="Avalonia.Themes.Fluent" />
     <Using Include="Avalonia.Layout" />
     <Using Include="Avalonia.Media" />
+    <Using Include="Avalonia.Styling" />
+    <Using Include="Avalonia.Themes.Fluent" />
+    <Using Include="System" />
   </ItemGroup>
 
 </Project>
