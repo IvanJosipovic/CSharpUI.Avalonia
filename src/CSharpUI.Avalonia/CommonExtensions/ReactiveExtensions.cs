@@ -15,7 +15,7 @@ public static class ReactiveExtensions
     /// Binds a control property to a view model property using ReactiveUI's reactive bindings.
     /// </summary>
     /// <typeparam name="TControl">The type of the control (must inherit from AvaloniaObject).</typeparam>
-    /// <typeparam name="TViewModel">The type of the view model (must inherit from ReactiveObject).</typeparam>
+    /// <typeparam name="TViewModel">The type of the view model (must implement INotifyPropertyChanged).</typeparam>
     /// <typeparam name="TValue">The type of the control property.</typeparam>
     /// <typeparam name="TValue2">The type of the view model property.</typeparam>
     /// <param name="control">The control whose property will be bound.</param>
@@ -30,7 +30,7 @@ public static class ReactiveExtensions
         TViewModel model,
         Expression<Func<TViewModel, TValue2?>> propertySelector,
         Action<TValue?>? onChange,
-        Func<TValue2?, TValue?>? valueSelector = null) where TControl : Control where TViewModel : ReactiveObject
+        Func<TValue2?, TValue?>? valueSelector = null) where TControl : Control where TViewModel : INotifyPropertyChanged
     {
         var disposables = new CompositeDisposable();
 
@@ -96,7 +96,7 @@ public static class ReactiveExtensions
         AvaloniaProperty<TValue?> prop,
         TViewModel model,
         Expression<Func<TViewModel, TValue?>> propertySelector,
-        Action<TValue?>? onChange = null) where TControl : Control where TViewModel : ReactiveObject
+        Action<TValue?>? onChange = null) where TControl : Control where TViewModel : INotifyPropertyChanged
     {
         control.ReactiveBinding(prop, model, propertySelector, onChange, null);
 
