@@ -337,6 +337,11 @@ internal static class Extensions
         if (property.GetAttributes().Any(x => x.AttributeClass?.Name == "ObsoleteAttribute"))
             return false;
 
+        if (property.Name == "this")
+        {
+            return false;
+        }
+
         return !IsReadOnly(property);
     }
 
