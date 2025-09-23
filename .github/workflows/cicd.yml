@@ -11,6 +11,13 @@ on:
     types: [opened, reopened, synchronize]
   merge_group:
 
+permissions:
+  id-token: write
+  contents: write
+  actions: write
+  checks: write
+  issues: write
+
 jobs:
   build-test:
     name: Build & Test
@@ -79,6 +86,13 @@ jobs:
       if: steps.semantic.outputs.new_release_published == 'true'
       run: dotnet pack -c Release -p:Version=${{ steps.semantic.outputs.new_release_version }}
 
+    - name: NuGet login (OIDC → temp API key)
+      if: steps.semantic.outputs.new_release_published == 'true'
+      uses: NuGet/login@v1
+      id: login
+      with:
+        user: IvanJosipovic
+
     - name: .NET NuGet Push
       if: steps.semantic.outputs.new_release_published == 'true'
-      run: dotnet nuget push src/**/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push src/**/*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ steps.login.outputs.NUGET_API_KEY }}
