@@ -67,7 +67,7 @@ public class PropertyExtensionInfo : IMemberExtensionInfo
         ControlType = property.ContainingType ?? throw new NullReferenceException("Control type can not be NULL");
         ExtensionName = property.Name.RemoveTrailingProperty();
         MemberName = property.Name.RemoveTrailingProperty();
-        FieldName = property.Name + "Propert";
+        FieldName = property.Name + "Property";
 
         ValueType = property.Type.GetLastGenericArgument();
         ControlTypeName = ControlType.GetFullTypeName();
