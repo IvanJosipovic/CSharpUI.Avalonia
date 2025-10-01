@@ -77,7 +77,7 @@ public class Generator : IIncrementalGenerator
         var classDecl = (ClassDeclarationSyntax)context.Node;
         var symbol = context.SemanticModel.GetDeclaredSymbol(classDecl);
 
-        if (symbol != null && (Extensions.InheritsFrom(symbol, "Avalonia.Visual") || Extensions.InheritsFrom(symbol, "Avalonia.AvaloniaObject")))
+        if (symbol != null && Extensions.InheritsFrom(symbol, "Avalonia.AvaloniaObject"))
         {
             return symbol!;
         }
@@ -108,7 +108,7 @@ public class Generator : IIncrementalGenerator
 
         foreach (var publicClass in Extensions.GetPublicClasses(symbol.GlobalNamespace))
         {
-            if (Extensions.InheritsFrom(publicClass, "Avalonia.Visual") || Extensions.InheritsFrom(publicClass, "Avalonia.AvaloniaObject"))
+            if (publicClass != null && Extensions.InheritsFrom(publicClass, "Avalonia.AvaloniaObject"))
             {
                 var code = generator.GenerateExtensions(publicClass);
 
