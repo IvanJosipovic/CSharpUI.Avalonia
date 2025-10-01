@@ -53,7 +53,8 @@ public class GeneratorHost()
             t => t.GetMembers()
                 .OfType<IPropertySymbol>()
                 .Where(x => !x.IsAvaloniaProperty()
-                            && x.IsCommonProperty())
+                            && x.IsCommonProperty()
+                            && !x.IsThisCollectionPtoperty())
                 .Select(x => new PropertyExtensionInfo(x)),
 
             new ValueSetterGenerator()

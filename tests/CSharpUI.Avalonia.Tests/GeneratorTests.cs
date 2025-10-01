@@ -12,6 +12,7 @@ public class GeneratorTests
     [InlineData(typeof(AttachedProperty2Test))]
     [InlineData(typeof(AttachedProperty3Test))]
     [InlineData(typeof(AttachedPropertyTest))]
+    [InlineData(typeof(AvaloniaListTest))]
     [InlineData(typeof(CommentTest))]
     [InlineData(typeof(CommonPropertyTest))]
     [InlineData(typeof(DirectPropertyTest))]
