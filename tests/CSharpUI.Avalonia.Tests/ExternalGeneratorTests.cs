@@ -1,6 +1,7 @@
 using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using System.ComponentModel;
 using Tests;
 
 namespace CSharpUI.Avalonia.Tests;
@@ -43,6 +44,8 @@ public class ExternalPropertyGeneratorTests
 
     private static string? GetGeneratedOutput(string externalAssemblySourceCode)
     {
+        var test = typeof(CancelEventArgs);
+
         var references = AppDomain.CurrentDomain.GetAssemblies()
                   .Where(assembly => !assembly.IsDynamic)
                   .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
