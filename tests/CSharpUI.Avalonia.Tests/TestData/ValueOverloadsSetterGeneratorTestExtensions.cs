@@ -27,11 +27,6 @@ public static partial class ValueOverloadsSetterGeneratorTestExtensions
 
 
 
-    /*AvaloniaPropertyBindSetterGenerator*/
-    /// <summary>Gets or sets the padding to place around the .</summary>
-    public static T Padding<T>(this T control, global::Avalonia.AvaloniaProperty avaloniaProperty, global::Avalonia.Data.BindingMode? bindingMode = null, global::Avalonia.Data.Converters.IValueConverter? converter = null) where T : global::Tests.ValueOverloadsSetterGeneratorTest
-        => control._set(global::Tests.ValueOverloadsSetterGeneratorTest.PaddingProperty, avaloniaProperty, bindingMode, converter);
-
 
 
     //================= Styles ======================//

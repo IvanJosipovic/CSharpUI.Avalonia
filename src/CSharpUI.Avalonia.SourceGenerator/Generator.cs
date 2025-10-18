@@ -68,7 +68,7 @@ public class Generator : IIncrementalGenerator
                                                               $"global using CSharpUI.Avalonia.Extensions;{Extensions.NewLine}" +
                                                               $"global using CSharpUI.Avalonia.Styles;{Extensions.NewLine}" +
                                                               $"global using CSharpUI.Avalonia;{Extensions.NewLine}"
-                                                              ,Encoding.UTF8));
+                                                              , Encoding.UTF8));
         });
     }
 

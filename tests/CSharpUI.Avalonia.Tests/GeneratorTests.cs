@@ -39,6 +39,10 @@ public class GeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
+        Directory.CreateDirectory("TestDataOutput");
+
+        File.WriteAllText(Path.Combine("TestDataOutput", $"{name}Extensions.cs"), output);
+
         Assert.Equal(expectedOutput.Trim(), output);
     }
 

@@ -12,11 +12,6 @@ public static partial class GenericPropertyTestExtensions
     public static T Ticks<T>(this T control, global::Avalonia.Collections.AvaloniaList<global::System.Double>? value) where T : global::Tests.GenericPropertyTest
         => control._set(() => control.Ticks = value!);
 
-    /*AvaloniaPropertyBindSetterGenerator*/
-    /// <summary></summary>
-    public static T Ticks<T>(this T control, global::Avalonia.AvaloniaProperty avaloniaProperty, global::Avalonia.Data.BindingMode? bindingMode = null, global::Avalonia.Data.Converters.IValueConverter? converter = null) where T : global::Tests.GenericPropertyTest
-        => control._set(global::Tests.GenericPropertyTest.TicksProperty, avaloniaProperty, bindingMode, converter);
-
 
 
     //================= Styles ======================//

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using System.ComponentModel;
 using Tests;
 
 namespace CSharpUI.Avalonia.Tests;
@@ -81,7 +82,7 @@ public class ExternalPropertyGeneratorTests
         {
             var failures = results.Diagnostics.Where(diagnostic => diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
 
-            throw new Exception(failures.Select(x => $"Error creating Assembly: {x.Id}: {x.GetMessage()}").Aggregate((x,y) => x + "\n\r" + y));
+            throw new Exception(failures.Select(x => $"Error creating Assembly: {x.Id}: {x.GetMessage()}").Aggregate((x, y) => x + "\n\r" + y));
         }
 
         dll.Position = 0;
