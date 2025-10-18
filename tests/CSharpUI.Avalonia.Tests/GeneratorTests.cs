@@ -38,6 +38,8 @@ public class GeneratorTests
 
         var output = GetGeneratedOutput(inputSource);
 
+        File.WriteAllText(Path.Combine("TestData", $"{name}Extensions.cs"), output);
+
         Assert.Equal(expectedOutput.Trim(), output);
     }
 

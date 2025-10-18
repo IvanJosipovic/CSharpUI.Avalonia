@@ -12,11 +12,6 @@ public static partial class CommentTestExtensions
     public static T ItemsSource<T>(this T control, global::System.Collections.IEnumerable? value) where T : global::Tests.CommentTest
         => control._set(() => control.ItemsSource = value!);
 
-    /*AvaloniaPropertyBindSetterGenerator*/
-    /// <summary>Gets or sets a collection that is used to generate the items for the drop-down portion of the control.</summary>
-    public static T ItemsSource<T>(this T control, global::Avalonia.AvaloniaProperty avaloniaProperty, global::Avalonia.Data.BindingMode? bindingMode = null, global::Avalonia.Data.Converters.IValueConverter? converter = null) where T : global::Tests.CommentTest
-        => control._set(global::Tests.CommentTest.ItemsSourceProperty, avaloniaProperty, bindingMode, converter);
-
 
 
     //================= Common Properties ======================//

@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/cicd.yml" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="samples/CSharpUI.Avalonia.Samples.Reactive/CSharpUI.Avalonia.Samples.Reactive.csproj" />
+  <Project Path="src/CSharpUI.Avalonia.SourceGenerator/CSharpUI.Avalonia.SourceGenerator.csproj" />
+  <Project Path="src/CSharpUI.Avalonia/CSharpUI.Avalonia.csproj" />
+  <Project Path="tests/CSharpUI.Avalonia.Tests/CSharpUI.Avalonia.Tests.csproj" />
+</Solution>
