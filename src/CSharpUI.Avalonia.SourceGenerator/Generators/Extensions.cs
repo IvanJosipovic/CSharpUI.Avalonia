@@ -443,4 +443,9 @@ internal static class Extensions
         return symbol.AllInterfaces.Any(i =>
             SymbolEqualityComparer.Default.Equals(i, baseOrInterface));
     }
+
+    internal static bool IsThisCollectionProperty(this IPropertySymbol property)
+    {
+        return property.Name == "this[]";
+    }
 }

@@ -1,3 +1,5 @@
+using Avalonia;
+using Avalonia.Controls;
 using CSharpUI.Avalonia.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -8,11 +10,11 @@ namespace CSharpUI.Avalonia.Tests;
 
 public class ExternalPropertyGeneratorTests
 {
-
     [Theory]
     [InlineData(typeof(AttachedProperty2Test))]
     [InlineData(typeof(AttachedProperty3Test))]
     [InlineData(typeof(AttachedPropertyTest))]
+    [InlineData(typeof(AvaloniaListTest))]
     [InlineData(typeof(CommentTest))]
     [InlineData(typeof(CommonPropertyTest))]
     [InlineData(typeof(DirectPropertyTest))]
@@ -44,13 +46,19 @@ public class ExternalPropertyGeneratorTests
 
     private static string? GetGeneratedOutput(string externalAssemblySourceCode)
     {
-        var test = typeof(CancelEventArgs);
+        var references = new List<MetadataReference>();
 
-        var references = AppDomain.CurrentDomain.GetAssemblies()
-                  .Where(assembly => !assembly.IsDynamic)
+        var references2 = AppDomain.CurrentDomain.GetAssemblies()
+                  .Where(assembly => !assembly.IsDynamic && !assembly.Location.Contains("Microsoft.NETCore.App"))
                   .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
                   .Cast<MetadataReference>()
                   .ToList();
+
+        references.AddRange(references2);
+        references.AddRange(Basic.Reference.Assemblies.Net90.References.All);
+
+        //references.Add(MetadataReference.CreateFromFile(typeof(AvaloniaObject).Assembly.Location));
+        //references.Add(MetadataReference.CreateFromFile(typeof(Controls).Assembly.Location));
 
         var externalAssemblySyntaxTree = CSharpSyntaxTree.ParseText(externalAssemblySourceCode + "\n\r" + "public class TestPointer { }");
 
@@ -91,7 +99,6 @@ public class ExternalPropertyGeneratorTests
                       [syntaxTree],
                       references,
                       new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, optimizationLevel: OptimizationLevel.Release));
-
 
         // Source Generator to test
         var generator = new Generator();
