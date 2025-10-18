@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
-    <NoWarn>$(NoWarn);CS0067</NoWarn>
+    <NoWarn>$(NoWarn);CS0067;CS8618</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
