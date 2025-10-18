@@ -13,11 +13,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.5" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.7" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.5" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.5" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.7" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
     <PackageReference Include="ReactiveUI.SourceGenerators" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
