@@ -51,7 +51,7 @@ jobs:
       if: success() || failure()
       with:
         name: Tests
-        path: tests/**/TestResults/test-results.trx
+        path: tests/**/test-results.trx
         reporter: dotnet-trx
 
     - name: Coverage
