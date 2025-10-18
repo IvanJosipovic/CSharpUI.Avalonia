@@ -21,8 +21,8 @@ public class GeneratorHost()
                 .Select(x => new PropertyExtensionInfo(x)),
 
             new ValueSetterGenerator(),
-            new ValueOverloadsSetterGenerator(),
-            new AvaloniaPropertyBindSetterGenerator()
+            new ValueOverloadsSetterGenerator()
+            //new AvaloniaPropertyBindSetterGenerator()
         ),
 
         new("Attached Properties",

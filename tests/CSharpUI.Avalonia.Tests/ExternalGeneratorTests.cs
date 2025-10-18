@@ -71,7 +71,7 @@ public class ExternalPropertyGeneratorTests
         {
             var failures = results.Diagnostics.Where(diagnostic => diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
 
-            throw new Exception(failures.Select(x => $"Error creating Assembly: {x.Id}: {x.GetMessage()}").Aggregate((x,y) => x + "\n\r" + y));
+            throw new Exception(failures.Select(x => $"Error creating Assembly: {x.Id}: {x.GetMessage()}").Aggregate((x, y) => x + "\n\r" + y));
         }
 
         dll.Position = 0;

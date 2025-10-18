@@ -22,15 +22,12 @@ var appBuilder = AppBuilder.Configure<Application>()
     .UseReactiveUI()
 #if DEBUG
     .UseHotReload()
+    .WithDeveloperTools()
 #endif
     .SetupWithLifetime(lifetime);
 
 lifetime.MainWindow = new Window()
                             .Content(new MainView(new MainViewModel()))
                             .Title("Reactive Sample App");
-
-#if DEBUG
-lifetime.MainWindow.AttachDevTools();
-#endif
 
 lifetime.Start(args);
