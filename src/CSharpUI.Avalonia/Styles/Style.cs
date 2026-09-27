@@ -1,48 +1,62 @@
-﻿using Avalonia.Styling;
-using CSharpUI.Avalonia.Helpers;
+using Avalonia.Styling;
+using System;
 using System.Runtime.CompilerServices;
 
-namespace CSharpUI.Avalonia.Styles;
+namespace CSharpUI.Avalonia;
 /// <summary>
 /// Typed style to support method chains with generic arguments
 /// </summary>
 /// <typeparam name="TControl">Type of the control that style will be applied to</typeparam>
-public class Style<TControl> : Style, IRelativeStyle where TControl : StyledElement
+public class Style<TControl> : Style, IRelativeStyle
+    where TControl : StyledElement
 {
     private Func<Selector, Selector> SelectorFunc { get; }
 
     /// <summary>
-    /// Creates Style with added .OfType&lt;TControl&gt; selector
+    /// Creates a style with an added <c>.OfType&lt;TControl&gt;()</c> selector.
     /// </summary>
     public Style()
     {
         SelectorFunc = s => s.OfType<TControl>();
-        Selector = SelectorFunc(null!);
+
+        UpdateSelector(null);
     }
 
     /// <summary>
-    /// Creates Style with added .OfType&lt;TControl&gt; selector and use name=&quot;selectorFunc&quot; to generate selector
+    /// Creates Style with applied selector.
     /// </summary>
-    /// <param name="selectorFunc">Selector to control</param>
-    /// <param name="expression">expression how selector was called</param>
-    /// <param name="callerFile">file where style was constructed</param>
-    public Style(Func<Selector, Selector> selectorFunc, [CallerArgumentExpression(nameof(selectorFunc))] string? expression = null, [CallerFilePath] string? callerFile = null)
+    public Style(
+            Func<Selector, Selector> selectorFunc,
+            [CallerArgumentExpression(nameof(selectorFunc))] string? expression = null,
+            [CallerFilePath] string? callerFile = null)
     {
-        SelectorFunc = selectorFunc;
+        var selectorString = selectorFunc(null!).ToString();
 
-        //add TypeOf<> Selector as a beginning of the chain if it's not specified in selectorFunc body argument already
-        if (selectorFunc(null!).GetTypeNameFromSelector() == null)
+        // 1. Check if the user explicitly specified a root (starts with a letter, e.g. OfType<StackPanel>).
+        bool hasExplicitRootType = !string.IsNullOrEmpty(selectorString) && char.IsLetter(selectorString[0]);
+
+        // 2. Check whether the selector is a traversal (a path to descendants).
+        // In Avalonia traversals include spaces, '>', or '/' in the selector string.
+        // Also inspect the C# expression for traversal helpers for robustness.
+        bool isTraversal =
+            (!string.IsNullOrEmpty(selectorString) && (selectorString.Contains(' ') || selectorString.Contains('>') || selectorString.Contains('/'))) ||
+            (expression != null && (expression.Contains(".Descendant(") || expression.Contains(".Child(") || expression.Contains(".Template(")));
+
+        // If a root type is explicitly specified OR the selector is a traversal, do not modify it.
+        if (hasExplicitRootType || isTraversal)
+        {
+            SelectorFunc = selectorFunc;
+        }
+        else
+        {
+            // For simple single selectors (e.g. `.my-class` or `:pointerover`),
+            // safely bind the selector to `TControl` so it won't apply to other control types.
             SelectorFunc = s => selectorFunc(s.OfType<TControl>());
+        }
 
-        //Prevent Selector generation from immediate call, since we need to apply base selectors from ascendant groups
-        if (ViewBuildContext.CurrentState != ViewBuildContextState.StyleBuilding)
-            Selector = SelectorFunc(null!);
+        UpdateSelector(null);
     }
 
-    /// <summary>
-    /// Update Selector with baseSelectorFunc if not null
-    /// </summary>
-    /// <param name="baseSelectorFunc"></param>
     public void UpdateSelector(Func<Selector, Selector>? baseSelectorFunc)
     {
         if (baseSelectorFunc != null)

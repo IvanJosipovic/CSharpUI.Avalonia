@@ -1,81 +1,60 @@
 # CSharpUI.Avalonia
 
-[![Nuget](https://img.shields.io/nuget/vpre/CSharpUI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/CSharpUI.Avalonia)
-[![Nuget)](https://img.shields.io/nuget/dt/CSharpUI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/CSharpUI.Avalonia)
-[![codecov](https://codecov.io/github/IvanJosipovic/CSharpUI.Avalonia/graph/badge.svg?token=WXS4sxWpVr)](https://codecov.io/github/IvanJosipovic/CSharpUI.Avalonia)
+[![NuGet](https://img.shields.io/nuget/vpre/CSharpUI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/CSharpUI.Avalonia)
+[![NuGet downloads](https://img.shields.io/nuget/dt/CSharpUI.Avalonia.svg?style=flat-square)](https://www.nuget.org/packages/CSharpUI.Avalonia)
 
-**CSharpUI.Avalonia** is a fluent, type-safe, XAML-free UI composition library for [Avalonia](https://avaloniaui.net/). It lets you build cross-platform user interfaces entirely in C#, with full IDE support, strong typing.
+CSharpUI.Avalonia builds user interfaces in C# with real Avalonia controls. Source generation provides fluent setters, strongly typed expression bindings, event helpers, and style setters. Avalonia continues to own the controls, property system, bindings, styles, and events.
 
----
+## Requirements
 
-## ✨ Key Features
+- Avalonia 12.x
+- .NET 10 or .NET 11
 
-- **XAML-Free** UI development in pure C#
-- **Fluent C# DSL** for layouts, controls, styles, and bindings
-- Full **IntelliSense**, **compile-time checking**, and **refactoring support**
-- Hot Reload support
-- ViewModel binding using **C# Expressions**
-- MVVM architecture with **ReactiveUI**
-- Source Generator support for external assemblies
-
----
-
-## 🔧 Installation
+## Install
 
 ```bash
 dotnet add package CSharpUI.Avalonia
 ```
 
----
-
-## 🖼️ Example View
+## A view with typed bindings
 
 ```csharp
-public class PageView : ReactiveViewBase<PageViewModel>
+using static CSharpUI.Avalonia.GeneratedControlFactories;
+
+public sealed class GreetingView(GreetingViewModel viewModel) : ViewBase<GreetingViewModel>(viewModel)
 {
-    protected override StyleGroup? BuildStyles() =>
-    [
-         new Style<TextBlock>()
-            .HorizontalAlignment(HorizontalAlignment.Center)
-            .VerticalAlignment(VerticalAlignment.Center),
-
-         new Style<TextBox>(x => x.Class("myTextBox"))
-            .HorizontalAlignment(HorizontalAlignment.Right)
-            .VerticalAlignment(VerticalAlignment.Center)
-    ];
-
-    protected override Control Build(PageViewModel vm) =>
-        new StackPanel()
+    protected override object Build(GreetingViewModel vm) =>
+        StackPanel()
+            .Margin(new Thickness(24))
+            .Spacing(12)
             .Children([
-                new TextBlock()
-                    .ReactiveBinding(TextBox.TextProperty, vm, x => x.MyProperty), // One way
-                new TextBox()
-                    .Class("myTextBox")
-                    .ReactiveBinding(TextBox.TextProperty, vm, x => x.MyProperty, x => vm.MyProperty = x ?? ""), // Two way
+                TextBlock()
+                    .FontSize(22)
+                    .Text(vm, model => model.Greeting),
+                TextBox()
+                    .PlaceholderText("Type a greeting")
+                    .Text(vm, model => model.Greeting, BindingMode.TwoWay)
             ]);
 }
 ```
 
-## 🖼️ Example ViewModel
+Generated factory methods create ordinary Avalonia controls and attach their call-site file, line, view type, and control type as source metadata. Import `GeneratedControlFactories` explicitly in files that use the factory syntax. Generated fluent extension methods are produced for Avalonia controls and can also be generated for controls in other assemblies.
 
-```csharp
-public partial class PageViewModel : ReactiveObject, IRoutableViewModel
-{
-    public IScreen HostScreen { get; }
+`CSharpUIGeneratorMetadataAttribute` can rename generated APIs, suppress generated members or factories, and mark a property as a content slot. For example, `[CSharpUIGeneratorMetadata(Alias = "Caption")]` renames the generated fluent setter while keeping the underlying Avalonia property unchanged.
 
-    public string? UrlPathSegment => "page";
+## Samples
 
-    public PageViewModel1(IScreen screen)
-    {
-        HostScreen = screen;
-    }
+- `CSharpUI.Avalonia.Samples.Basic` builds a view without an MVVM framework.
+- `CSharpUI.Avalonia.Samples.Mvvm` shows native `DataContext`, typed bindings, two-way input, and commands.
+- `CSharpUI.Avalonia.Samples.CustomControls` shows generated APIs for a local control, including an aliased property, attached property, and event.
 
-    [Reactive]
-    public partial string MyProperty { get; set; } = "Page View";
-}
+See [the architecture guide](docs/architecture.md) for inheritance handling, external assembly generation, source metadata, and generator overrides.
+
+## Build
+
+```bash
+dotnet build
+dotnet test
 ```
 
-
-
-## ❤️ Attribution
-Includes portions derived from [Avalonia.Markup.Declarative](https://github.com/AvaloniaUI/Avalonia.Markup.Declarative) (MIT License)
+The library targets `net10.0` and `net11.0`. The source generator targets `netstandard2.0` so it can run in compiler hosts used by supported IDEs.

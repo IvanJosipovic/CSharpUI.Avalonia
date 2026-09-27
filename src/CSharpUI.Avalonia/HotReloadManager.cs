@@ -1,55 +1,36 @@
-﻿using CSharpUI.Avalonia;
+using System;
 using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
-#pragma warning disable IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
-[assembly: System.Reflection.Metadata.MetadataUpdateHandler(typeof(HotReloadManager))]
-#pragma warning restore IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
+[assembly: System.Reflection.Metadata.MetadataUpdateHandler(typeof(CSharpUI.Avalonia.HotReloadManager))]
 
 namespace CSharpUI.Avalonia;
 
-/// <summary>
-/// Manages Hot Reload functionality
-/// </summary>
 public static class HotReloadManager
 {
-    private static readonly ConcurrentDictionary<Type, HashSet<IReloadable>> Instances = new();
+    private static readonly ConcurrentDictionary<Type, ConditionalWeakTable<IReloadable, object?>> Instances = new();
 
-    /// <summary>
-    /// Event that is raised after hot reload is applied
-    /// </summary>
     public static event Action<Type[]?>? HotReloaded;
 
-    /// <summary>
-    /// Indicates whether Hot Reload is enabled
-    /// </summary>
-    public static bool IsEnabled { get; private set; }
+    public static bool IsEnabled { get; private set; } = true;
 
-    /// <summary>
-    /// Enables Hot Reload functionality
-    /// </summary>
-    public static void Activate() => IsEnabled = true;
+    public static void Activate() =>
+        IsEnabled = true;
 
-    /// <summary>
-    /// Disables Hot Reload functionality
-    /// </summary>
-    public static void Deactivate() => IsEnabled = false;
+    public static void Deactivate() =>
+        IsEnabled = false;
 
-    private static void OnHotReloaded(Type[]? types) => HotReloaded?.Invoke(types);
+    private static void OnHotReloaded(Type[]? types) =>
+        HotReloaded?.Invoke(types);
 
-    /// <summary>
-    /// Clears cache for specified types (not implemented)
-    /// </summary>
-    /// <param name="types"></param>
     public static void ClearCache(Type[]? types)
     {
-        Console.WriteLine("ClearCache for types: " + PrintTypes(types));
+        Log("ClearCache for types: " + PrintTypes(types));
     }
 
-    /// <summary>
-    /// Updates application for specified types
-    /// </summary>
-    /// <param name="types"></param>
     public static void UpdateApplication(Type[]? types)
     {
         if (IsEnabled)
@@ -60,25 +41,25 @@ public static class HotReloadManager
 
     private static void ReloadInstances(Type[]? types)
     {
-        Console.WriteLine("UpdateApplication for types: " + PrintTypes(types));
+        Log("UpdateApplication for types: " + PrintTypes(types));
         if (types == null)
             return;
 
         foreach (var type in types)
         {
-            if (!Instances.TryGetValue(type, out var instances))
+            if (!Instances.TryGetValue(type, out var table))
                 continue;
 
-            foreach (var instance in instances)
-                instance.Reload();
+            foreach (var instance in table)
+            {
+                instance.Key.Reload();
+            }
         }
     }
 
-    /// <summary>
-    /// Prints type names from the array
-    /// </summary>
-    /// <param name="types"></param>
-    /// <returns></returns>
+    [Conditional("DEBUG")]
+    private static void Log(string message) => Debug.WriteLine($"[Markup.HotReload] {message}");
+
     public static string PrintTypes(Type[]? types)
     {
         if (types != null)
@@ -89,25 +70,27 @@ public static class HotReloadManager
         return "";
     }
 
-    [RequiresUnreferencedCode("Calls CSharpUI.Avalonia.HotReloadManager.RegisterMethodWatchers(Type)")]
+    /// <summary>
+    /// Enumerates the live attached instances currently tracked for hot reload. Used by the
+    /// diagnostics component registry to list active views.
+    /// </summary>
+    internal static IEnumerable<IReloadable> GetLiveInstances()
+    {
+        foreach (var table in Instances.Values)
+        {
+            foreach (var pair in table)
+                yield return pair.Key;
+        }
+    }
+
     internal static void RegisterInstance(IReloadable instance)
     {
         if (!IsEnabled) return;
-
         var type = instance.GetType();
+        if (type.IsGenericType) type = type.GetGenericTypeDefinition();
 
-        if (type.IsGenericType)
-        {
-            type = type.GetGenericTypeDefinition();
-        }
-
-        if (!Instances.TryGetValue(type, out var instances))
-        {
-            instances = [];
-            Instances[type] = instances;
-        }
-
-        instances.Add(instance);
+        var table = Instances.GetOrAdd(type, _ => []);
+        table.AddOrUpdate(instance, null);
     }
 
     internal static void UnregisterInstance(IReloadable instance)
@@ -121,8 +104,8 @@ public static class HotReloadManager
             type = type.GetGenericTypeDefinition();
         }
 
-        if (!Instances.TryGetValue(type, out var instances)) return;
+        if (!Instances.TryGetValue(type, out var table)) return;
 
-        instances.Remove(instance);
+        table.Remove(instance);
     }
 }

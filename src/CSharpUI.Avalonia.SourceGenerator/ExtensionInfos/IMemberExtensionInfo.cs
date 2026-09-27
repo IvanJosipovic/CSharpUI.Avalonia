@@ -1,6 +1,6 @@
-namespace CSharpUI.Avalonia.SourceGenerator.Generators;
+namespace CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 
-public interface IMemberExtensionInfo
+internal interface IMemberExtensionInfo
 {
     string MemberName { get; }
 }

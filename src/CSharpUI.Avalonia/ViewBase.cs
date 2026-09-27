@@ -1,47 +1,78 @@
-﻿using CSharpUI.Avalonia.Styles;
+using Avalonia.Controls;
+using Avalonia.Threading;
+using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
 namespace CSharpUI.Avalonia;
 
 /// <summary>
-/// Generic ViewBase
+/// Defines when a view should be initialized.
 /// </summary>
-/// <typeparam name="TViewModel"></typeparam>
-public abstract class ViewBase<TViewModel> : ViewBase
+public enum ViewInitializationStrategy
 {
     /// <summary>
-    /// View Model from the DataContext
+    /// View is initialized lazily when first accessed (e.g., when Child property is accessed or when attached to visual tree).
     /// </summary>
+    Lazy,
+
+    /// <summary>
+    /// View is initialized immediately in the constructor.
+    /// </summary>
+    Immediate
+}
+
+public abstract class ViewBase<TViewModel> : ViewBase
+    where TViewModel : class
+{
     public virtual TViewModel? ViewModel
     {
-        get => (TViewModel)DataContext!;
+        get => (TViewModel?)DataContext!;
         set => DataContext = value;
     }
 
-    /// <summary>
-    /// Initializes ViewBase with specified view model
-    /// </summary>
-    /// <param name="viewModel"></param>
-    protected ViewBase(TViewModel viewModel) : base(true)
+    //injecting viewmodel through constructor is optional, but if you do it, the view will be initialized immediately with provided viewmodel as DataContext
+    protected ViewBase(TViewModel viewModel) : base(ViewInitializationStrategy.Lazy)
     {
-        DataContext = viewModel;
-        OnCreatedCore();
+        DataContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
         Initialize();
     }
 
-    /// <inheritdoc/>
-    protected abstract object Build(TViewModel? vm);
+    //classic mvvm approach with parameterless constructor and setting DataContext later is also supported, but in this case the view will be initialized lazily when first accessed or attached to visual tree
+    protected ViewBase() : base(ViewInitializationStrategy.Lazy)
+    {
+        // not calling Initialize()! Waiting for OnDataContextChanged
+    }
 
-    /// <inheritdoc/>
-    protected override object Build() => Build(ViewModel);
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        base.OnDataContextChanged(e);
+
+        // once DataContext is set to a compatible viewmodel type, we can initialize the view if it hasn't been initialized yet
+        if (DataContext is TViewModel && !IsInitialized)
+        {
+            Initialize();
+        }
+    }
+
+    protected abstract object Build(TViewModel vm);
+
+    protected override object Build()
+    {
+        if (DataContext is not TViewModel vm)
+        {
+            throw new InvalidOperationException(
+                $"Cannot build view {GetType().Name} without a valid ViewModel of type {typeof(TViewModel).Name}.");
+        }
+
+        return Build(vm);
+    }
 }
 
 /// <summary>
 /// Base view class used like UserControl in XAML
 /// </summary>
-
-public abstract class ViewBase : Decorator, IReloadable
+public abstract class ViewBase : Decorator, IReloadable, IDeclarativeViewBase
 {
     private INameScope? _nameScope;
 
@@ -50,53 +81,40 @@ public abstract class ViewBase : Decorator, IReloadable
     /// </summary>
     protected INameScope Scope => _nameScope ??= new NameScope();
 
-    /// <summary>
-    /// Action called when view is initialized
-    /// </summary>
     public event Action? ViewInitialized;
 
-    /// <summary>
-    /// Called to build the view's content
-    /// </summary>
-    /// <returns></returns>
     protected abstract object Build();
 
-    /// <summary>
-    /// Sets up styles for the view
-    /// </summary>
-    /// <returns></returns>
     protected virtual StyleGroup? BuildStyles() => null;
 
-    /// <summary>
-    /// Initializes ViewBase with deferred loading set to false
-    /// </summary>
-    protected ViewBase() : this(false)
+    protected ViewBase()
+        : this(AppBuilderExtensions.DefaultViewInitializationStrategy)
     {
+    }
 
+    protected ViewBase(ViewInitializationStrategy initializationStrategy)
+    {
+        InitializationStrategy = initializationStrategy;
+
+        if (initializationStrategy == ViewInitializationStrategy.Immediate)
+            Initialize();
     }
 
     /// <summary>
-    /// Initializes ViewBase
+    /// Gets the initialization strategy used by this view.
     /// </summary>
-    /// <param name="deferredLoading"></param>
-    protected ViewBase(bool deferredLoading)
+    public ViewInitializationStrategy InitializationStrategy { get; }
+
+    private bool _isInitialized;
+    private bool _isInitializing;
+
+    private void EnsureInitialized()
     {
-        if (!deferredLoading)
+        if (!_isInitialized && !_isInitializing)
         {
-            OnCreatedCore();
             Initialize();
         }
     }
-
-    /// <summary>
-    /// Called after the view is initialized.
-    /// </summary>
-    protected virtual void OnAfterInitialized() { }
-
-    /// <summary>
-    /// Called from constructor, right before initialization and building UI
-    /// </summary>
-    protected internal void OnCreatedCore() => OnCreated();
 
     /// <summary>
     /// Called from constructor, right before initialization and building UI
@@ -106,56 +124,108 @@ public abstract class ViewBase : Decorator, IReloadable
     {
     }
 
-    /// <summary>
-    /// Called to initialize the view, build its content, and apply styles.
-    /// </summary>
-    /// <exception cref="ViewBuildingException"></exception>
+    protected virtual void OnAfterInitialized()
+    {
+    }
+
     public void Initialize()
     {
+        if (_isInitialized || _isInitializing)
+            return;
+
+        _isInitializing = true;
+
         try
         {
+            using var sourceScope = SourceInfo.EnterView(GetType());
+            OnCreated();
             NameScope.SetNameScope(this, Scope);
 
-            using (var context = new ViewBuildContext(this))
+            if (BuildStyles() is { } styleGroup)
             {
-                context.SetState(ViewBuildContextState.StyleBuilding);
-                if (BuildStyles() is { } styleGroup)
-                {
-                    context.SetState(ViewBuildContextState.StyleSelectorUpdating);
-                    var viewStyles = StyleBuilder.StylesToRange(styleGroup).ToImmutableList();
-                    Styles.AddRange(viewStyles);
-                }
-
-                context.SetState(ViewBuildContextState.ViewBuilding);
-                var content = Build();
-                Child = content as Control;
+                var viewStyles = StyleBuilder.StylesToRange(styleGroup).ToImmutableList();
+                Styles.AddRange(viewStyles);
             }
 
+            var content = Build();
+            Child = content as Control;
+
+            _isInitialized = true;
             ViewInitialized?.Invoke();
             OnAfterInitialized();
+        }
+        catch (ViewBuildingException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
             Debug.WriteLine(ex.StackTrace);
-            throw new ViewBuildingException($"Build error in {GetType().Name} : {ex.Message}", ex);
+            var message = CreateBuildErrorMessage(GetType(), ex);
+            // A ViewBuildingException coming from a _set call is already recorded at its creation site
+            // (handled by the catch above), so only the generic wrap is recorded here.
+            Diagnostics.DiagnosticsErrorLog.Record(
+                Diagnostics.DiagnosticSeverity.Error, Diagnostics.DiagnosticCategory.Build, GetType().Name, message);
+            throw new ViewBuildingException(message, ex);
+        }
+        finally
+        {
+            _isInitializing = false;
         }
     }
 
-    #region Hot reload stuff
+    private static string CreateBuildErrorMessage(Type viewType, Exception exception)
+    {
+        var rootCause = GetRootCause(exception);
+        var message = $"Build error in {viewType.Name} ({rootCause.GetType().Name}): {rootCause.Message}";
+
+        if (IsBinaryCompatibilityException(rootCause))
+        {
+            message += " This usually means an external package was built against a different version of Avalonia or another dependency. Check the package's declared dependency versions against the versions resolved by the app.";
+        }
+
+        return message;
+    }
+
+    private static Exception GetRootCause(Exception exception)
+    {
+        while (exception.InnerException != null)
+        {
+            exception = exception.InnerException;
+        }
+
+        return exception;
+    }
+
+    private static bool IsBinaryCompatibilityException(Exception exception) =>
+        exception is MissingFieldException or MissingMethodException or TypeLoadException or System.IO.FileLoadException;
+
     /// <summary>
-    /// Reloads the view by rebuilding its content.
+    /// Gets the child control, ensuring initialization if needed.
     /// </summary>
+    public new Control? Child
+    {
+        get
+        {
+            EnsureInitialized();
+            return base.Child;
+        }
+        protected set => base.Child = value;
+    }
+
+    #region Hot reload stuff
     public void Reload()
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             OnBeforeReload();
-            Child = null;
+            SetValue(ChildProperty, null);
             VisualChildren.Clear();
             _nameScope = null;
+            _isInitialized = false;
+            _isInitializing = false;
 
-            OnCreatedCore();
             Initialize();
 
             InvalidateArrange();
@@ -164,93 +234,23 @@ public abstract class ViewBase : Decorator, IReloadable
         });
     }
 
-    /// <summary>
-    /// Called before the view is reloaded.
-    /// </summary>
     protected virtual void OnBeforeReload()
     {
     }
 
-    /// <summary>
-    /// Called when the view is attached to the visual tree.
-    /// </summary>
-    /// <param name="e"></param>
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
-        if (HotReloadManager.IsEnabled)
-        {
-#pragma warning disable IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
-            HotReloadManager.RegisterInstance(this);
-#pragma warning restore IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
-        }
+        HotReloadManager.RegisterInstance(this);
+        EnsureInitialized();
     }
 
-    /// <summary>
-    /// Called when the view is detached from the visual tree.
-    /// </summary>
-    /// <param name="e"></param>
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
-        if (HotReloadManager.IsEnabled)
-        {
-            HotReloadManager.UnregisterInstance(this);
-        }
+        HotReloadManager.UnregisterInstance(this);
     }
     #endregion
 }
 
-internal class ViewBuildContext : IDisposable
-{
-    private static readonly Stack<ViewBuildContext> ViewsStack = new();
-    private static ViewBuildContext? _currentContext;
-
-    internal static ViewBase? CurrentView => _currentContext?._view;
-    internal static ViewBuildContextState? CurrentState => _currentContext?._state;
-
-    private readonly ViewBase _view;
-    private ViewBuildContextState _state;
-
-    public ViewBuildContext(ViewBase view)
-    {
-        _view = view;
-
-        if (_currentContext != null)
-            ViewsStack.Push(_currentContext);
-
-        _currentContext = this;
-
-        //Debug.WriteLine($"Pushed view {view.GetType().Name}");
-    }
-
-    internal void SetState(ViewBuildContextState state)
-    {
-        _state = state;
-    }
-
-    public void Dispose()
-    {
-        _currentContext = ViewsStack.Count > 0 ? ViewsStack.Pop() : null;
-
-        //if( _currentContext != null )
-        //    Debug.WriteLine($"Poped view {_currentContext._view.GetType().Name}");
-    }
-
-    //public static string GetViewStackString() => string.Join("/", ViewsStack.ToArray().Reverse().Select(x=>x._view.GetType().Name));
-}
-
-internal enum ViewBuildContextState
-{
-    None,
-    StyleBuilding,
-    StyleSelectorUpdating,
-    ViewBuilding
-}
-
-/// <summary>
-/// Exception thrown when a view fails to build.
-/// </summary>
-/// <param name="message"></param>
-/// <param name="innerException"></param>
 public class ViewBuildingException(string message, Exception innerException) : Exception(message, innerException);

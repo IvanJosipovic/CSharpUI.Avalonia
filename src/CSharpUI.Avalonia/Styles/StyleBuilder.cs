@@ -1,6 +1,8 @@
-﻿using Avalonia.Styling;
+using System;
+using System.Collections.Generic;
+using Avalonia.Styling;
 
-namespace CSharpUI.Avalonia.Styles;
+namespace CSharpUI.Avalonia;
 
 internal static class StyleBuilder
 {

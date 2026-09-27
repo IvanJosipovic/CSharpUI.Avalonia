@@ -1,105 +1,80 @@
-using CSharpUI.Avalonia.SourceGenerator.Generators;
+#nullable enable
+
 using Microsoft.CodeAnalysis;
-using System.Collections.Immutable;
 
 namespace CSharpUI.Avalonia.SourceGenerator.ExtensionInfos;
 
-public class EventExtensionInfo : IMemberExtensionInfo
+internal sealed class EventExtensionInfo : IMemberExtensionInfo
 {
     public string MemberName { get; }
-    public IEventSymbol EventInfo { get; }
-    public ITypeSymbol ControlType { get; }
     public string ControlTypeName { get; }
-
     public string EventHandler { get; }
     public string EventName { get; }
+    public string ExtensionName { get; }
     public List<string> EventParameterTypes { get; } = [];
-    public bool IsGeneric { get; }
-    public string ReturnType { get; set; }
-    public string GenericConstraint { get; set; } = "";
-    public string GenericArg { get; set; } = "";
-    public string? Comment { get; set; }
-
-
-    public bool IsRoutedEvent { get; set; }
-    public bool IsObsolete { get; set; }
+    public bool ReturnsVoid { get; private set; } = true;
+    public string ReturnType { get; }
+    public string XmlDoc { get; }
+    public string GenericConstraint { get; } = "";
+    public string GenericArg { get; } = "";
+    public bool IsRoutedEvent { get; }
+    public bool SupportsAddHandler { get; }
+    public bool IsObsolete { get; }
 
     public bool HasStandardSignature =>
-        EventParameterTypes.Count == 2 && EventParameterTypes[0] == "System.Object" &&
-        EventParameterTypes[1].EndsWith("EventArgs");
+        EventParameterTypes.Count == 2 &&
+        EventParameterTypes[0] == "global::System.Object?" &&
+        EventParameterTypes[1].Contains("EventArgs", StringComparison.Ordinal);
 
-    public bool HasSingleParameter => EventParameterTypes.Count == 0;
-    public bool HasMultipleParameters => EventParameterTypes.Count > 0;
-
-    public EventExtensionInfo(IEventSymbol eventInfo)
+    public EventExtensionInfo(IEventSymbol eventInfo, string? extensionName = null)
     {
-        if (eventInfo.ContainingType == null)
-            throw new NullReferenceException("Control type cannot be NULL");
-
-        if (eventInfo.Type == null)
-            throw new NullReferenceException("Event handler type cannot be NULL");
-
-        EventInfo = eventInfo;
-        ControlType = eventInfo.ContainingType;
-        ControlTypeName = ControlType.GetFullTypeName();
-        EventName = EventInfo.Name;
+        ControlTypeName = eventInfo.ContainingType.GetFullTypeName();
+        EventName = eventInfo.Name;
+        ExtensionName = extensionName ?? eventInfo.Name;
         MemberName = EventName;
         EventHandler = eventInfo.Type.GetFullTypeName();
+        XmlDoc = SymbolUtilities.FormatXmlDoc(eventInfo);
+        IsObsolete = eventInfo.IsObsolete();
+        IsRoutedEvent = IsRoutedEventSymbol(eventInfo);
+        SupportsAddHandler = eventInfo.ContainingType.IsOrInheritsFrom("Avalonia.Interactivity.Interactive");
 
-        if (EventHandler.StartsWith("EventHandler"))
-        {
-            EventHandler = "global::System." + EventHandler;
-        }
-
-        EventParameterTypes.Add("global::System.Object?");
-
-        var eventArgType = eventInfo.Type;
-
-        if (eventArgType.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T && eventInfo.Type is INamedTypeSymbol nts)
-        {
-            var t = nts.TypeArguments[0];
-
-            eventArgType = t;
-        }
-
-        if (eventArgType is INamedTypeSymbol nts2)
-        {
-            if (nts2.IsGenericType)
-            {
-                EventParameterTypes.Add(nts2.TypeArguments[0].GetFullTypeName());
-            }
-            else
-            {
-                EventParameterTypes.Add("global::System.EventArgs");
-            }
-        }
-
-        IsObsolete = EventInfo.GetAttributes().Any(a => a.AttributeClass?.Name == nameof(ObsoleteAttribute));
-        IsGeneric = !eventInfo.ContainingType.IsSealed;
-
-        ReturnType = ControlTypeName;
-        if (IsGeneric)
+        if (!eventInfo.ContainingType.IsSealed)
         {
             ReturnType = "T";
             GenericConstraint = $"where T : {ControlTypeName}";
             GenericArg = "<T>";
         }
+        else
+        {
+            ReturnType = ControlTypeName;
+        }
+
+        if (eventInfo.Type is INamedTypeSymbol delegateType && delegateType.DelegateInvokeMethod is { } invokeMethod)
+        {
+            ReturnsVoid = invokeMethod.ReturnsVoid;
+
+            foreach (var parameter in invokeMethod.Parameters)
+            {
+                EventParameterTypes.Add(parameter.Type.GetFullTypeName());
+            }
+        }
     }
 
-    private static bool HasRoutedEventArgs(ImmutableArray<IParameterSymbol> parameters)
+    private static bool IsRoutedEventSymbol(IEventSymbol eventInfo)
     {
-        return parameters.Any(x => IsRoutedEventArgType(x.Type));
-
-        static bool IsRoutedEventArgType(ITypeSymbol? type)
+        if (eventInfo.Type is not INamedTypeSymbol delegateType || delegateType.DelegateInvokeMethod is not { } invokeMethod)
         {
-            while (type != null)
-            {
-                if (type.Name == "RoutedEventArgs")
-                    return true;
-
-                type = type.BaseType;
-            }
             return false;
         }
+
+        var hasRoutedArgs = invokeMethod.Parameters.Any(static x => x.Type.IsOrInheritsFrom("Avalonia.Interactivity.RoutedEventArgs"));
+        if (!hasRoutedArgs)
+        {
+            return false;
+        }
+
+        return eventInfo.ContainingType.GetMembers($"{eventInfo.Name}Event")
+            .OfType<IFieldSymbol>()
+            .Any(static x => x.IsStatic && x.DeclaredAccessibility == Accessibility.Public);
     }
 }

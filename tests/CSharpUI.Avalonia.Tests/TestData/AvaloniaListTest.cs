@@ -7,7 +7,7 @@ namespace Tests;
 
 public class AvaloniaListTest : AvaloniaObject, IAvaloniaList<AvaloniaListTest>
 {
-    private List<AvaloniaListTest> items;
+    private readonly List<AvaloniaListTest> items = [];
 
     public AvaloniaListTest this[int index] { get => items[index]; set => items[index] = value; }
 
@@ -40,7 +40,7 @@ public class AvaloniaListTest : AvaloniaObject, IAvaloniaList<AvaloniaListTest>
 
     public IEnumerator<AvaloniaListTest> GetEnumerator()
     {
-        return null;
+        return items.GetEnumerator();
     }
 
     public int IndexOf(AvaloniaListTest item)
